@@ -1,0 +1,30 @@
+.search-input-container{
+  position: relative;
+  height: 1.25rem;
+  line-height: 0.90625rem;
+  /deep/ input{
+    height: 1.25rem;
+    line-height: 1.25rem;
+    border-radius: 20px;
+    border-color: #409eff !important;
+    box-shadow: 0px 1px 3px 0px #409eff;
+  }
+  /deep/ input::-webkit-input-placeholder{
+    color: #565656;
+  }
+  /deep/ i{
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 0.75rem;
+    width: 2.5rem;
+    height: 100%;
+    line-height: 1.25rem;
+    border-radius: 20px;
+    text-align: center;
+    background: rgb(3, 114, 248);
+    color: #fff;
+    z-index: 2;
+  }
+}

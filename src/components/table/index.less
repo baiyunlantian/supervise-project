@@ -1,0 +1,53 @@
+#table-wrapper{
+  /deep/
+  .el-table {
+    tr{
+      >td:last-child{
+        span{
+          cursor: pointer;
+          margin-left: 0.75rem;
+        }
+      }
+    }
+    th{
+      color: #464646;
+      border-bottom: 1px solid rgb(204, 230, 255);
+      .cell{
+        font-weight: 400;
+        font-size: 0.5rem;
+      }
+    }
+    td{
+      color: #464646;
+      border-bottom: 1px solid rgb(204, 230, 255);
+      padding: 0.3125rem 0;
+    }
+  }
+}
+
+.el-popover{
+  width: 100px !important;
+  .el-table-filter__custom{
+    position: relative;
+    .el-table-filter__radio-group{
+      .el-radio:not(:last-child)::after{
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 90%;
+        height: 1px;
+        background-color: #d4d4d4;
+      }
+      .el-radio{
+        display: inline-block;
+        margin-right: 0px;
+        margin-bottom: 5px;
+        padding-bottom: 5px;
+        padding-left: 15%;
+        width: 100%;
+        position: relative;
+      }
+    }
+  }
+}

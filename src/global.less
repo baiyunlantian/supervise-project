@@ -1,0 +1,270 @@
+html, body, #app {
+  width: 100vw;
+  height: 100vh;
+}
+
+/*
+* 1920*1080  根元素font-size:32px  适配rem
+*/
+
+*{
+  margin: 0;
+  padding: 0;
+  /* Chrome 9-, Safari 5-, iOS 4.2-, Android 3-, Blackberry 7- */
+  -webkit-box-sizing: border-box;
+
+  /* Firefox (desktop or Android) 28- */
+  -moz-box-sizing: border-box;
+
+  /* Firefox 29+, IE 8+, Chrome 10+, Safari 5.1+, Opera 9.5+, iOS 5+, Opera Mini Anything, Blackberry 10+, Android 4+ */
+  box-sizing: border-box;
+}
+
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: left;
+  color: #565656;
+  overflow: hidden;
+  font-size: 0.5rem;
+
+  i{
+    cursor: pointer;
+    color: rgb(3, 114, 248);
+  }
+
+  img{
+    width: 100%;
+    height: 100%;
+  }
+
+
+  /deep/ .el-button{
+    font-size: 0.5rem;
+    padding: 0.375rem 0.75rem;
+    width: auto;
+    min-width: 3rem;
+  }
+  /deep/ .el-button--default{
+    border-color: #a9a9a9;
+  }
+  /deep/ .el-button--primary{
+    background-color: rgb(3, 114, 248);
+    border-color: rgb(3, 114, 248);
+  }
+
+  /deep/ .el-select{
+    .el-input__inner{
+      border-color: #848484;
+      padding: 0 0.03125rem 0 5px;
+    }
+    .el-input__icon{
+      font-size: 0.5rem;
+      font-weight: 600;
+      color: #353535;
+      line-height: 0.9375rem;
+    }
+  }
+
+  /deep/ .el-input{
+    .el-input__inner{
+      position: relative;
+      box-shadow: 1px 1px 5px 1px #4b89e65e;
+    }
+  }
+  /deep/ .el-textarea{
+    .el-textarea__inner{
+      border: 1px solid #676767;
+    }
+  }
+
+  /deep/
+  .el-date-editor {
+    border: none;
+    padding: 0;
+    position: relative;
+    .el-range__icon, .el-icon-date, .el-icon-time {
+      display: none;
+    }
+
+    .el-range-separator {
+      width: auto;
+      color: #828282;
+    }
+    .el-range-input {
+      border: 1px solid;
+      border-radius: 5px;
+      height: 0.9375rem;
+      line-height: 0.9375rem;
+      width: 50%;
+    }
+    .el-range__close-icon {
+      position: absolute;
+      right: 0;
+    }
+  }
+
+  /deep/
+  .el-dialog__wrapper{
+    .el-dialog__header{
+
+      .el-icon-close{
+        font-size: 24px;
+        font-weight: 600;
+        color: #7d7a7a;
+      }
+
+      .el-dialog__title{
+        font-weight: 600;
+      }
+    }
+
+    .el-dialog__footer{
+      button{
+        height: 30px;
+        line-height: 30px;
+        padding: 0;
+      }
+    }
+  }
+}
+
+.progress-line {
+
+  .default-line {
+    display: inline-block;
+    position: relative;
+    width: 85%;
+    border: 1px solid #ccc;
+    height: 100%;
+
+    .blue-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      background-color: #169bd5;
+      height: 100%;
+    }
+  }
+
+  .text {
+    display: inline-block;
+    height: 100%;
+    vertical-align: top;
+    font-weight: 600;
+    padding-left: 0.15625rem;
+  }
+}
+
+.fontBlackAndBold{
+  font-weight: 600;
+  color: #565656;
+  font-size: 0.5rem;
+}
+
+.cursor{
+  cursor: pointer;
+}
+
+.hiddenScrollbar::-webkit-scrollbar {
+  display: none; /* Chrome Safari */
+}
+.hiddenScrollbar{
+  overflow: auto;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+}
+
+.module-title {
+  line-height: 0.375rem;
+  height: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  .router_jump{
+    color: rgb(22, 155, 213);
+    font-size: 0.4375rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .title-text{
+    font-weight: 600;
+    font-size: 0.5625rem;
+    color: #565656;
+  }
+}
+
+.el-popover{
+  min-width: 100px !important;
+}
+
+.person-management-container.el-popover-operate-group{
+  padding: 10px;
+}
+
+//单选按钮改成多选按钮样式
+.radio-use-checkbox-style{
+  position: relative;
+  .el-radio{
+    .el-radio__input{
+      cursor: pointer;
+      outline: 0;
+      line-height: 1;
+      vertical-align: middle;
+      display: inline-block;
+      position: relative;
+      white-space: nowrap;
+      .el-radio__inner{
+        display: inline-block;
+        position: relative;
+        border: 1px solid #9c9c9c;
+        border-radius: 2px;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        width: 14px;
+        height: 14px;
+        -webkit-transition: border-color .25s cubic-bezier(.71,-.46,.29,1.46),background-color .25s cubic-bezier(.71,-.46,.29,1.46);
+        transition: border-color .25s cubic-bezier(.71,-.46,.29,1.46),background-color .25s cubic-bezier(.71,-.46,.29,1.46);
+      }
+      .el-radio__inner::after{
+        -webkit-box-sizing: content-box;
+        box-sizing: content-box;
+        content: "";
+        position: absolute;
+        height: 7px;
+        left: 6px;
+        top: 4px;
+        width: 3px;
+        transform-origin: center;
+        border-bottom: 2px solid white;
+        border-right: 2px solid white;
+        background-color: rgba(0,0,0,0);
+        -webkit-transform: rotate(45deg) scaleY(0);
+        -ms-transform: rotate(45deg) scaleY(0);
+        transform: rotate(45deg) scaleY(0);
+        -webkit-transition: -webkit-transform .15s ease-in .05s;
+        transition: -webkit-transform .15s ease-in .05s;
+        transition: transform .15s ease-in .05s;
+        transition: transform .15s ease-in .05s, -webkit-transform .15s ease-in .05s;
+        transition: transform .15s ease-in .05s,-webkit-transform .15s ease-in .05s;
+        -webkit-transform-origin: center;
+        -ms-transform-origin: center;
+
+      }
+      .el-radio__inner:hover{
+        border-color: #409EFF;
+      }
+    }
+    .el-radio__input.is-checked{
+      .el-radio__inner{
+        border-color: #409EFF;
+        background-color: #409EFF;
+      }
+      .el-radio__inner::after{
+        transform: translate(-50%, -30%) rotate(45deg);
+        -webkit-transform: translate(-50%, -30%) rotate(45deg);
+      }
+    }
+  }
+}

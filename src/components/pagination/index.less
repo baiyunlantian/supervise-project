@@ -1,0 +1,50 @@
+.custom-pagination-container{
+  display: flex;
+  align-items: center;
+  font-size: 0.5rem;
+  .opera-page{
+    font-size: 0.4375rem;
+    font-weight: 600;
+    color: #666666;
+    span{
+      cursor: pointer;
+    }
+    >span:last-child{
+      margin-left: 10px;
+    }
+    .multiple{
+      font-weight: 600;
+      min-width: auto;
+      font-size: 0.5625rem;
+    }
+    .multiple.prev{
+      position: relative;
+      right: -45px;
+    }
+    .multiple.next{
+      position: relative;
+      left: -45px;
+    }
+  }
+  /deep/
+  .el-pagination {
+    padding: 0;
+    color: rgb(102, 102, 102);
+    .el-pager li:not(.disabled).active {
+      background-color: rgb(102, 102, 102);
+    }
+    .el-pager li:not(.disabled) {
+      border:1px solid rgb(102, 102, 102);
+    }
+    .btn-prev{
+      position: relative;
+      left: -20px;
+      top: 0.09375rem;
+    }
+    .btn-next{
+      position: relative;
+      left: 20px;
+      top: 0.09375rem;
+    }
+  }
+}
