@@ -1,23 +1,15 @@
 <template>
   <div class="custom-pagination-container">
-    <div class="opera-page">
-      <span @click="changePageNum(1)">首页</span>
-      <span class="multiple prev" @click="changePageNum('prev','multiple')">《</span>
-    </div>
     <el-pagination
         @current-change="changePageNum"
         :current-page="pagination['pageNum']"
         :page-size="pagination['pageSize']"
         :total="pagination['total']"
         background
-        layout="prev, pager, next"
-        prev-text="上一页"
-        next-text="下一页"
+        layout="total,prev, pager,next, jumper"
+        prev-text="<<"
+        next-text=">>"
     />
-    <div class="opera-page">
-      <span class="multiple next" @click="changePageNum('next','multiple')">》</span>
-      <span @click="changePageNum(pagination.totalPageNum)">末页</span>
-    </div>
   </div>
 </template>
 
@@ -40,6 +32,7 @@
     },
     methods: {
       changePageNum: function (pageNumParam:number | string, type?:string) {
+        console.log(pageNumParam,type)
         const { pageNum:currentPageNum, totalPageNum} = this.$props.pagination;
 
         if (pageNumParam === currentPageNum || totalPageNum === 1) return;
@@ -55,6 +48,9 @@
         }else {
           this.$emit('changeNum',pageNumParam);
         }
+      },
+      change: function ( type:string, str:string) {
+        this.changePageNum(type, str)
       }
     },
   })

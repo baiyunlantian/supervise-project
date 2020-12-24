@@ -12,7 +12,7 @@
     </div>
 
     <template slot="footer">
-      <el-button type="primary" @click="">{{okText}}</el-button>
+      <el-button type="primary" @click="onOk">{{okText}}</el-button>
       <el-button @click="close">取消</el-button>
     </template>
   </el-dialog>
@@ -35,7 +35,18 @@
     methods: {
       close: function () {
         this.$emit('close','addOrEditDialogVisible',false);
-      }
+      },
+      onOk: function () {
+        this.$emit('submit', this.name, this.$props.department.id || '');
+      },
+    },
+    watch:{
+      department:{
+        handler: function (newVal, oldVal) {
+          this.name = newVal.name;
+        },
+        deep:true
+      },
     },
   })
 </script>

@@ -14,37 +14,33 @@
         <img :src="require('@/assets/mission-person.jpg')" alt="头像"/>
       </template>
       <template v-slot:operate="{row}" class="operate-btn">
-        <i class="el-icon-edit" @click="deploy += 1"/>
+        <i class="el-icon-edit" @click="triggerParentEvent('personInfo',row, 'personDialogVisible', true)"/>
         <i class="el-icon-delete" @click="toggleDialog('personId',row.id, 'deleteDialogVisible', true)"/>
       </template>
     </Table>
 
-    <DetailDialog :person-info="personInfo" :visible="detailDialogVisible" @close="toggleDialog" />
     <DeleteDialog
-        :personId="personId"
+        :id="personId"
         :visible="deleteDialogVisible"
         @close="toggleDialog"
         title="删除人员"
-        main-text="确认删除部门吗？"
-        sub-text="删除后部门内的人员同时被删除，请谨慎操作！"
+        main-text="确认删除人员吗？"
+        sub-text="删除后该人员有关信息将被删除，请谨慎操作！"
     />
-    <DeployDialog :deploy="deploy" />
   </div>
 </template>
 
 <script lang="ts">
   import Vue from 'vue';
   import Table from '@/components/table/index.vue';
-  import DetailDialog from './component/detail-dialog.vue';
+  import AddOrUpdatePersonDialog from './component/add-or-update-person-dialog.vue';
   import DeleteDialog from './component/delete-dialog.vue';
-  import DeployDialog from './component/add-or-edit-department-dialog.vue';
 
   export default Vue.extend({
     components:{
       Table,
-      DetailDialog,
+      AddOrUpdatePersonDialog,
       DeleteDialog,
-      DeployDialog,
     },
     data() {
       return {
@@ -76,10 +72,7 @@
             {prop:'operate',label:'操作',insertHtml:true,width:100},
           ],
         },
-        personInfo:{},
         personId:'',
-        deploy:0,
-        detailDialogVisible:false,
         deleteDialogVisible:false,
       }
     },
@@ -95,6 +88,9 @@
         //@ts-ignore
         this.$data[key1] = value1;
         this.$data[key2] = value2;
+      },
+      triggerParentEvent: function (key1:string, value1:any, key2:string, value2:any) {
+        this.$emit('toggleDialog',key1, value1, key2, value2);
       }
     },
   })

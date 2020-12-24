@@ -149,6 +149,10 @@
       margin-bottom: 2vh;
       #search-form-container{
         margin: 0;
+        /deep/
+        .el-input__inner{
+          width: 10vw;
+        }
       }
       >div{
         height: 100%;
@@ -214,17 +218,16 @@
     .custom-pagination-container{
       position: absolute;
       bottom: -5vh;
-      right: 3vw;
+      right: 0;
+      width: 92vw;
+      //.el-pager{
+      //  margin-left: 62vw;
+      //}
+      //.el-pagination__jump{
+      //  margin-left: 3vw;
+      //}
     }
 
   }
 
-}
-
-.operate-btn{
-  text-align: center;
-  cursor: pointer;
-}
-.operate-btn:hover{
-  background-color: rgb(172, 219, 240);
 }

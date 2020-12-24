@@ -8,43 +8,38 @@
     color: #666666;
     span{
       cursor: pointer;
-    }
-    >span:last-child{
-      margin-left: 10px;
-    }
-    .multiple{
+      display: inline-block;
+      width: 40px;
+      border: 1px solid;
+      text-align: center;
+      color: #828282;
+      border-radius: 2px;
+      height: 28px;
+      line-height: 28px;
       font-weight: 600;
       min-width: auto;
       font-size: 0.5625rem;
     }
-    .multiple.prev{
-      position: relative;
-      right: -45px;
-    }
-    .multiple.next{
-      position: relative;
-      left: -45px;
-    }
   }
   /deep/
   .el-pagination {
+    width: 100%;
     padding: 0;
     color: rgb(102, 102, 102);
+    text-align: right;
     .el-pager li:not(.disabled).active {
-      background-color: rgb(102, 102, 102);
+      background-color: rgb( 3, 114, 248);
+      border: none;
     }
     .el-pager li:not(.disabled) {
-      border:1px solid rgb(102, 102, 102);
+      border:1px solid #bbb;
     }
-    .btn-prev{
-      position: relative;
-      left: -20px;
-      top: 0.09375rem;
+    .el-pagination__total{
+      position: absolute;
+      left: 0;
     }
-    .btn-next{
-      position: relative;
-      left: 20px;
-      top: 0.09375rem;
+    button{
+      border: 1px solid #bbb;
     }
   }
 }

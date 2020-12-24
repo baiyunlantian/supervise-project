@@ -22,7 +22,7 @@
   import Vue from 'vue';
 
   export default Vue.extend({
-    props:['personId','visible','title','mainText','subText'],
+    props:['id','visible','title','mainText','subText'],
     data() {
       return {
       }
@@ -33,6 +33,7 @@
         this.close();
       },
       close: function () {
+        console.log(this.$props.id);
         this.$emit('close','deleteDialogVisible', false)
       },
     },

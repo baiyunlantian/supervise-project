@@ -3,7 +3,7 @@
     <div class="left">
       <div class="top">
         <SearchInput placeholder="搜索部门和人" @search="search"/>
-        <div class="add-group">
+        <div class="add-group cursor" @click="handleAddOrUpdateDepart('add')">
           <img :src="require('@/assets/person/add-group.png')"/>
         </div>
       </div>
@@ -28,8 +28,8 @@
               <div class="label" :class="{active:node.expanded === true}">
                 <span>{{data.label}}</span>
                 <div class="operate-btn" v-if="node.expanded === true">
-                  <i class="el-icon-edit" @click="addOrEdit('edit',data)"/>
-                  <i class="el-icon-folder-add" @click="addOrEdit('add')"/>
+                  <i class="el-icon-edit" @click="handleAddOrUpdateDepart('edit',data)"/>
+                  <i class="el-icon-folder-add" @click="handleAddOrUpdateDepart('add')"/>
                   <i class="el-icon-delete" @click="toggleDialog('department',data, 'deleteDialogVisible', true)"/>
                 </div>
               </div>
@@ -50,16 +50,16 @@
             <img :src="require('@/assets/person/batch-import.png')"/>
           </div>
           <div>
-            <img :src="require('@/assets/person/adduser.png')"/>
+            <img :src="require('@/assets/person/adduser.png')" @click="toggleDialog('personInfo',{}, 'personDialogVisible', true)"/>
           </div>
         </div>
       </div>
 
-      <NormalPersonList />
+      <NormalPersonList @toggleDialog="toggleDialog"/>
     </div>
 
     <DeleteDialog
-        :personId="department"
+        :id="department.id"
         :visible="deleteDialogVisible"
         @close="toggleDialog"
         title="删除部门"
@@ -70,10 +70,14 @@
     <AddOrEditDepartmentDialog
         :department="department"
         :visible="addOrEditDialogVisible"
-        @close="toggleDialog"
         :title="addOrEditText === 'add' ? '添加部门' : '修改部门'"
         :ok-text="addOrEditText === 'add' ? '添加' : '修改'"
+        @close="toggleDialog"
+        @submit="addOrUpdateDepart"
     />
+
+    <AddOrUpdatePersonDialog :person-info="personInfo" :visible="personDialogVisible" @close="toggleDialog" />
+
   </div>
 </template>
 
@@ -82,9 +86,10 @@
   import SearchInput from '@/components/search-input/index.vue';
   import SearchForm from '@/components/search-form/index.vue';
   import NormalPersonList from './normal-person.vue';
-  import NotActivePersonList from './not-active-person.vue';
   import DeleteDialog from './component/delete-dialog.vue';
   import AddOrEditDepartmentDialog from './component/add-or-edit-department-dialog.vue';
+  import AddOrUpdatePersonDialog from './component/add-or-update-person-dialog.vue';
+  import Pagination from '@/components/pagination/index.vue';
 
 
   import {
@@ -97,9 +102,10 @@
       SearchForm,
       SearchInput,
       NormalPersonList,
-      NotActivePersonList,
       DeleteDialog,
-      AddOrEditDepartmentDialog
+      AddOrEditDepartmentDialog,
+      AddOrUpdatePersonDialog,
+      Pagination
     },
     data() {
       return {
@@ -121,6 +127,8 @@
         department:{},
         addOrEditText:'add',
         addOrEditDialogVisible:false,
+        personDialogVisible:false,
+        personInfo:{},
       }
     },
     methods: {
@@ -134,6 +142,7 @@
             return{
               id:item.id,
               type:item.type,
+              name:item.name,
               label:item.type === 0 ? `${item.name}（${item.personCount}人）` : item.name,
               leaf: item.type === 0 ? false : true,
             }
@@ -148,6 +157,7 @@
           let list = res.data.list.map((item:any)=>{
             return {
               id:item.id,
+              name:item.name,
               label:`${item.name}（${item.personCount}人）`,
               leaf: item.personCount > 0 ? false : true,
               type:0
@@ -166,19 +176,20 @@
           this.handleGetChildTree(node.data.id, resolve);
         }
       },
-      operateGroup: function (id:number | string, type:string) {
-        console.log(id)
-        console.log(type)
-      },
       toggleDialog: function (key1:any, value1:any, key2:any, value2:any ) {
         //@ts-ignore
         this.$data[key1] = value1;
         this.$data[key2] = value2;
       },
-      addOrEdit: function (type:string, data = {}) {
+      handleAddOrUpdateDepart: function (type:string, data = {}) {
         this.addOrEditText = type;
         this.department = data;
         this.addOrEditDialogVisible = true;
+      },
+      addOrUpdateDepart: function (name:string, id:string) {
+        console.log(name)
+        console.log(id)
+        this.addOrEditDialogVisible = false;
       }
     },
     mounted(): void {
