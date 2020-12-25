@@ -2,9 +2,14 @@
   <div id="person-management-container">
     <div class="left">
       <div class="top">
-        <SearchInput placeholder="搜索部门和人" @search="search"/>
-        <div class="add-group cursor" @click="handleAddOrUpdateDepart('add')">
-          <img :src="require('@/assets/person/add-group.png')"/>
+        <div class="fontBlackAndBold">人员组织架构</div>
+        <div class="operate-btn">
+          <div class="add-group cursor" @click="setStationDialogVisible = true">
+            <img :src="require('@/assets/person/set-station.png')"/>
+          </div>
+          <div class="add-group cursor" @click="handleAddOrUpdateDepart('add')">
+            <img :src="require('@/assets/person/add-group.png')"/>
+          </div>
         </div>
       </div>
 
@@ -78,6 +83,8 @@
 
     <AddOrUpdatePersonDialog :person-info="personInfo" :visible="personDialogVisible" @close="toggleDialog" />
 
+    <SetStationDialog :visible="setStationDialogVisible" @close="toggleDialog"/>
+
   </div>
 </template>
 
@@ -89,7 +96,7 @@
   import DeleteDialog from './component/delete-dialog.vue';
   import AddOrEditDepartmentDialog from './component/add-or-edit-department-dialog.vue';
   import AddOrUpdatePersonDialog from './component/add-or-update-person-dialog.vue';
-  import Pagination from '@/components/pagination/index.vue';
+  import SetStationDialog from './component/set-station-dialog.vue';
 
 
   import {
@@ -105,7 +112,7 @@
       DeleteDialog,
       AddOrEditDepartmentDialog,
       AddOrUpdatePersonDialog,
-      Pagination
+      SetStationDialog,
     },
     data() {
       return {
@@ -128,6 +135,7 @@
         addOrEditText:'add',
         addOrEditDialogVisible:false,
         personDialogVisible:false,
+        setStationDialogVisible: false,
         personInfo:{},
       }
     },
@@ -190,7 +198,7 @@
         console.log(name)
         console.log(id)
         this.addOrEditDialogVisible = false;
-      }
+      },
     },
     mounted(): void {
     }
