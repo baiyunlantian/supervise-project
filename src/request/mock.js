@@ -792,3 +792,70 @@ Mock.mock('/mock/project-control/asset/assetCountDetailRatio',(res,req)=>{
     }
   }
 });
+
+//排班管理--任务管理列表
+Mock.mock('/mock/schedule-management/missionSelectList',(res,req)=>{
+  const body = JSON.parse(res.body);
+
+  let list = [];
+
+  for (let i = 0; i < body.pageSize; i++){
+    let personList = [];
+    for (let j = 0; j < Random.integer(2,10); j++){
+      personList.push({type:j === 0 ? 0 : 1, url:''});
+    }
+
+    list.push({
+      id:Random.integer(1,99999),
+      name:Random.csentence(2,4),
+      service:Random.csentence(2,4),
+      serviceStatus:Random.integer(1,3),
+      missionStatus:Random.integer(1,3),
+      reporterStatus:Random.integer(0,1),
+      time:`${Random.date('yyyy.MM.dd')}-${Random.date('yyyy.MM.dd')}`,
+      personList,
+    });
+
+  }
+
+  return {
+    data:{
+      list,
+      page:{
+        total:list.length * 10,
+        pageSize:body.pageSize,
+        pageNum:body.pageNum
+      },
+    }
+  }
+});
+
+//排班管理--任务详情--施工监督报告列表
+Mock.mock('/mock/schedule-detail/reportSelectList',(res,req)=>{
+  const body = JSON.parse(res.body);
+
+  let list = [];
+
+  for (let i = 0; i < body.pageSize; i++){
+    list.push({
+      id:Random.integer(1,99999),
+      code:Random.integer(10000,99999),
+      startTime:Random.time('HH:mm:ss'),
+      endTime:Random.time('HH:mm:ss'),
+      warningCount:Random.integer(10,50),
+      date:`${Random.date('yyyy.MM.dd')}`,
+    });
+
+  }
+
+  return {
+    data:{
+      list,
+      page:{
+        total:list.length * 10,
+        pageSize:body.pageSize,
+        pageNum:body.pageNum
+      },
+    }
+  }
+});

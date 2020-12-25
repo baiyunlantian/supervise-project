@@ -22,6 +22,8 @@
       <GetFormItem :formData="formData" :item="item"/>
     </el-form-item>
 
+    <slot></slot>
+
     <el-form-item v-if="!formProps.hiddenFooter">
       <el-button :class="formProps.okBtnClass" type="primary" @click="onOk" :disabled="disabledSubmit">{{formProps.onOkText || '确认'}}</el-button>
       <el-button :class="formProps.cancelBtnClass" v-if="formProps.onCancelText" @click="onCancel">{{formProps.onCancelText}}</el-button>

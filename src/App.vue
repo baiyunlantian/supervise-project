@@ -43,7 +43,8 @@
     height: 95vh !important;
     >div:last-child{
       flex: 1;
-      padding: 1.5% 3% 0 1%;
+      padding: 1% 3% 0 1%;
+      background-color: rgb(240, 247, 255);
     }
   }
   @import "global.less";

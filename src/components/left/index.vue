@@ -5,8 +5,8 @@
         :key="index"
         :to="menu.path"
     >
-      <div :class="{active: currentPath === menu.path}">
-        <img :src="currentPath === menu.path ? menu.active : menu.normal" alt=""/>
+      <div :class="{active: currentPath.indexOf(menu.path) >= 0}">
+        <img :src="currentPath.indexOf(menu.path) >= 0 ? menu.active : menu.normal" alt=""/>
       </div>
     </router-link>
   </div>
@@ -20,7 +20,7 @@
       return {
         menuList:[
           {
-            path:'/',
+            path:'/monitor-management',
             normal:require('@/assets/menu/monitor.png'),
             active:require('@/assets/menu/monitor-active.png'),
           },

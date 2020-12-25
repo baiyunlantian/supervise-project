@@ -22,11 +22,13 @@
     />
   </el-select>
   <el-date-picker
-      v-else-if="item.type === 'datetimerange' || item.type === 'datetime' || item.type === 'date'"
+      v-else-if="item.type === 'datetimerange' || item.type === 'datetime' || item.type === 'date' || item.type === 'daterange'"
       v-model="formData[item.key]"
       :type="item.type"
       :format="item.format || 'yyyy-MM-dd'"
       :class="item.className"
+      :start-placeholder="item.startPlaceholder"
+      :end-placeholder="item.endPlaceholder"
       range-separator="—"
       clearable
   />
