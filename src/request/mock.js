@@ -936,3 +936,40 @@ Mock.mock('/mock/equipment-management/selectList',(res,req)=>{
     }
   }
 });
+
+//排班管理--监督报告--预警信息统计
+Mock.mock('/mock/schedule-management/reporter/infoCensus',(res,req)=>{
+
+  return {
+    data:{
+      face:Random.integer(0,20),
+      safeHat:Random.integer(0,1),
+      workArea:Random.integer(0,20),
+      clothes:Random.integer(0,20),
+      climb:Random.integer(0,1),
+      stop:Random.integer(0,20),
+      fire:Random.integer(0,20),
+      fall:Random.integer(0,1),
+    }
+  }
+});
+
+//排班管理--监督报告--预警信息统计
+Mock.mock('/mock/schedule-management/reporter/warningList',(res,req)=>{
+  let list = [];
+
+  for (let i = 0; i < Random.integer(4,15); i++){
+    list.push({
+      time:Random.datetime('yyyy.MM.dd HH.mm.ss'),
+      name:Random.csentence(3,6),
+      person:Random.csentence(3,6),
+      status:Random.integer(0,4),
+    });
+  }
+
+  return {
+    data:{
+      list
+    }
+  }
+});

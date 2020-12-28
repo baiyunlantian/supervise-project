@@ -35,7 +35,11 @@
           :table-props="tableProps"
       >
         <template v-slot:operate="{row}">
-          <router-link :to="{ path: '/schedule-management/mission-detail', query: { missionId: row.id }}">
+          <router-link
+              :to="{
+            path: '/schedule-management/reporter-detail',
+            query:{code:row.code, date:row.date, startTime:row.startTime, endTime:row.endTime}
+          }">
             查看详情>>
           </router-link>
         </template>
