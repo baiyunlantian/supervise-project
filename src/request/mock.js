@@ -859,3 +859,80 @@ Mock.mock('/mock/schedule-detail/reportSelectList',(res,req)=>{
     }
   }
 });
+
+//设备管理--设备统计
+Mock.mock('/mock/equipment-management/census',(res,req)=>{
+
+  return {
+    data:{
+      onLine:Random.integer(1,10),
+      offLine:Random.integer(1,10),
+      error:Random.integer(1,10),
+      stop:Random.integer(1,10),
+    }
+  }
+});
+
+//设备管理--设备列表
+Mock.mock('/mock/equipment-management/selectList',(res,req)=>{
+  const body = JSON.parse(res.body);
+
+  let list = [];
+
+  for (let i = 0; i < body.pageSize; i++){
+    list.push({
+      id:Random.integer(1,99999),
+      name:Random.csentence(3,5),
+      ip:'127.0.0.1',
+      port:Random.integer(50,200),
+      account:'admin',
+      password:'123456',
+      status:Random.integer(0,3),
+      remark:Random.csentence(3,5),
+      cameraList:[
+        {
+          id:Random.integer(1,99999),
+          name:'摄像头'+Random.integer(1,1000),
+          ip:'127.0.0.1',
+          port:Random.integer(50,200),
+          account:'admin',
+          password:'123456',
+          status:Random.integer(0,3),
+          remark:Random.csentence(3,5),
+        },
+        {
+          id:Random.integer(1,99999),
+          name:'摄像头'+Random.integer(1,1000),
+          ip:'127.0.0.1',
+          port:Random.integer(50,200),
+          account:'admin',
+          password:'123456',
+          status:Random.integer(0,3),
+          remark:Random.csentence(3,5),
+        },
+        {
+          id:Random.integer(1,99999),
+          name:'摄像头'+Random.integer(1,1000),
+          ip:'127.0.0.1',
+          port:Random.integer(50,200),
+          account:'admin',
+          password:'123456',
+          status:Random.integer(0,3),
+          remark:Random.csentence(3,5),
+        }
+      ],
+    });
+
+  }
+
+  return {
+    data:{
+      list,
+      page:{
+        total:list.length * 10,
+        pageSize:body.pageSize,
+        pageNum:body.pageNum
+      },
+    }
+  }
+});

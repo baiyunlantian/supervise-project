@@ -23,6 +23,11 @@ export default new VueRouter({
       component: resolve => require(['@/pages/schedule-management/mission-detail.vue'], resolve),
     },
     {
+      path: '/equipment-management',
+      name: 'equipment-management',
+      component: resolve => require(['@/pages/equipment-management/index.vue'], resolve),
+    },
+    {
       path: '*',
       name: 'Home',
       component: resolve => require(['@/pages/index/index.vue'], resolve)

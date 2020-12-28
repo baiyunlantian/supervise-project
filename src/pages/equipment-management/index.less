@@ -1,0 +1,122 @@
+#equipment-management-container{
+  .top{
+    height: 10vh;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .item{
+      height: 100%;
+      width: 18%;
+      box-shadow: @divShadow;
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+      .img{
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        img{
+          width: 50%;
+          height: 50%;
+        }
+      }
+      .text{
+        color: #565656;
+      }
+      .count{
+        color: inherit;
+        font-size: 30px;
+      }
+    }
+    .item.total{
+      color: rgb(0, 131, 255);
+      .img{
+        background-color: rgb(230, 243, 255);
+      }
+    }
+    .item.onLine{
+      color: rgb(0, 161, 76);
+      .img{
+        background-color: rgb(224, 244, 233);
+      }
+    }
+    .item.offLine{
+      color: rgb(102, 102, 102);
+      .img{
+        background-color: rgb(236, 236, 236);
+      }
+    }
+    .item.error{
+      color: rgb(255, 59, 59);
+      .img{
+        background-color: rgb(255, 224, 224);
+      }
+    }
+    .item.stop{
+      color: rgb(255, 186, 0);
+      .img{
+        background-color: rgb(255, 246, 230);
+      }
+    }
+  }
+
+  #search-form-container{
+    margin-top: 2vh;
+    /deep/
+    .search-form-operate{
+      position: absolute;
+      right: 0;
+      margin: 0;
+    }
+  }
+
+  .table-content{
+    box-shadow: @divShadow;
+    .title{
+      padding: 10px;
+      background-color: rgb(204, 230, 255);
+    }
+
+    /deep/
+    .el-table__body-wrapper::-webkit-scrollbar {
+      display: none; /* Chrome Safari */
+    }
+
+    /deep/
+    .el-table__body-wrapper{
+      height: auto;
+      max-height: 57vh;
+      overflow: auto;
+      scrollbar-width: none; /* Firefox */
+      -ms-overflow-style: none; /* IE 10+ */
+      .el-table__body{
+        .el-table__expanded-cell{
+          background-color: rgb(244,244,244);
+          padding-top: 0;
+          .expand-content{
+            width: 82%;
+            margin: 0 6% 0 6%;
+            background-color: #fff;
+            box-shadow: 0px 1px 5px 0 #adadad;
+            .item{
+              display: flex;
+              >td{
+                width: 210px;
+                text-align: center;
+              }
+            }
+          }
+        }
+        .cell{
+          >i{
+            font-size: 24px;
+          }
+        }
+      }
+    }
+
+  }
+}

@@ -6,6 +6,8 @@
         style="width: 100%"
         :stripe="tableProps.showStripe"
         :border="tableProps.showBorder"
+        :highlight-current-row="tableProps.highlight"
+        @expand-change="expandChange"
         @selection-change="multipleSelectChange"
     >
       <!--  首列配置项--开头    -->
@@ -107,6 +109,7 @@
     params?: object,
     showStripe?: boolean,
     showBorder?: boolean,
+    highlight?: boolean,
     firstColumn?: FIRST_COLUMN_PROPS,
   }
 
@@ -219,6 +222,11 @@
 
       multipleSelectChange: function (selection:any) {
         this.$emit('multipleSelectChange',selection);
+      },
+
+      expandChange: function (row:any, expand:any) {
+        //（展开行时，回调的第二个参数为 expandedRows；树形表格时第二参数为 expanded）
+
       }
     },
 
