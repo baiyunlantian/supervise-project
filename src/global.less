@@ -110,11 +110,15 @@ html, body, #app {
     .el-dialog__header{
       padding: 10px;
       background-color: rgb(38, 125, 231);
-      .el-icon-close{
-        font-size: 24px;
-        font-weight: 600;
-        color: #7d7a7a;
+      .el-dialog__headerbtn{
+        top: 10px;
+        .el-icon-close{
+          font-size: 24px;
+          font-weight: 600;
+          color: #fff;
+        }
       }
+
 
       .el-dialog__title{
         font-weight: 600;
@@ -129,6 +133,29 @@ html, body, #app {
         line-height: 30px;
         padding: 0;
       }
+    }
+  }
+
+  /deep/
+  .el-switch{
+    .el-switch__label{
+      visibility: hidden;
+      position: absolute;
+      color: #fff !important;
+      span{
+        font-size: 12px;
+      }
+    }
+    .el-switch__label.el-switch__label--left{
+      left: 20px;
+      z-index: 10;
+    }
+    .el-switch__label.is-active{
+      visibility: visible;
+      color: #fff !important;
+    }
+    .el-switch__core{
+      width: 70px !important;
     }
   }
 }
@@ -158,6 +185,20 @@ html, body, #app {
     font-weight: 600;
     padding-left: 0.15625rem;
   }
+}
+
+.bgcAndShadow{
+  background-color: #fff;
+  box-shadow: @divShadow;
+  border-radius: 5px;
+}
+
+.play-icon{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  font-size: 35px;
 }
 
 .fontBlackAndBold{

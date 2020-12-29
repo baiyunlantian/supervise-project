@@ -1,0 +1,55 @@
+/deep/
+.detail-dialog{
+  color: #828282;
+  .el-dialog__header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    i{
+      font-size: 24px;
+      color: #fff !important;
+    }
+  }
+  .el-dialog__body{
+    padding: 30px;
+    .person-list{
+      .title{
+        margin: 10px 0;
+        font-size: 18px;
+        border-bottom: 1px dotted deepskyblue;
+      }
+
+      .list{
+        display: flex;
+        flex-wrap: wrap;
+        .item{
+          width: 50%;
+          display: flex;
+          margin-bottom: 15px;
+          .img{
+            width: 120px;
+            height: 150px;
+            border-radius: 5px;
+            margin-right: 10px;
+            overflow: hidden;
+          }
+          .info{
+            color: #000;
+            .label{
+              width: 65px;
+              text-align-last: justify;
+              display: inline-block;
+            }
+            span{
+              color: #828282;
+            }
+            span:last-child{
+              margin-right: 5px;
+              font-weight: 600;
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -973,3 +973,36 @@ Mock.mock('/mock/schedule-management/reporter/warningList',(res,req)=>{
     }
   }
 });
+
+//异常事件--最新异常浴巾信息列表
+Mock.mock('/mock/exception-event/latelyList',(res,req)=>{
+  const body = JSON.parse(res.body);
+  let list = [];
+
+  for (let i = 0; i < body.pageSize; i++){
+    list.push({
+      id:Random.integer(1,99999),
+      time:Random.datetime('yyyy.MM.dd HH:mm:ss'),
+      name:Random.csentence(3,6),
+      type:Random.csentence(3,6),
+      source:Random.csentence(3,6),
+      project:Random.csentence(3,6),
+      person:Random.csentence(3,6),
+      info:Random.csentence(3,6),
+      status:Random.integer(0,1),
+      personList:[
+      ],
+    });
+  }
+
+  return {
+    data:{
+      list,
+      page:{
+        total:body.pageSize * 10,
+        pageNum:body.pageNum,
+        pageSize:body.pageSize,
+      },
+    }
+  }
+});

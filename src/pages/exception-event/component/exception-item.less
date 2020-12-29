@@ -1,0 +1,49 @@
+.exception-item{
+  .title{
+    padding: 0.15625rem 0.3125rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px dotted deepskyblue;
+    .fontBlackAndBold{
+      font-size: 0.4375rem;
+    }
+    .operate-btn{
+      display: flex;
+      justify-content: flex-end;
+      color: rgb(46, 130, 232);
+      font-size: 0.625rem;
+      font-weight: 600;
+      i{
+        color: inherit;
+        font-size: inherit;
+      }
+    }
+  }
+
+  .content{
+    display: flex;
+    padding: 0.3125rem;
+    .left{
+      position: relative;
+      flex: 1;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-right: 0.3125rem;
+    }
+
+    .right{
+      width: 55%;
+      font-size: 0.40625rem;
+      >div{
+        margin-bottom: 2px;
+        >span{
+          color: #000;
+          padding-left: 5px;
+          font-weight: 600;
+        }
+      }
+    }
+  }
+
+}

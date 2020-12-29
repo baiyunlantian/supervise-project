@@ -1,0 +1,58 @@
+#history-list-container{
+
+  /deep/
+  #search-form-container{
+    margin-top: 1vh;
+    .el-input{
+      .el-input__inner{
+        width: 4.0625rem;
+      }
+    }
+
+    .el-range-editor{
+      width: auto;
+      .el-range-input{
+        width: 4.375rem;
+      }
+    }
+
+    .search-form-operate{
+      position: absolute;
+      right: 0;
+      .el-form-item__content{
+        display: flex;
+        align-items: center;
+      }
+      .go-back-btn{
+        height: 1.34375rem;
+        line-height: 1.34375rem;
+        font-size: 0.5rem !important;
+      }
+    }
+  }
+
+  .list{
+    display: flex;
+    flex-wrap: wrap;
+    .exception-item{
+      width: 22%;
+      margin: 0px 3% 2% 0;
+      /deep/
+      .right{
+        > div {
+          margin-bottom: 4px;
+        }
+      }
+    }
+
+    //.item:nth-child(8n) {
+    //  margin-right: 0;
+    //  float: right;
+    //  margin-bottom: 0;
+    //}
+  }
+
+  .custom-pagination-container{
+    position: relative;
+  }
+}

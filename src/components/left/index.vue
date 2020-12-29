@@ -25,7 +25,7 @@
             active:require('@/assets/menu/monitor-active.png'),
           },
           {
-            path:'/exception-management',
+            path:'/exception-event',
             normal:require('@/assets/menu/exception.png'),
             active:require('@/assets/menu/exception-active.png'),
           },

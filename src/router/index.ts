@@ -13,6 +13,16 @@ export default new VueRouter({
       component: resolve => require(['@/pages/person-management/index.vue'], resolve),
     },
     {
+      path: '/exception-event',
+      name: 'exception-event',
+      component: resolve => require(['@/pages/exception-event/index.vue'], resolve),
+    },
+    {
+      path: '/exception-event/history-list',
+      name: 'exception-event/history-list',
+      component: resolve => require(['@/pages/exception-event/history-list.vue'], resolve),
+    },
+    {
       path: '/schedule-management',
       name: 'schedule-management',
       component: resolve => require(['@/pages/schedule-management/index.vue'], resolve),
