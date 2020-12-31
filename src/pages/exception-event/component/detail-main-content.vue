@@ -24,7 +24,7 @@
     <div class="right">
       <div class="main-video">
         <img :src="require('@/assets/mission-person.jpg')" alt="***"/>
-        <i class="el-icon-video-play play-icon"/>
+        <i class="el-icon-video-play play-icon" @click="toggleVideo(true)"/>
       </div>
 
       <div class="sub-img hiddenScrollbar">
@@ -61,7 +61,11 @@
       return {
       }
     },
-    methods: {},
+    methods: {
+      toggleVideo: function (res:boolean) {
+        this.$emit('toggleVideo',res);
+      }
+    },
   })
 </script>
 

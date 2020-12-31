@@ -11,7 +11,7 @@
     <div class="content">
       <div class="left">
         <img :src="require('@/assets/mission-person.jpg')" alt="***"/>
-        <i class="el-icon-video-play play-icon"/>
+        <i class="el-icon-video-play play-icon" @click="visible = true"/>
       </div>
 
       <div class="right">
@@ -34,11 +34,14 @@
         </div>
       </div>
     </div>
+
+    <VideoDialog :visible="visible" @close="close"/>
   </div>
 </template>
 
 <script lang="ts">
   import Vue from 'vue';
+  import VideoDialog from './video-dialog.vue';
 
   export default Vue.extend({
     props:{
@@ -59,12 +62,23 @@
         }
       }
     },
+    components:{
+      VideoDialog
+    },
+    data(){
+      return {
+        visible:false
+      }
+    },
     methods: {
       showDetailDialog: function () {
         this.$emit('showDetailDialog', true, this.$props.data);
       },
       handleDelete: function (id:string | number) {
         this.$emit('delete', id);
+      },
+      close: function () {
+        this.visible = false;
       }
     },
   })

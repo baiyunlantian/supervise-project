@@ -5,3 +5,4 @@ declare module '*.vue' {
 
 declare module 'vue-echarts';
 declare module 'js-export-excel';
+declare module 'vue-video-player';

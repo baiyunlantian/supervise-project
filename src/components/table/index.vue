@@ -42,7 +42,7 @@
         />
       <!--  首列配置项--结尾    -->
 
-      <!--  其余列配置项--列头  -->
+      <!--  其余列配置项--开头  -->
         <el-table-column
             v-for="(column, index) in tableColumn"
             :key="index"
@@ -88,7 +88,7 @@
             <template v-else>{{ column.format ? column.format(scope.row[column.prop], scope.row) : scope.row[column.prop]}}</template>
           </template>
         </el-table-column>
-      <!--  其余列配置项--列头  -->
+      <!--  其余列配置项--结尾  -->
     </el-table>
 
     <Pagination v-if="!tableProps.hiddenPagination" :pagination="pagination" @changeNum="changePageNum"/>

@@ -46,3 +46,4 @@ export const exportExcl = async (
   toExcel.saveExcel();
 };
 
+export const VideoSrc = 'https://www.runoob.com/try/demo_source/movie.mp4';

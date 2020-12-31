@@ -24,7 +24,7 @@ module.exports = {
                 lessOptions: {
                     strictMath: true,
                     globalVars:{
-                        divShadow: '0px 0px 10px 0px #004dc15e',
+                        divShadow: '1px 2px 3px 0px #a7d4ff',
                         inputShadow: '1px 1px 5px 1px #4b89e65e',
                     },
                 },

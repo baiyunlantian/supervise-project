@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <template v-show="path !== '/login'">
+    <template v-if="path !== '/login'">
       <Header />
       <div class="main-container">
         <MenuList />
@@ -8,14 +8,14 @@
       </div>
     </template>
 
-    <Login v-show="path === '/login'"/>
+    <Login v-else/>
   </div>
 </template>
 
 <script lang="ts">
   import Vue from 'vue';
   import Header from '@/components/header/index.vue';
-  import MenuList from '@/components/left/index.vue';
+  import MenuList from '@/components/menu/index.vue';
   import Login from '@/pages/login/index.vue';
 
   export default Vue.extend({

@@ -1,107 +1,164 @@
 <template>
   <div id="left-container">
-
-    <div class="company-container">
-      <div class="router_jump">人员管理>></div>
-      <div class="title-text">{{company.name}}</div>
-      <div class="person-count">
-        <div>企业人数：{{company.total}}</div>
-        <div>在场人数：{{company.actual}}</div>
+    <div class="top bgcAndShadow">
+      <div class="item">
+        <div>
+          <div class="text">当前在线设备</div>
+          <div class="count" style="color: rgb(0, 131, 255)">{{flowCensus.onLine || 0}}</div>
+        </div>
+        <div>
+          <div class="text">今日已开始任务</div>
+          <div class="count" style="color: rgb(4, 178, 82)">{{flowCensus.mission || 0}}</div>
+        </div>
       </div>
+      <div class="item">
+        <div>
+          <div class="text">今日已用流量</div>
+          <div class="count" style="color: rgb(237, 56, 81)">{{flowCensus.todayFlow || 0}}M</div>
+        </div>
+        <div>
+          <div class="text">共用流量</div>
+          <div class="count" style="color: rgb(152, 70, 209)">{{flowCensus.totalFlow || 0}}M</div>
+        </div>
+      </div>
+      <i class="el-icon-setting" @click="flowDialog = true"/>
     </div>
 
-    <div class="project-container">
-      <div class="project-census">
-        <div class="module-title">
-          <div class="title-text">项目统计</div>
-          <div class="router_jump">项目管控>></div>
-        </div>
-        <div class="total">
-          <div>项目数量：<span>{{project.total}}</span></div>
-        </div>
-        <div class="items">
-          <div class="item">
-            <div>{{project.notStart}}</div>
-            <div>未开始</div>
-          </div>
-          <div class="item">
-            <div>{{project.running}}</div>
-            <div>进行中</div>
-          </div>
-          <div class="item">
-            <div>{{project.end}}</div>
-            <div>已结束</div>
-          </div>
-          <div class="item">
-            <div>{{project.stop}}</div>
-            <div>已中止</div>
-          </div>
-        </div>
-      </div>
+    <div class="terminal-container bgcAndShadow">
 
-      <div class="project-progress">
-        <div class="title-text">项目进度统计</div>
-        <div class="progress-list">
-          <div class="item" v-for="(item, index) in projectProgressList" :key="index">
-            <div>{{item.name}}</div>
-            <div class="progress-line">
-              <div class="default-line">
-                <div class="blue-bar" :style="{width:item.progress*100+'%'}"></div>
-              </div>
-              <div class="text">{{item.status === 3 ? '已中止' : `${(item.progress*100).toFixed(0) || 0}%`}}</div>
+      <SearchInput placeholder=""/>
+
+      <el-tree
+          ref="tree"
+          :props="defaultProps"
+          :load="loadTree"
+          :expand-on-click-node="false"
+          lazy
+          accordion
+          node-key="id"
+      >
+        <template v-slot="{ node, data }" class="group">
+          <div class="custom-tree-node">
+            <div class="img">
+              <span v-if="node.expanded === true || data.hasOwnProperty('parentId')">-</span>
+              <span v-else-if="node.expanded === false">+</span>
+            </div>
+            <div class="label" :class="{active:node.expanded === true}">
+              <span>{{data.label}}</span>
             </div>
           </div>
-        </div>
-      </div>
+        </template>
+      </el-tree>
     </div>
+
+    <el-dialog
+      :visible="flowDialog"
+      title="流量提醒设置"
+      width="400px"
+      :show-close="false"
+    >
+
+      <div class="content">
+        <div class="form-item">
+          <div class="label">流量使用提醒：</div>
+          <el-input type="number" v-model="flowMax"/>
+        </div>
+        <div class="sub">(不做使用上限提醒时请输入0，单位：M)</div>
+      </div>
+
+      <template slot="footer">
+        <el-button type="primary" @click="save">保存</el-button>
+        <el-button @click="flowDialog = false">取消</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script lang="ts">
   import Vue from "vue";
-  import { getCompanyInfo, getProjectCensus, getProjectProgressList } from "@/request";
+  import SearchInput from '@/components/search-input/index.vue';
+  import { getFlowCensus } from "@/request";
+  import {
+    getTerminalTree,
+    getTerminalChildTree,
+  } from '@/request';
 
   export default Vue.extend({
+    components:{
+      SearchInput,
+    },
     data(){
       return{
-        company:{
-          name:"test",
-          total:0,
-          actual:0,
+        defaultProps: {
+          children: 'zones',
+          label: 'label',
+          isLeaf: 'leaf',
+          id:'id',
+          parentId:'parentId',
         },
-        project:{
-          notStart:0,
-          running:0,
-          end:0,
-          stop:0,
-          total:0,
+        flowCensus:{
+          onLine:0,
+          mission:0,
+          totalFlow:0,
+          todayFlow:0,
         },
-        projectProgressList:[],
+        warningCensus:{},
+        flowDialog:false,
+        flowMax:'',
+      }
+    },
+    methods:{
+      handleGetChildTree: function (id:string | number, resolve:Function) {
+        if (!id) return;
+        getTerminalChildTree({id}).then(res=>{
+          let list = res.data.list.map((item:any)=>{
+            return{
+              parentId:id,
+              id:item.id,
+              type:item.type,
+              label:item.name,
+              leaf: item.type === 0 ? false : true,
+            }
+          });
+          resolve(list);
+        }).catch(e=>{
+          resolve([]);
+        });
+      },
+      handleGetFirstTree: function (resolve:Function) {
+        getTerminalTree().then(res=>{
+          let list = res.data.list.map((item:any)=>{
+            return {
+              id:item.id,
+              name:item.name,
+              label:item.name,
+              leaf: item.personCount > 0 ? false : true,
+              type:0
+            };
+          });
+          resolve(list);
+        }).catch(e=>{
+          resolve([]);
+        })
+      },
+      loadTree: function (node:any, resolve:Function) {
+        // console.log('loadTree',node);
+        if (node.level === 0) {
+          this.handleGetFirstTree(resolve);
+        }else {
+          this.handleGetChildTree(node.data.id, resolve);
+        }
+      },
+      save: function () {
+        console.log(this.flowMax);
+        this.flowDialog = false;
       }
     },
     mounted(): void {
-      getCompanyInfo().then(res=>{
-        if (res.data){
-          this.company = res.data;
-        }
-      });
-
-      getProjectCensus().then(res=>{
-        if (res.data){
-          let total = 0;
-          Object.keys(res.data).forEach(key=>{
-            total += res.data[key] || 0;
-          });
-
-          this.project = {total, ...res.data};
-        }
-      });
-
-      getProjectProgressList().then(res=>{
-        if (res.data){
-          this.projectProgressList = res.data.list;
-        }
-      });
+      getFlowCensus().then(res=>{
+        if (!res.data) return
+        this.flowCensus = res.data;
+      })
     },
   });
 </script>

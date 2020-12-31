@@ -45,87 +45,6 @@
     }
 
 
-    .project-tree{
-
-      /deep/
-      .el-tree{
-        width: 95%;
-        >div{
-          //border-left: 1px solid;
-          padding-top: 1vh;
-        }
-
-        .custom-tree-node{
-          display: flex;
-          align-items: center;
-          width: 100%;
-
-          .active{
-            background-color: rgb(204, 230, 255);
-            span{
-              color: rgb(3, 114, 248);
-            }
-          }
-
-          .label{
-            padding: 0 5px;
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            .operate-btn{
-
-              i{
-                cursor: pointer;
-                font-size: 18px;
-                border-radius: 50%;
-                width: 30px;
-                height: 30px;
-                line-height: 30px;
-                text-align: center;
-                margin-right: 5px;
-              }
-            }
-          }
-
-          .img {
-            width: 30px;
-            height: 30px;
-            line-height: 30px;
-            text-align: center;
-            overflow: hidden;
-
-            img {
-              width: 100%;
-              height: 100%;
-              border-radius: 50%;
-            }
-
-            span {
-              width: 18px;
-              height: 18px;
-              display: inline-block;
-              border: 1px solid;
-              text-align: center;
-              line-height: 18px;
-            }
-          }
-
-        }
-
-        .el-tree-node__content{
-          position: relative;
-          height: 30px;
-          .el-tree-node__expand-icon{
-            position: absolute;
-            left: 0;
-            opacity: 0;
-          }
-        }
-
-      }
-
-    }
   }
 
   .right{
@@ -207,9 +126,9 @@
 
     /deep/
     .custom-pagination-container{
-      position: absolute;
-      bottom: -7vh;
-      right: 0;
+      position: fixed;
+      bottom: 2vh;
+      right: 3vw;
       width: 92vw;
     }
 

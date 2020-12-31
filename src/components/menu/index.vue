@@ -5,8 +5,8 @@
         :key="index"
         :to="menu.path"
     >
-      <div :class="{active: currentPath.indexOf(menu.path) >= 0}">
-        <img :src="currentPath.indexOf(menu.path) >= 0 ? menu.active : menu.normal" alt=""/>
+      <div :class="{active: handlePathIsActive(menu.path) === true}">
+        <img alt="" :src=" handlePathIsActive(menu.path) === true ? menu.active : menu.normal"/>
       </div>
     </router-link>
   </div>
@@ -20,7 +20,7 @@
       return {
         menuList:[
           {
-            path:'/monitor-management',
+            path:'/',
             normal:require('@/assets/menu/monitor.png'),
             active:require('@/assets/menu/monitor-active.png'),
           },
@@ -53,7 +53,20 @@
         this.currentPath = to;
       }
     },
-    methods: {},
+    methods: {
+      handlePathIsActive: function (path:string) {
+        let res: boolean;
+        if (path === '/') {
+          res = path === this.currentPath;
+        }else{
+          console.log(path)
+          console.log(this.currentPath)
+          res = this.currentPath.indexOf(path) >= 0;
+        }
+
+        return res;
+      },
+    },
   })
 </script>
 

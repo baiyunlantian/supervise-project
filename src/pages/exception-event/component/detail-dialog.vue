@@ -10,7 +10,7 @@
       <i class="el-icon-close" @click="close"/>
     </template>
 
-    <DetailMainContent :data="data"/>
+    <DetailMainContent :data="data" @toggleVideo="toggleVideo"/>
 
     <div class="person-list">
       <div class="title">关联人员信息</div>
@@ -36,12 +36,15 @@
         </div>
       </div>
     </div>
+
+    <VideoDialog :visible="videoVisible" @close="toggleVideo"/>
   </el-dialog>
 </template>
 
 <script lang="ts">
   import Vue from 'vue';
   import DetailMainContent from './detail-main-content.vue';
+  import VideoDialog from './video-dialog.vue';
 
   export default Vue.extend({
     props:{
@@ -67,14 +70,19 @@
     },
     components:{
       DetailMainContent,
+      VideoDialog,
     },
     data() {
       return {
+        videoVisible:false,
       }
     },
     methods: {
       close: function () {
         this.$emit('close',false);
+      },
+      toggleVideo: function (res = false) {
+        this.videoVisible = res;
       }
     },
   })
