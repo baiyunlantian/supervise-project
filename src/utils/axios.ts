@@ -20,11 +20,7 @@ axios.interceptors.request.use( (config:any) => {
     } else {
         //添加统一入参
         params = {
-            // cmId: 10001,
-            // communityType: 0,
-            // cpId: 1,
-            campusId:100003,
-            schoolId:1
+            companyCode:100003,
         }
     }
     config.data = {...data, ...params};

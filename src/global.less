@@ -171,6 +171,7 @@ html, body, #app {
       display: flex;
       align-items: center;
       width: 100%;
+      position: absolute;
 
       .active{
         background-color: rgb(204, 230, 255);
@@ -229,9 +230,9 @@ html, body, #app {
       position: relative;
       height: 30px;
       .el-tree-node__expand-icon{
-        position: absolute;
-        left: 0;
         opacity: 0;
+        z-index: 1000;
+        float: left;
       }
     }
 

@@ -10,7 +10,6 @@
       :inline-message="formProps.inlineMessage || false"
       :label-position="formData.labelPosition || 'left'"
       :hide-required-asterisk="formProps.hideRequiredAsterisk || false"
-      @validate="validate"
   >
     <el-form-item
         v-for="(item, index) in formProps.items"
@@ -25,7 +24,7 @@
     <slot></slot>
 
     <el-form-item v-if="!formProps.hiddenFooter">
-      <el-button :class="formProps.okBtnClass" type="primary" @click="onOk" :disabled="disabledSubmit">{{formProps.onOkText || '确认'}}</el-button>
+      <el-button :class="formProps.okBtnClass" type="primary" @click="onOk">{{formProps.onOkText || '确认'}}</el-button>
       <el-button :class="formProps.cancelBtnClass" v-if="formProps.onCancelText" @click="onCancel">{{formProps.onCancelText}}</el-button>
     </el-form-item>
   </el-form>
@@ -74,11 +73,6 @@
     components:{
       'GetFormItem':getFormItem,
     },
-    data(){
-      return{
-        disabledSubmit: false,
-      }
-    },
     methods:{
       onOk: function () {
         this.$emit('onOk', this.$props.formData);
@@ -86,8 +80,15 @@
       onCancel: function () {
         this.$emit('onCancel');
       },
-      validate: function (prop:any, result:boolean, msg:string) {
-        this.disabledSubmit = !result;
+      validate: function (callback:Function) {
+        //@ts-ignore
+        this.$refs.form.validate((valid) => {
+          if (valid) {
+            callback(valid);
+          } else {
+            return false;
+          }
+        });
       }
     },
   })

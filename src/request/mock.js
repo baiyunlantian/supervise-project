@@ -57,44 +57,69 @@ Mock.mock('/mock/index/terminalChildTree',(res,req)=>{
 });
 
 //人员管理--左侧部门列表
-Mock.mock('/mock/project-control/person/departmentList',(res,req)=>{
+Mock.mock('/mock/depart/departSelectList',(res,req)=>{
+  const body = JSON.parse(res.body);
 
-  let list = [];
+  let departList = [];
+  let personList = [];
 
-  for (let i = 0; i < 6; i++){
-    list.push({
-      id:Random.integer(1,99999),
-      name:Random.csentence(2,4),
-      personCount:Random.integer(10,20),
+  for (let i = 0; i < 3; i++){
+    departList.push({
+      departId:String(Random.integer(1,99999999)),
+      departName:Random.csentence(2,4),
+      num:Random.integer(0,20),
+      fatherId:body.fatherId,
+    });
+
+    personList.push({
+      personId:String(Random.integer(1,99999999)),
+      personName:Random.csentence(2,4),
     });
   }
 
   return {
     data:{
-      list,
+      departList,
+      personList,
     }
   }
 });
 
+//人员管理--更新部门
+Mock.mock('/mock/depart/departUpdate',(res,req)=>{
+  const body = JSON.parse(res.body);
+
+  return {
+    data:body.departId ? true : false
+  }
+});
+
+//人员管理--添加部门
+Mock.mock('/mock/depart/departAdd',(res,req)=>{
+  const body = JSON.parse(res.body);
+
+  return {
+    data:body.fatherId ? true : false
+  }
+});
+
 //人员管理--人员列表
-Mock.mock('/mock/project-control/person/notActivePersonSelectList',(res,req)=>{
+Mock.mock('/mock/person/personSelectList',(res,req)=>{
   const body = JSON.parse(res.body);
 
   let list = [];
 
   for (let i = 0; i < body.pageSize; i++){
     list.push({
-      id:Random.integer(1,99999),
+      personId:Random.integer(1,99999),
       name:Random.csentence(2,4),
-      phone:'15800158000',
-      idCard:'15786324684631851',
       sex:Random.integer(0,1),
-      group:Random.integer(0,5),
-      department:Random.integer(0,5),
+      ipNum:'15786324684631851',
+      phone:'15800158000',
       station:Random.integer(1,20),
-      unit:Random.csentence(3,4),
       code:Random.integer(1,99),
-      birth:Random.date('yyyy-MM:dd'),
+      remark:Random.csentence(3,4),
+      departId:Random.integer(0,5),
       certificateList:[
         {
           date:Random.date('yyyy-MM'),
@@ -127,26 +152,28 @@ Mock.mock('/mock/project-control/person/notActivePersonSelectList',(res,req)=>{
   }
 });
 
-//人员管理--左侧部门里的  人员/部门
-Mock.mock('/mock/project-control/person/findDetailByDepartmentId',(res,req)=>{
-  const body = JSON.parse(res.body);
-
-  let list = [];
-
-  for (let i = 0; i < 6; i++){
-    list.push({
-      parentId: body.id,
-      id:Random.integer(1,99999),
-      name:Random.csentence(2,4),
-      type:Random.integer(0,1),
-      personCount:Random.integer(0,20),
-    });
-  }
+//人员管理--添加人员
+Mock.mock('/mock/person/personAdd',(res,req)=>{
 
   return {
-    data:{
-      list,
-    }
+    data:true
+  }
+});
+
+//人员管理--更新人员
+Mock.mock('/mock/person/personUpdate',(res,req)=>{
+
+  return {
+    data:true
+  }
+});
+
+//人员管理--删除人员
+Mock.mock('/mock/person/personDelete',(res,req)=>{
+  const body = JSON.parse(res.body);
+
+  return {
+    data:body.personIds ? true : false
   }
 });
 

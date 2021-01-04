@@ -12,7 +12,7 @@
     </div>
 
     <template slot="footer">
-      <el-button type="primary" @click="handleLeave">确认</el-button>
+      <el-button type="primary" @click="handleDelete">确认</el-button>
       <el-button @click="close">取消</el-button>
     </template>
   </el-dialog>
@@ -20,6 +20,7 @@
 
 <script lang="ts">
   import Vue from 'vue';
+  import { deletePerson } from '@/request/person';
 
   export default Vue.extend({
     props:['id','visible','title','mainText','subText'],
@@ -28,12 +29,11 @@
       }
     },
     methods: {
-      handleLeave: function () {
-        console.log('submit');
+      handleDelete: function () {
+        this.$emit('triggerDelete',{personIds:[this.$props.id]});
         this.close();
       },
       close: function () {
-        console.log(this.$props.id);
         this.$emit('close','deleteDialogVisible', false)
       },
     },

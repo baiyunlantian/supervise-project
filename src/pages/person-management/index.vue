@@ -7,7 +7,7 @@
           <div class="add-group cursor" @click="setStationDialogVisible = true">
             <img :src="require('@/assets/person/set-station.png')"/>
           </div>
-          <div class="add-group cursor" @click="handleAddOrUpdateDepart('add')">
+          <div class="add-group cursor" @click="handleClickAddOrUpdateDepart('add')">
             <img :src="require('@/assets/person/add-group.png')"/>
           </div>
         </div>
@@ -21,20 +21,20 @@
             :load="loadTree"
             :expand-on-click-node="false"
             lazy
-            node-key="id"
+            node-key="departId"
         >
           <template v-slot="{ node, data }" class="group">
             <div class="custom-tree-node">
               <div class="img">
-                <img v-if="data.type === 1" :src="require('@/assets/mission-person.jpg')" alt=""/>
+                <img v-if="data.type === 1" :src="data.url || require('@/assets/mission-person.jpg')" alt=""/>
                 <span v-else-if="data.type === 0 && node.expanded === true">-</span>
                 <span v-else-if="data.type === 0 && node.expanded === false">+</span>
               </div>
               <div class="label" :class="{active:node.expanded === true}">
                 <span>{{data.label}}</span>
                 <div class="operate-btn" v-if="node.expanded === true">
-                  <i class="el-icon-edit" @click="handleAddOrUpdateDepart('edit',data)"/>
-                  <i class="el-icon-folder-add" @click="handleAddOrUpdateDepart('add')"/>
+                  <i class="el-icon-edit" @click="handleClickAddOrUpdateDepart('edit',data)"/>
+                  <i class="el-icon-folder-add" @click="handleClickAddOrUpdateDepart('add', data)"/>
                   <i class="el-icon-delete" @click="toggleDialog('department',data, 'deleteDialogVisible', true)"/>
                 </div>
               </div>
@@ -49,10 +49,24 @@
         <SearchForm
             :form-items-prop="formItemsProp"
             :form-data="searchParams"
+            @search="searchTable"
         />
         <div class="operate-btn">
           <div>
-            <img :src="require('@/assets/person/batch-import.png')"/>
+            <el-upload
+                class="upload-demo"
+                accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                :show-file-list="false"
+                @on-success="batchImportSuccess"
+                @on-error="batchImportError"
+                :limit="1"
+                :name="batchImportOptions.name"
+                :action="batchImportOptions.action"
+                :data="batchImportOptions.data"
+                :headers="batchImportOptions.headers"
+            >
+              <img :src="require('@/assets/person/batch-import.png')" />
+            </el-upload>
           </div>
           <div>
             <img :src="require('@/assets/person/adduser.png')" @click="toggleDialog('personInfo',{}, 'personDialogVisible', true)"/>
@@ -60,7 +74,7 @@
         </div>
       </div>
 
-      <NormalPersonList @toggleDialog="toggleDialog"/>
+      <NormalPersonList @toggleDialog="toggleDialog" :searchParams="searchParams" ref="childTable"/>
     </div>
 
     <DeleteDialog
@@ -81,7 +95,7 @@
         @submit="addOrUpdateDepart"
     />
 
-    <AddOrUpdatePersonDialog :person-info="personInfo" :visible="personDialogVisible" @close="toggleDialog" />
+    <AddOrUpdatePersonDialog :person-info="personInfo" :visible="personDialogVisible" @close="toggleDialog" @initTable="searchTable"/>
 
     <SetStationDialog :visible="setStationDialogVisible" @close="toggleDialog"/>
 
@@ -98,11 +112,12 @@
   import AddOrUpdatePersonDialog from './component/add-or-update-person-dialog.vue';
   import SetStationDialog from './component/set-station-dialog.vue';
 
-
+  import { batchImportPerson,} from '@/request/person';
   import {
-    getPersonDepartmentList,
-    getChildTreeById,
-  } from '@/request/project-control';
+    getDepartmentTreeList,
+    updateDepart,
+    addDepart,
+  } from "@/request/department";
 
   export default Vue.extend({
     components:{
@@ -120,12 +135,12 @@
           children: 'zones',
           label: 'label',
           isLeaf: 'leaf',
-          id:'id',
-          parentId:'parentId',
+          departId:'departId',
+          fatherId:'fatherId',
         },
         formItemsProp:[
           { key: 'name', label:'姓名', type:'input'},
-          { key: 'ipCard', label:'身份证号', type:'input'},
+          { key: 'ipNum', label:'身份证号', type:'input'},
           { key: 'phone', label:'手机号', type:'input'},
           { key: 'code', label:'工号', type:'input'},
         ],
@@ -137,68 +152,147 @@
         personDialogVisible:false,
         setStationDialogVisible: false,
         personInfo:{},
+        batchImportOptions:{
+          action:"/mock/person/personBatchInsert",
+          name:'file',
+          data:{
+            companyCode:'1',
+          },
+          headers: {
+            token: sessionStorage.getItem('token'),
+          },
+        },
+        currentNode:'',
       }
     },
     methods: {
-      search: function (value:string) {
-        console.log(value);
-      },
-      handleGetChildTree: function (id:string | number, resolve:Function) {
-        if (!id) return;
-        getChildTreeById({id}).then(res=>{
-          let list = res.data.list.map((item:any)=>{
-            return{
-              id:item.id,
-              type:item.type,
-              name:item.name,
-              label:item.type === 0 ? `${item.name}（${item.personCount}人）` : item.name,
-              leaf: item.type === 0 ? false : true,
-            }
-          });
-          resolve(list);
-        }).catch(e=>{
-          resolve([]);
-        });
-      },
-      handleGetFirstTree: function (resolve:Function) {
-        getPersonDepartmentList().then(res=>{
-          let list = res.data.list.map((item:any)=>{
-            return {
-              id:item.id,
-              name:item.name,
-              label:`${item.name}（${item.personCount}人）`,
-              leaf: item.personCount > 0 ? false : true,
+      handleGetTreeSelectList: function (resolve:Function, fatherId?:string) {
+        console.log('handleGetTreeSelectList',fatherId);
+        let data = {
+          fatherId:fatherId ? fatherId : sessionStorage.getItem('companyCode') || '123456',
+        }
+
+        getDepartmentTreeList(data).then(res=>{
+          if (!res.data) return;
+          console.log(res.data);
+
+          const { departList, personList } = res.data;
+          let list : any = [];
+
+          departList.forEach((item:any)=>{
+            list.push({
+              fatherId:item.fatherId,
+              departId:item.departId,
+              name:item.departName,
+              label:`${item.departName}（${item.num}人）`,
+              leaf: false,
               type:0
-            };
+            });
           });
+
+          personList.forEach((item:any)=>{
+            list.push({
+              personId:item.personId,
+              name:item.personName,
+              label:item.personName,
+              url:item.url,
+              leaf: true,
+              type:1
+            });
+          });
+
           resolve(list);
         }).catch(e=>{
           resolve([]);
         })
       },
       loadTree: function (node:any, resolve:Function) {
-        // console.log('loadTree',node);
+        console.log('loadTree',node);
+        //@ts-ignore
+        this.node = node;
         if (node.level === 0) {
-          this.handleGetFirstTree(resolve);
+          this.handleGetTreeSelectList(resolve);
         }else {
-          this.handleGetChildTree(node.data.id, resolve);
+          this.handleGetTreeSelectList(resolve, node.data.fatherId);
         }
       },
-      toggleDialog: function (key1:any, value1:any, key2:any, value2:any ) {
-        //@ts-ignore
+      toggleDialog: function (key1:string, value1:any, key2:string, value2:any ) {
         this.$data[key1] = value1;
         this.$data[key2] = value2;
       },
-      handleAddOrUpdateDepart: function (type:string, data = {}) {
+      handleClickAddOrUpdateDepart: function (type:string, data = {}) {
         this.addOrEditText = type;
         this.department = data;
         this.addOrEditDialogVisible = true;
       },
       addOrUpdateDepart: function (name:string, id:string) {
-        console.log(name)
-        console.log(id)
+        console.log(id);
+        let data: any = {
+          departName:name
+        };
+
+        let handleFn: Function;
+        let text: string;
+        if (this.addOrEditText === 'add') {
+          handleFn = addDepart;
+          text = '新增';
+          //@ts-ignore
+          data.fatherId = id;
+        }else {
+          handleFn = updateDepart;
+          text = '更新';
+          //@ts-ignore
+          data.departId = id;
+        }
+
+        handleFn(data).then((res:any)=>{
+          if (res.data){
+            this.$message({
+              type:'success',
+              message:text+'部门成功'
+            });
+            this.$emit('initTable');
+          }else {
+            this.$message({
+              type:'error',
+              message:text+'部门失败'
+            });
+          }
+        })
+
+        console.log('this.currentNode',this.currentNode)
+        //@ts-ignore
+        let node = this.$refs.tree.getNode(this.department);
+        console.log(node);
+        node.loaded = false;
+        node.expand();
+        //@ts-ignore
         this.addOrEditDialogVisible = false;
       },
+      searchTable: function (data?:object) {
+        //@ts-ignore
+        this.$refs.childTable.initTable({...data, ...this.searchParams,});
+      },
+      batchImportSuccess: function (res:any) {
+        /*
+         * failList: list[String]  失败列表
+         * successNum: Number  成功数量
+         * **/
+        let data = res.data;
+        if(data.code == 200) {
+          this.$message({
+            type: 'success',
+            message: '导入成功!'
+          });
+          this.searchTable();
+        }
+      },
+      batchImportError: function () {
+        this.$message({
+          type: 'error',
+          message: '导入失败!'
+        });
+      }
     },
     mounted(): void {
     }

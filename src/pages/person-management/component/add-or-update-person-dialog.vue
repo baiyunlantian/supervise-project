@@ -9,7 +9,7 @@
     <div class="body">
       <div class="upload-container">
         <div class="img-container">
-          <img :src="imgUrl" alt="头像"/>
+          <img :src="personInfo.url || imgUrl" alt="头像"/>
         </div>
         <el-upload
             action="#"
@@ -26,6 +26,7 @@
       <Form
           :form-data="formData"
           :form-props="formProps"
+          ref="form"
       />
       <div class="remark-item">
         <div class="label">备注</div>
@@ -43,6 +44,7 @@
 <script lang="ts">
   import Vue from 'vue';
   import Form from '@/components/form/index.vue';
+  import { addPerson, updatePerson } from '@/request/person';
 
   export default Vue.extend({
     props:['visible','personInfo'],
@@ -56,13 +58,13 @@
             {key:'name',label:'姓名',type:'input'},
             {key:'sex',label:'性别',type:'radio',
               options:[
-                {value:0,label:'男'},
-                {value:1,label:'女'},
+                {value:1,label:'男'},
+                {value:2,label:'女'},
               ]
             },
-            {key:'idCard',label:'身份证号',type:'input'},
+            {key:'ipNum',label:'身份证号',type:'input'},
             {key:'phone',label:'手机号',type:'input'},
-            {key:'department',label:'部门',type:'select',
+            {key:'departId',label:'部门',type:'select',
               options:[
                 {value:1,label:'部门1'},
                 {value:2,label:'部门2'},
@@ -73,18 +75,18 @@
             {key:'code',label:'工号',type:'input'},
           ],
           rules:{
-            name:[{ required: true, message: '请输入姓名', trigger: 'blur'},],
-            sex:[{ required: true, message: '请选择性别', trigger: 'blur'},],
-            idCard:[
-              { required: true, message: '请输入身份证号', trigger: 'blur'},
-              { min: 16, max: 18, message: '请输入16-18位的身份证号', trigger: 'blur' }
-            ],
+            // name:[{ required: true, message: '请输入姓名', trigger: 'blur'},],
+            // sex:[{ required: true, message: '请选择性别', trigger: 'blur'},],
+            // ipNum:[
+            //   { required: true, message: '请输入身份证号', trigger: 'blur'},
+            //   { min: 16, max: 18, message: '请输入16-18位的身份证号', trigger: 'blur' }
+            // ],
             phone:[
               { required: true, message: '请输入手机号', trigger: 'blur'},
               { min: 11, max: 11,message: '请输入11位数的手机号',trigger: 'blur'}
             ],
-            department:[{ required: true, message: '请选择部门', trigger: 'blur'},],
-            station:[{ required: true, message: '请填写岗位', trigger: 'blur'},],
+            departId:[{ required: true, message: '请选择部门', trigger: 'blur'},],
+            // station:[{ required: true, message: '请填写岗位', trigger: 'blur'},],
           },
           hiddenFooter:true,
           inlineMessage:false,
@@ -98,10 +100,51 @@
     },
     methods: {
       close: function () {
-        this.$emit('close','personDialogVisible', false)
+        this.imgUrl = '';
+        this.$emit('close','personDialogVisible', false, 'personInfo',{})
       },
       submit: function() {
-        console.log(this.formData);
+        //@ts-ignore
+        this.$refs.form.validate((valid) => {
+          let formData = new FormData();
+
+          Object.keys(this.formData).forEach(key=>{
+            //@ts-ignore
+            if (this.formData[key]){
+              //@ts-ignore
+              formData.append(key,this.formData[key]);
+            }
+          })
+
+          if (this.imgUrl){
+            formData.append('file',this.imgUrl);
+          }
+
+          let handleFn : Function = addPerson;
+          let text : string = '新增';
+
+          if (this.$props.personInfo.personId) {
+            handleFn = updatePerson;
+            text = '更新';
+          }
+
+          handleFn(formData).then((res:any)=>{
+            if (res.data){
+              this.$message({
+                type:'success',
+                message:text+'人员成功'
+              });
+              this.$emit('initTable');
+            }else {
+              this.$message({
+                type:'error',
+                message:text+'人员失败'
+              });
+            }
+
+            this.close();
+          })
+        });
       },
       getFile: function (file:any, fileList:any) {
         this.getBase64(file.raw).then((base64:any) => {

@@ -37,7 +37,14 @@
         this.$emit('close','addOrEditDialogVisible',false);
       },
       onOk: function () {
-        this.$emit('submit', this.name, this.$props.department.id || '');
+        let id = '';
+        if (this.$props.okText === '修改'){
+          id = this.$props.department.departId;
+        }else {
+          console.log(this.$props.department)
+          id = this.$props.department.fatherId || sessionStorage.getItem('companyCode') || '123456';
+        }
+        this.$emit('submit', this.name, id);
       },
     },
     watch:{

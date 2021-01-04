@@ -59,8 +59,6 @@
         if (path === '/') {
           res = path === this.currentPath;
         }else{
-          console.log(path)
-          console.log(this.currentPath)
           res = this.currentPath.indexOf(path) >= 0;
         }
 
