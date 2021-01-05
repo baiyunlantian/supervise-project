@@ -33,8 +33,8 @@
 <script lang="ts">
   import Vue from 'vue';
   import Table from '@/components/table/index.vue';
-  import AddOrUpdatePersonDialog from './component/add-or-update-person-dialog.vue';
-  import DeleteDialog from './component/delete-dialog.vue';
+  import AddOrUpdatePersonDialog from './add-or-update-person-dialog.vue';
+  import DeleteDialog from './delete-dialog.vue';
   import { deletePerson, createBatchImportPersonExcel } from '@/request/person';
 
   export default Vue.extend({
@@ -127,5 +127,5 @@
 </script>
 
 <style scoped lang="less">
-  @import "normal-person.less";
+  @import "tableList.less";
 </style>

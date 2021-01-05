@@ -85,21 +85,41 @@ Mock.mock('/mock/depart/departSelectList',(res,req)=>{
   }
 });
 
+//人员管理--添加部门
+Mock.mock('/mock/depart/departAdd',(res,req)=>{
+  return {
+    data:body.fatherId ? true : false
+  }
+});
+
 //人员管理--更新部门
 Mock.mock('/mock/depart/departUpdate',(res,req)=>{
-  const body = JSON.parse(res.body);
-
   return {
     data:body.departId ? true : false
   }
 });
 
-//人员管理--添加部门
-Mock.mock('/mock/depart/departAdd',(res,req)=>{
-  const body = JSON.parse(res.body);
-
+//人员管理--删除部门
+Mock.mock('/mock/depart/departDelete',(res,req)=>{
   return {
-    data:body.fatherId ? true : false
+    data:body.departId ? true : false
+  }
+});
+
+//人员管理--岗位列表
+Mock.mock('/mock/depart/stationSelect',(res,req)=>{
+  let list = [];
+
+  for (let i = 0; i < 4; i++){
+    list.push({
+      stationId:String(Random.integer(1,99999)),
+      stationName:Random.csentence(2,4),
+    })
+  }
+  return {
+    data:{
+      list:[]
+    }
   }
 });
 

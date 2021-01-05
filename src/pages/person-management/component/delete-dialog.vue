@@ -20,7 +20,6 @@
 
 <script lang="ts">
   import Vue from 'vue';
-  import { deletePerson } from '@/request/person';
 
   export default Vue.extend({
     props:['id','visible','title','mainText','subText'],
@@ -30,7 +29,18 @@
     },
     methods: {
       handleDelete: function () {
-        this.$emit('triggerDelete',{personIds:[this.$props.id]});
+        let param: any;
+
+        if (this.$props.title.indexOf('部门') >= 0){
+          param = this.$props.id;
+        }else {
+          param = {personIds:[this.$props.id]};
+        }
+        /*
+        * 删除单个人员时传递 object
+        * 删除单个部门时传递 string
+        * */
+        this.$emit('triggerDelete', param);
         this.close();
       },
       close: function () {

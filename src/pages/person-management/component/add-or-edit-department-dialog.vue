@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-      :visible.sync="visible"
+      :visible="visible"
       custom-class="deploy-dialog-container"
       :show-close="false"
       width="500px"
@@ -8,8 +8,9 @@
   >
     <div class="content">
       <span>部门名称</span>
-      <el-input v-model="name"/>
+      <el-input v-model="name" @blur="checkValid"/>
     </div>
+    <div class="tip" v-show="!valid">请填写部门名称</div>
 
     <template slot="footer">
       <el-button type="primary" @click="onOk">{{okText}}</el-button>
@@ -30,6 +31,7 @@
     data() {
       return {
         name:'',
+        valid:true,
       }
     },
     methods: {
@@ -38,22 +40,33 @@
       },
       onOk: function () {
         let id = '';
+        let fatherId = this.$props.department.departId || localStorage.getItem('companyCode');
         if (this.$props.okText === '修改'){
           id = this.$props.department.departId;
         }else {
-          console.log(this.$props.department)
-          id = this.$props.department.fatherId || sessionStorage.getItem('companyCode') || '123456';
+          id = fatherId;
         }
-        this.$emit('submit', this.name, id);
+
+        if (this.name){
+          this.valid = true;
+        }else {
+          this.valid = false;
+          return;
+        }
+
+        this.$emit('submit', this.name, id, fatherId);
+        this.close();
       },
+      checkValid: function () {
+        this.valid = this.name ? true : false;
+      }
     },
     watch:{
-      department:{
-        handler: function (newVal, oldVal) {
-          this.name = newVal.name;
-        },
-        deep:true
-      },
+      visible: function (newVal, oldVal) {
+        if (newVal === true){
+          this.name = this.$props.okText === '添加' ? '' : this.$props.department.name;
+        }
+      }
     },
   })
 </script>

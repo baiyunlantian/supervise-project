@@ -25,7 +25,7 @@ module.exports = {
                     strictMath: true,
                     globalVars:{
                         divShadow: '1px 2px 3px 0px #a7d4ff',
-                        inputShadow: '1px 1px 5px 1px #4b89e65e',
+                        inputShadow: '1px 2px 3px 0px #a7d4ff',
                     },
                 },
             }
