@@ -7,6 +7,7 @@
     :show-close="false"
   >
     <Form
+        ref="form"
         :form-data="data"
         :form-props="formProps"
     />
@@ -21,6 +22,8 @@
 <script lang="ts">
   import Vue from 'vue';
   import Form from '@/components/form/index.vue';
+  import { updateEquipment } from "@/request/equipment";
+  import {showMessageAfterRequest} from "@/utils/common";
 
   export default Vue.extend({
     props:['visible','initialValue'],
@@ -61,12 +64,17 @@
     },
     methods: {
       close: function (operate = '') {
-        console.log('close');
         this.$emit('close',operate);
       },
       submit: function () {
-        console.log(this.data);
-        this.close('refresh');
+        //@ts-ignore
+        this.$refs.form.validate(valid=>{
+          console.log(this.data);
+          updateEquipment({...this.data}).then(res=>{
+            showMessageAfterRequest(res.data, '更新成功', '更新失败');
+            res.data === true ? this.close('refresh') : this.close();
+          })
+        })
       }
     },
     watch:{

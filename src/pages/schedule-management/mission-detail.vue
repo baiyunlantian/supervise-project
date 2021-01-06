@@ -7,13 +7,20 @@
 
     <div class="mission-info">
       <div class="operate-btn">
-        <i class="el-icon-edit" />
-        <i class="el-icon-delete" />
+        <template v-if="disabledForm">
+          <i class="el-icon-edit" @click="disabledForm = false"/>
+          <i class="el-icon-delete" @click="handleClickDelete"/>
+        </template>
+        <template v-else>
+          <i class="el-icon-success" @click="handleSubmit('ok')"/>
+          <i class="el-icon-error" @click="handleSubmit('cancel')"/>
+        </template>
       </div>
 
       <Form
         :form-props="formProps"
         :form-data="formData"
+        :disabled="disabledForm"
       >
         <el-form-item label="使用时间" prop="useTime">
           <el-date-picker v-model="formData.useTime" type="date" placeholder="使用时间"></el-date-picker>
@@ -54,7 +61,8 @@
   import Form from '@/components/form/index.vue';
   import Table from '@/components/table/index.vue';
   import moment from "moment";
-  import { exportExcl } from '@/utils/common';
+  import { exportExcl, showMessageAfterRequest } from '@/utils/common';
+  import { getScheduleDetail, updateSchedule, batchDeleteSchedule } from "@/request/schedule";
 
   export default Vue.extend({
     components:{
@@ -67,7 +75,7 @@
         formProps:{
           items:[
             {key:'time',label:'任务时间',type:'daterange',startPlaceholder:'开始时间',endPlaceholder:'结束时间'},
-            {key:'schedulePerson',label:'安排人员',type:'select',multiple:true,
+            {key:'personList',label:'安排人员',type:'select',multiple:true,
               options:[
                 {value:1,label:'佩恩'},
                 {value:2,label:'自来也'},
@@ -76,7 +84,7 @@
                 {value:5,label:'鸣人'},
               ],
             },
-            {key:'service',label:'绑定设备',type:'select',
+            {key:'boxId',label:'绑定设备',type:'select',
               options:[
                 {value:1,label:'设备1'},
                 {value:2,label:'设备2'},
@@ -84,8 +92,8 @@
                 {value:4,label:'设备4'},
               ]
             },
-            {key:'name',label:'任务名称',type:'input'},
-            {key:'management',label:'负责人',type:'select',
+            {key:'arrangeName',label:'任务名称',type:'input'},
+            {key:'dutyPersonId',label:'负责人',type:'select',
               options:[
                 {value:1,label:'长门'},
                 {value:2,label:'三代'},
@@ -94,7 +102,7 @@
                 {value:5,label:'波风水门'},
               ],
             },
-            {key:'status',label:'设备状态',type:'select',
+            {key:'boxStatus',label:'设备状态',type:'select',
               options:[
                 {value:1,label:'未领取'},
                 {value:2,label:'已领取'},
@@ -102,7 +110,7 @@
               ]
             },
             {key:'detail',label:'任务详情',type:'textarea'},
-            {key:'missionStatus',label:'任务状态',type:'select',
+            {key:'arrangeStatus',label:'任务状态',type:'select',
               options:[
                 {value:1,label:'未开始'},
                 {value:2,label:'进行中'},
@@ -111,10 +119,6 @@
             },
           ],
           hiddenFooter:true
-        },
-        formData:{
-          useTime:'',
-          returnTime:''
         },
         tableProps:{
           url:'/mock/schedule-detail/reportSelectList',
@@ -131,6 +135,10 @@
             {prop:'operate',label:'操作',insertHtml:true},
           ],
         },
+        formData:{},
+        baseFormData:{},
+        disabledForm:true,
+        arrangeId:'',
       }
     },
     methods: {
@@ -156,8 +164,44 @@
         const fileName = '施工监督报告表格';
 
         exportExcl(dataList, sheetData, exclHeader, columnWidths, fileName);
+      },
+      handleSubmit: function (type:string) {
+        this.disabledForm = true;
+
+        if (type === 'cancel'){
+          this.formData = JSON.parse(JSON.stringify(this.baseFormData));
+        }else if (type === 'ok'){
+          updateSchedule({arrangeId:this.arrangeId, ...this.formData}).then(res=>{
+            showMessageAfterRequest(res.data, '更新成功', '更新失败');
+          })
+        }
+      },
+      handleClickDelete: function () {
+        this.$confirm('确认删除该任务吗？')
+        .then(ok=>{
+          batchDeleteSchedule({arrangeIds:[this.arrangeId]}).then(res=>{
+            showMessageAfterRequest(res.data, '删除成功', '删除失败');
+            res.data === true ? this.$router.back() : '';
+          })
+        })
+        .catch(e=>{
+          console.log(e)
+        })
       }
     },
+    mounted(): void {
+      const {arrangeId} = this.$route.query;
+      //@ts-ignore
+      this.arrangeId = arrangeId;
+
+      getScheduleDetail({arrangeId}).then(res=>{
+        if (!res.data) return;
+
+        let time = [res.data.dutyStartTime, res.data.dutyEndTime];
+        this.formData = {time, ...res.data};
+        this.baseFormData = {time, ...res.data};
+      })
+    }
   })
 </script>
 

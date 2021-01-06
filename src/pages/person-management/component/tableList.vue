@@ -36,6 +36,7 @@
   import AddOrUpdatePersonDialog from './add-or-update-person-dialog.vue';
   import DeleteDialog from './delete-dialog.vue';
   import { deletePerson, createBatchImportPersonExcel } from '@/request/person';
+  import {showMessageAfterRequest} from "@/utils/common";
 
   export default Vue.extend({
     props:['searchParams'],
@@ -101,19 +102,9 @@
         console.log(personIds)
 
         deletePerson(personIds).then(res=>{
-          if (res.data){
-            this.$message({
-              type:'success',
-              message:'删除人员成功'
-            });
-            //@ts-ignore
-            this.$refs.table.initTable(this.$props.searchParams);
-          }else {
-            this.$message({
-              type:'error',
-              message:'删除人员失败'
-            });
-          }
+          showMessageAfterRequest(res.data, '删除人员成功', '删除人员失败');
+          //@ts-ignore
+          res.data === true ? this.$refs.table.initTable(this.$props.searchParams) : '';
         })
       },
       exportPersonExcel: function () {

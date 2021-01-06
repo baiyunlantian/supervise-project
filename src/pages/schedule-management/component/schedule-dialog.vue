@@ -11,8 +11,9 @@
     </template>
 
     <Form
-      :form-data="formData"
-      :form-props="formProps"
+        ref="form"
+        :form-data="formData"
+        :form-props="formProps"
     />
 
     <template slot="footer">
@@ -26,6 +27,8 @@
   import Vue from 'vue';
   import Form from '@/components/form/index.vue';
   import moment from "moment";
+  import { addSchedule } from "@/request/schedule";
+  import {showMessageAfterRequest} from "@/utils/common";
 
   export default Vue.extend({
     props:['visible'],
@@ -37,9 +40,9 @@
         formProps:{
           items:[
             {key:'time',label:'任务时间',type:'daterange',startPlaceholder:'开始时间',endPlaceholder:'结束时间'},
-            {key:'name',label:'任务名称',type:'input'},
+            {key:'arrangeName',label:'任务名称',type:'input'},
             {key:'detail',label:'任务详情',type:'textarea'},
-            {key:'schedulePerson',label:'安排人员',type:'select',multiple:true,
+            {key:'personList',label:'安排人员',type:'select',multiple:true,
               options:[
                 {value:1,label:'佩恩'},
                 {value:2,label:'自来也'},
@@ -48,7 +51,7 @@
                 {value:5,label:'鸣人'},
               ],
             },
-            {key:'management',label:'负责人',type:'select',
+            {key:'dutyPersonId',label:'负责人',type:'select',
               options:[
                 {value:1,label:'长门'},
                 {value:2,label:'三代'},
@@ -57,7 +60,7 @@
                 {value:5,label:'波风水门'},
               ],
             },
-            {key:'service',label:'绑定设备',type:'select',
+            {key:'boxId',label:'绑定设备',type:'select',
               options:[
                 {value:1,label:'设备1'},
                 {value:2,label:'设备2'},
@@ -66,31 +69,47 @@
               ]
             },
           ],
-          hiddenFooter:true
+          rules:{
+            arrangeName:[{ required: true, message: '请输入任务名称', trigger: 'blur'},],
+            time:[{ required: true, message: '请选择时间', trigger: 'blur'},],
+            detail:[{ required: true, message: '请输入任务详情', trigger: 'blur'},],
+            personList:[{ required: true, message: '请安排人员', trigger: 'blur'},],
+            dutyPersonId:[{ required: true, message: '请负责人', trigger: 'blur'},],
+            boxId:[{ required: true, message: '请绑定设备', trigger: 'blur'},],
+          },
+          hiddenFooter:true,
+          hideRequiredAsterisk:true
         },
         formData:{},
       }
     },
     methods: {
-      close: function () {
+      close: function (refreshTable = false) {
         this.formData = {};
-        this.$emit('toggle',false);
+        this.$emit('toggle',false, refreshTable);
       },
       submit: function () {
-        let data = JSON.parse(JSON.stringify(this.formData));
+        //@ts-ignore
+        this.$refs.form.validate((valid) => {
+          let data = JSON.parse(JSON.stringify(this.formData));
 
-        Object.keys(data).forEach(key=>{
-          if (!data[key]) {
-            delete data[key];
-          }else if (key === 'time'){
-            data.startTime = moment(data.time[0]).format('yyyy.MM.DD');
-            data.endTime = moment(data.time[1]).format('yyyy.MM.DD');
-            delete data.time;
-          }
+          Object.keys(data).forEach(key=>{
+            if (!data[key]) {
+              delete data[key];
+            }else if (key === 'time'){
+              data.dutyStartTime = moment(data.time[0]).format('yyyy.MM.DD');
+              data.dutyEndTime = moment(data.time[1]).format('yyyy.MM.DD');
+              delete data.time;
+            }
+          })
+
+          addSchedule(data).then(res=>{
+            showMessageAfterRequest(res.data, '新增成功', '新增失败');
+            res.data === true ? this.close(true) : this.close();
+          })
+
         })
 
-        console.log(data);
-        this.close();
       }
     },
   })

@@ -14,31 +14,32 @@
       <div class="title">
         <div class="left">
           <div class="fontBlackAndBold">任务管理列表</div>
-          <SearchInput placeholder="输入任务名称搜索" @search="value=>setData(value,'missionName')"/>
+          <SearchInput placeholder="输入任务名称搜索" @search="value=>setData(value,'arrangeName')"/>
         </div>
 
         <div class="right">
           <div class="mission-status">
             <span>任务状态：</span>
-            <span :class="{active: missionStatus === 0}" @click="setData(0,'missionStatus')">全部</span>
+            <span :class="{active: arrangeStatus === 0}" @click="setData(0,'arrangeStatus')">全部</span>
             <span>|</span>
-            <span  :class="{active: missionStatus === 1}" @click="setData(1,'missionStatus')">未开始</span>
+            <span  :class="{active: arrangeStatus === 1}" @click="setData(1,'arrangeStatus')">未开始</span>
             <span>|</span>
-            <span  :class="{active: missionStatus === 2}" @click="setData(2,'missionStatus')">进行中</span>
+            <span  :class="{active: arrangeStatus === 2}" @click="setData(2,'arrangeStatus')">进行中</span>
             <span>|</span>
-            <span  :class="{active: missionStatus === 3}" @click="setData(3,'missionStatus')">已结束</span>
+            <span  :class="{active: arrangeStatus === 3}" @click="setData(3,'arrangeStatus')">已结束</span>
           </div>
 
           <div class="operate-btn">
             <i class="el-icon-folder-add" />
-            <i class="el-icon-delete" />
+            <i class="el-icon-delete" @click="handleClickDelete(null)"/>
           </div>
         </div>
       </div>
 
       <Table
-        :table-props="tableProps"
-        ref="table"
+          ref="table"
+          :table-props="tableProps"
+          @multipleSelectChange="multipleSelectChange"
       >
         <template v-slot:personCount="{row}">
           <div class="custom-img-list">
@@ -55,24 +56,24 @@
           </div>
         </template>
 
-        <template v-slot:serviceStatus="{row}">
-          <span v-if="row.serviceStatus === 1">未领取</span>
-          <span v-else-if="row.serviceStatus === 2" class="active">已领取</span>
-          <span v-else-if="row.serviceStatus === 3" class="green">已归还</span>
+        <template v-slot:boxStatus="{row}">
+          <span v-if="row.boxStatus === 1">未领取</span>
+          <span v-else-if="row.boxStatus === 2" class="active">已领取</span>
+          <span v-else-if="row.boxStatus === 3" class="green">已归还</span>
         </template>
 
-        <template v-slot:missionStatus="{row}">
-          <span v-if="row.missionStatus === 1">未开始</span>
-          <span v-else-if="row.missionStatus === 2" class="active">进行中</span>
-          <span v-else-if="row.missionStatus === 3" class="green">已结束</span>
+        <template v-slot:arrangeStatus="{row}">
+          <span v-if="row.arrangeStatus === 1">未开始</span>
+          <span v-else-if="row.arrangeStatus === 2" class="active">进行中</span>
+          <span v-else-if="row.arrangeStatus === 3" class="green">已结束</span>
         </template>
 
         <template v-slot:operate="{row}">
           <div class="operate-btn">
-            <router-link :to="{ path: '/schedule-management/mission-detail', query: { missionId: row.id }}">
+            <router-link :to="{ path: '/schedule-management/mission-detail', query: { arrangeId: row.arrangeId }}">
               ···
             </router-link>
-            <i class="el-icon-delete" />
+            <i class="el-icon-delete" @click="handleClickDelete(row.arrangeId)"/>
           </div>
         </template>
 
@@ -90,6 +91,9 @@
   import SearchInput from '@/components/search-input/index.vue';
   import ScheduleDialog from './component/schedule-dialog.vue';
   import moment from "moment";
+  import { batchDeleteSchedule } from "@/request/schedule";
+  import {showMessageAfterRequest} from "@/utils/common";
+
 
   export default Vue.extend({
     components:{
@@ -102,8 +106,8 @@
       return {
         formItemsProp:[
           {key:'time',label:'任务时间',type:'daterange'},
-          {key:'person',label:'人员',type:'input'},
-          {key:'service',label:'设备',type:'select',
+          {key:'personId',label:'人员',type:'input'},
+          {key:'boxId',label:'设备',type:'select',
             options:[
               {value:1,label:'设备1'},
               {value:2,label:'设备2'},
@@ -111,7 +115,7 @@
               {value:4,label:'设备4'},
             ]
           },
-          {key:'status',label:'设备状态',type:'select',
+          {key:'boxStatus',label:'设备状态',type:'select',
             options:[
               {value:1,label:'未领取'},
               {value:2,label:'已领取'},
@@ -121,8 +125,8 @@
 
         ],
         tableProps:{
-          url:'/mock/schedule-management/missionSelectList',
-          rowKey:'id',
+          url:'/mock/arrange/arrangeSelectList',
+          rowKey:'personId',
           firstColumn:{
             show:true,
             type:'selection'
@@ -132,11 +136,11 @@
           },
           tableColumn:[
             {prop:'time',label:'任务起止时间'},
-            {prop:'name',label:'任务名称'},
+            {prop:'arrangeName',label:'任务名称'},
             {prop:'personCount',label:'安排人员',insertHtml:true,width:300},
-            {prop:'service',label:'绑定设备'},
-            {prop:'serviceStatus',label:'设备状态',insertHtml:true},
-            {prop:'missionStatus',label:'任务状态',insertHtml:true},
+            {prop:'boxId',label:'绑定设备'},
+            {prop:'boxStatus',label:'设备状态',insertHtml:true},
+            {prop:'arrangeStatus',label:'任务状态',insertHtml:true},
             { prop:'reporterStatus',label:'监督施工报告',
               format:function (value:number) {
                 return value === 0 ? '' : '报告已生成'
@@ -146,14 +150,17 @@
           ],
         },
         searchParam:{},
-        missionStatus:0,
-        missionName:'',
+        arrangeStatus:0,
+        arrangeName:'',
         visible:false,
+        arrangeIds:[],
       }
     },
     methods: {
-      toggleDialog: function (visible:boolean) {
+      toggleDialog: function (visible:boolean, refreshTable = false) {
         this.visible = visible;
+
+        refreshTable === true ? this.searchTable() : '';
       },
       setData: function (value:number | string, key:string) {
         //@ts-ignore
@@ -164,8 +171,8 @@
       },
       searchTable: function (params = {}) {
         let data: any = {
-          missionName:this.missionName,
-          missionStatus:this.missionStatus,
+          arrangeName:this.arrangeName,
+          arrangeStatus:this.arrangeStatus,
           ...this.searchParam,
           ...params,
         };
@@ -174,8 +181,8 @@
           if (!data[key]) {
             delete data[key];
           }else if (key === 'time'){
-            data.startTime = moment(data.time[0]).format('yyyy.MM.DD');
-            data.endTime = moment(data.time[1]).format('yyyy.MM.DD');
+            data.dutyStartTime = moment(data.time[0]).format('yyyy.MM.DD');
+            data.dutyEndTime = moment(data.time[1]).format('yyyy.MM.DD');
             delete data.time;
           }
         })
@@ -183,7 +190,27 @@
         console.log(data);
         //@ts-ignore
         this.$refs.table.initTable(data);
-      }
+      },
+      handleClickDelete: function (id?:string) {
+        let data = {
+          arrangeIds: id ? [id] : this.arrangeIds
+        };
+
+        console.log(data);
+        this.$confirm('确认删除任务吗？')
+          .then(ok=>{
+            batchDeleteSchedule(data).then(res=>{
+              showMessageAfterRequest(res.data, '删除成功', '删除失败');
+              res.data === true ? this.searchTable() : '';
+            })
+          })
+          .catch(e=>{
+            console.log(e)
+          })
+      },
+      multipleSelectChange: function (value:any) {
+        this.arrangeIds = value.map((item:any)=>item.arrangeId);
+      },
     },
   })
 </script>

@@ -73,7 +73,8 @@
   import Table from '@/components/table/index.vue';
   import SearchForm from '@/components/search-form/index.vue';
   import Dialog from './dialog.vue';
-  import { getEquipmentCensus } from "@/request/equipment";
+  import { getEquipmentCensus, deleteEquipment } from "@/request/equipment";
+  import {showMessageAfterRequest} from "@/utils/common";
 
   const statusCommon = [
     {value:0,label:'在线'},
@@ -151,11 +152,12 @@
         this.dialogData = row;
       },
       handleClickDelete: function (id:number | string) {
-        this.$confirm('确定删除设备吗？')
+        this.$confirm('确定该删除设备吗？')
           .then(res=>{
-            //delete
-            console.log(res)
-            this.initTable(this.searchParams);
+            deleteEquipment({id}).then(res=>{
+              showMessageAfterRequest(res.data, '删除成功', '删除失败');
+              res.data === true ? this.initTable(this.searchParams) : '';
+            })
           })
           .catch(e=>{
             //cancel

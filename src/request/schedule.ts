@@ -8,3 +8,19 @@ export function getWarningCensus (params?:object)  {
 export function getWarningSelectList (params?:object)  {
   return API.POST(`${MOCK}/schedule-management/reporter/warningList`, params)
 }
+
+export function updateSchedule (params?:object)  {
+  return API.POST(`${MOCK}/arrange/arrangeUpdate`, params)
+}
+
+export function addSchedule (params?:object)  {
+  return API.POST(`${MOCK}/arrange/arrangeAdd`, params)
+}
+
+export function batchDeleteSchedule (params?:object)  {
+  return API.POST(`${MOCK}/arrange/arrangeDelete`, params)
+}
+
+export function getScheduleDetail (params?:object)  {
+  return API.POST(`${MOCK}/arrange/arrangeDetail`, params)
+}

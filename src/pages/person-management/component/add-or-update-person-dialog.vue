@@ -45,6 +45,7 @@
   import Vue from 'vue';
   import Form from '@/components/form/index.vue';
   import { addPerson, updatePerson } from '@/request/person';
+  import {showMessageAfterRequest} from "@/utils/common";
 
   export default Vue.extend({
     props:['visible','personInfo'],
@@ -129,19 +130,8 @@
           }
 
           handleFn(formData).then((res:any)=>{
-            if (res.data){
-              this.$message({
-                type:'success',
-                message:text+'人员成功'
-              });
-              this.$emit('initTable');
-            }else {
-              this.$message({
-                type:'error',
-                message:text+'人员失败'
-              });
-            }
-
+            showMessageAfterRequest(res.data, text+'人员成功', text+'人员失败');
+            res.data === true ? this.$emit('initTable') : '';
             this.close();
           })
         });

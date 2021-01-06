@@ -21,6 +21,7 @@
       <GetFormItem :formData="formData" :item="item"/>
     </el-form-item>
 
+    <!--  自定义插入内容  -->
     <slot></slot>
 
     <el-form-item v-if="!formProps.hiddenFooter">

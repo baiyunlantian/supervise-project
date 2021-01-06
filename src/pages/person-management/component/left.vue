@@ -81,6 +81,7 @@
     deleteDepart,
     getDepartmentTreeList,
   } from "@/request/department";
+  import {showMessageAfterRequest} from "@/utils/common";
 
   export default Vue.extend({
     components:{
@@ -117,20 +118,9 @@
         if (!id) return;
 
         deleteDepart({departId:id}).then(res=>{
-          if (res.data){
-            this.$message({
-              type:'success',
-              message:'删除部门成功'
-            })
-
-            //@ts-ignore
-            this.customRefreshTree(this.department.fatherId);
-          }else {
-            this.$message({
-              type:'error',
-              message:'删除部门失败'
-            })
-          }
+          showMessageAfterRequest(res.data, '删除部门成功', '删除部门失败');
+          //@ts-ignore
+          res.data === true ? this.customRefreshTree(this.department.fatherId) : ''
         })
       },
       handleGetTreeSelectList: function (resolve:Function, fatherId?:string, type?:string) {
@@ -205,20 +195,8 @@
         }
 
         handleFn(data).then((res:any)=>{
-          if (res.data){
-            this.$message({
-              type:'success',
-              message:text+'部门成功'
-            });
-
-            this.customRefreshTree(fatherId);
-          }
-          else {
-            this.$message({
-              type:'error',
-              message:text+'部门失败'
-            });
-          }
+          showMessageAfterRequest(res.data, text+'部门成功', text+'部门失败');
+          res.data === true ? this.customRefreshTree(fatherId) : '';
         })
 
       },

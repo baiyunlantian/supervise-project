@@ -49,3 +49,17 @@ export const exportExcl = async (
 export const VideoSrc = 'https://www.runoob.com/try/demo_source/movie.mp4';
 
 export const IllegalString = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>《》/\?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]");
+
+export const showMessageAfterRequest = function (status:boolean, successText:string, errorText:string) {
+  if (status){
+    Vue.prototype.$message({
+      type:'success',
+      message:successText
+    });
+  }else {
+    Vue.prototype.$message({
+      type:'error',
+      message:errorText
+    });
+  }
+}

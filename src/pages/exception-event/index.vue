@@ -35,7 +35,7 @@
               <i class="el-icon-delete" @click="deleteItem(latelyList[0].id)"/>
             </div>
 
-            <DetailMainContent :data="latelyList[0]"/>
+            <DetailMainContent :data="latelyList[0]" @toggleVideo="(res)=>showDetailDialog(res, latelyList[0])"/>
           </div>
 
           <div class="items">

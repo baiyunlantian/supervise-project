@@ -234,7 +234,7 @@ Mock.mock('/mock/person/personDelete',(res,req)=>{
 
 
 //排班管理--任务管理列表
-Mock.mock('/mock/schedule-management/missionSelectList',(res,req)=>{
+Mock.mock('/mock/arrange/arrangeSelectList',(res,req)=>{
   const body = JSON.parse(res.body);
 
   let list = [];
@@ -246,11 +246,12 @@ Mock.mock('/mock/schedule-management/missionSelectList',(res,req)=>{
     }
 
     list.push({
-      id:Random.integer(1,99999),
-      name:Random.csentence(2,4),
-      service:Random.csentence(2,4),
-      serviceStatus:Random.integer(1,3),
-      missionStatus:Random.integer(1,3),
+      personId:Random.integer(1,99999),
+      arrangeId:Random.integer(1,99999),
+      arrangeName:Random.csentence(2,4),
+      boxId:Random.integer(2,40000),
+      boxStatus:Random.integer(1,3),
+      arrangeStatus:Random.integer(1,3),
       reporterStatus:Random.integer(0,1),
       time:`${Random.date('yyyy.MM.dd')}-${Random.date('yyyy.MM.dd')}`,
       personList,
@@ -267,6 +268,61 @@ Mock.mock('/mock/schedule-management/missionSelectList',(res,req)=>{
         pageNum:body.pageNum
       },
     }
+  }
+});
+
+//排班管理--更新排班
+Mock.mock('/mock/arrange/arrangeUpdate',(res,req)=>{
+  const body = JSON.parse(res.body);
+
+  return {
+    data:body.arrangeId ? true : false
+  }
+});
+
+//排班管理--新增排班
+Mock.mock('/mock/arrange/arrangeAdd',(res,req)=>{
+  const body = JSON.parse(res.body);
+
+  return {
+    data:body ? true : false
+  }
+});
+
+//排班管理--删除排班
+Mock.mock('/mock/arrange/arrangeDelete',(res,req)=>{
+  const body = JSON.parse(res.body);
+
+  return {
+    data:body.arrangeIds ? true : false
+  }
+});
+
+//排班管理--任务详情
+Mock.mock('/mock/arrange/arrangeDetail',(res,req)=>{
+  const body = JSON.parse(res.body);
+  let result;
+
+  if (body.arrangeId){
+    result = {
+      dutyStartTime:'2020-12-28',
+      dutyEndTime:'2021-1-23',
+      personList:[1,2,3],
+      boxId:Random.integer(1,4),
+      arrangeName:Random.csentence(3,5),
+      detail:Random.csentence(3,5),
+      dutyPersonId:Random.integer(1,5),
+      boxStatus:Random.integer(1,4),
+      arrangeStatus:Random.integer(1,3),
+      useTime:Random.date(),
+      returnTime:Random.date(),
+    };
+  }else {
+    result = false;
+  }
+
+  return {
+    data:result
   }
 });
 
@@ -310,6 +366,24 @@ Mock.mock('/mock/equipment-management/census',(res,req)=>{
       error:Random.integer(1,10),
       stop:Random.integer(1,10),
     }
+  }
+});
+
+//设备管理--更新设备
+Mock.mock('/mock/equipment/updateEquipment',(res,req)=>{
+  const body = JSON.parse(res.body);
+
+  return {
+    data:body ? true : false
+  }
+});
+
+//设备管理--删除设备
+Mock.mock('/mock/equipment/deleteEquipment',(res,req)=>{
+  const body = JSON.parse(res.body);
+
+  return {
+    data:body.id ? true : false
   }
 });
 

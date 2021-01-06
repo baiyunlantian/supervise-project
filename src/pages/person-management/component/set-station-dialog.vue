@@ -70,6 +70,7 @@
     deleteStation,
     getStationList
   } from "@/request/department";
+  import {showMessageAfterRequest} from "@/utils/common";
 
   export default Vue.extend({
     props:{visible:Boolean},
@@ -170,18 +171,8 @@
         }
 
         handleFn({list}).then((res:any)=>{
-          if (res.data){
-            this.$message({
-              type:'success',
-              message:text+'岗位成功'
-            });
-            this.initStationList();
-          }else {
-            this.$message({
-              type:'error',
-              message:text+'岗位失败'
-            });
-          }
+          showMessageAfterRequest(res.data, text+'岗位成功', text+'岗位失败');
+          res.data === true ? this.initStationList() : '';
         })
 
       },
