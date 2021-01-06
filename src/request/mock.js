@@ -87,6 +87,8 @@ Mock.mock('/mock/depart/departSelectList',(res,req)=>{
 
 //人员管理--添加部门
 Mock.mock('/mock/depart/departAdd',(res,req)=>{
+  const body = JSON.parse(res.body);
+
   return {
     data:body.fatherId ? true : false
   }
@@ -94,6 +96,8 @@ Mock.mock('/mock/depart/departAdd',(res,req)=>{
 
 //人员管理--更新部门
 Mock.mock('/mock/depart/departUpdate',(res,req)=>{
+  const body = JSON.parse(res.body);
+
   return {
     data:body.departId ? true : false
   }
@@ -101,6 +105,8 @@ Mock.mock('/mock/depart/departUpdate',(res,req)=>{
 
 //人员管理--删除部门
 Mock.mock('/mock/depart/departDelete',(res,req)=>{
+  const body = JSON.parse(res.body);
+
   return {
     data:body.departId ? true : false
   }
@@ -118,8 +124,37 @@ Mock.mock('/mock/depart/stationSelect',(res,req)=>{
   }
   return {
     data:{
-      list:[]
+      list
     }
+  }
+});
+
+//人员管理--添加岗位
+Mock.mock('/mock/depart/stationAdd',(res,req)=>{
+  const body = JSON.parse(res.body);
+
+  return {
+    data:body.stationName ? true : false
+  }
+});
+
+//人员管理--更新岗位
+Mock.mock('/mock/depart/stationUpdate',(res,req)=>{
+  const body = JSON.parse(res.body);
+  console.log('update',body);
+
+  return {
+    data:true
+  }
+});
+
+//人员管理--删除岗位
+Mock.mock('/mock/depart/stationDelete',(res,req)=>{
+  const body = JSON.parse(res.body);
+  console.log('delete',body);
+
+  return {
+    data:true
   }
 });
 

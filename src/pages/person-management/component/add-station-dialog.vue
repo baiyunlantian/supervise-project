@@ -11,7 +11,7 @@
       <span>岗位：</span>
       <el-input v-model="name" @blur="checkValid"/>
     </div>
-    <div class="tip" v-show="!valid">请填写岗位名称</div>
+    <div class="tip" v-show="!valid">{{tipText}}</div>
 
     <template slot="footer">
       <el-button type="primary" @click="onOk">添加</el-button>
@@ -22,6 +22,8 @@
 
 <script lang="ts">
   import Vue from 'vue';
+  import {addStation} from "@/request/department";
+  import { IllegalString } from "@/utils/common";
 
   export default Vue.extend({
     props:['visible',],
@@ -29,21 +31,41 @@
       return {
         name:'',
         valid:true,
+        tipText:'',
       }
     },
     methods: {
       checkValid: function () {
-        this.valid = this.name ? true : false;
+        if (this.name){
+
+          if(IllegalString.test(this.name)){
+            this.valid = false;
+            this.tipText = '含有非法字符';
+          }else {
+            this.valid = true;
+          }
+
+        }else {
+          this.tipText = '请填写岗位名称';
+          this.valid = false;
+        }
       },
       onOk: function () {
-        if (this.name){
-          this.valid = true;
-        }else {
-          this.valid = false;
-          return;
-        }
+        this.checkValid();
 
-        console.log(this.name)
+        if (!this.valid) return;
+
+        addStation({stationName:this.name}).then(res=>{
+          let result = res.data;
+
+          this.$message({
+            type:result === true ? 'success' : 'error',
+            message:`新增${result === true ? '成功' : '失败'}`,
+          })
+
+          this.close();
+          this.$emit('refreshList', result);
+        })
       },
       close: function () {
         this.name = '';

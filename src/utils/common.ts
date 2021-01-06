@@ -47,3 +47,5 @@ export const exportExcl = async (
 };
 
 export const VideoSrc = 'https://www.runoob.com/try/demo_source/movie.mp4';
+
+export const IllegalString = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>《》/\?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]");
