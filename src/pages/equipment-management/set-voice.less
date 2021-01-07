@@ -1,0 +1,106 @@
+#set-voice-container{
+  .btn-container{
+    text-align: right;
+  }
+
+  .normal-voice-content{
+    padding: 0.3125rem;
+    margin: 0.3125rem 0 0.625rem 0;
+  }
+
+  /deep/
+  .form-container{
+    display: flex;
+    align-items: center;
+    .el-form-item{
+      margin-right: 0.3125rem;
+    }
+    .el-form-item:first-child{
+      width: 35%;
+      .el-form-item__content{
+        display: flex;
+        align-items: center;
+        .compute-num{
+          margin-left: 0.15625rem;
+        }
+      }
+    }
+
+    .el-form-item:last-child{
+      .el-form-item__content{
+        position: relative;
+      }
+
+      .el-form-item__content::after{
+        content: 'S';
+        position: absolute;
+        top: 0;
+        right: -15px;
+        font-size: 14px;
+      }
+    }
+  }
+
+  .exception-voice-content{
+    .title{
+      padding: 0.3125rem;
+      background-color: rgb(204, 230, 255);
+    }
+
+    .exception-voice-list{
+      padding: 2%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      .item{
+        width: 23%;
+        padding: 0.3125rem;
+        margin-bottom: 2%;
+        .content{
+          .label{
+            display: flex;
+            align-items: center;
+            .img{
+              background-color: rgb(204, 230, 255);
+              width: 40px;
+              height: 40px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              border-radius: 50%;
+              img{
+                width: 60%;
+                height: 60%;
+              }
+            }
+            .text{
+              font-weight: 600;
+              margin-left: 0.3125rem;
+            }
+          }
+
+          .tip{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 14px;
+            .error-text{
+              color: #F56C6C;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .operate-btn{
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    i{
+      font-size: 0.75rem;
+      margin-right: 0.3125rem;
+    }
+  }
+}

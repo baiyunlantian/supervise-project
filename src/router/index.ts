@@ -43,6 +43,11 @@ export default new VueRouter({
       component: resolve => require(['@/pages/equipment-management/index.vue'], resolve),
     },
     {
+      path: '/equipment-management/set-voice',
+      name: 'equipment-management/set-voice',
+      component: resolve => require(['@/pages/equipment-management/set-voice.vue'], resolve),
+    },
+    {
       path: '*',
       name: 'Home',
       component: resolve => require(['@/pages/index/index.vue'], resolve)

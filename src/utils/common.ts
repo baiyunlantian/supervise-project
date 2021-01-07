@@ -48,6 +48,7 @@ export const exportExcl = async (
 
 export const VideoSrc = 'https://www.runoob.com/try/demo_source/movie.mp4';
 
+//校验非法字符，\ 无法校验
 export const IllegalString = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>《》/\?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]");
 
 export const showMessageAfterRequest = function (status:boolean, successText:string, errorText:string) {

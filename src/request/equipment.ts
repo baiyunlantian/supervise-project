@@ -12,3 +12,11 @@ export function updateEquipment (params?:object)  {
 export function deleteEquipment (params?:object)  {
   return API.POST(`${MOCK}/equipment/deleteEquipment`, params)
 }
+
+export function getVoiceInfo (params?:object)  {
+  return API.POST(`${MOCK}/equipment/voiceInfo`, params)
+}
+
+export function updateVoiceInfo (params?:object)  {
+  return API.POST(`${MOCK}/equipment/updateVoiceInfo`, params)
+}

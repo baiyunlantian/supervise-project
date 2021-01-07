@@ -19,7 +19,11 @@
         :form-data="searchParams"
         :form-items-prop="formItemsProp"
         @search="search"
-    />
+    >
+      <div class="img">
+        <img :src="require('@/assets/equipment/voice.png')" alt="语音设置" @click="jump"/>
+      </div>
+    </SearchForm>
 
     <div class="table-content">
       <div class="title fontBlackAndBold">设备列表</div>
@@ -109,7 +113,7 @@
         ],
         status:statusCommon,
         tableProps:{
-          url:'/mock/equipment-management/selectList',
+          url:'/mock/equipment/selectList',
           rowKey:'id',
           highlight:true,
           pagination:{
@@ -167,6 +171,9 @@
       initTable: function (data = {}) {
         //@ts-ignore
         this.$refs.table.initTable(data);
+      },
+      jump: function () {
+        this.$router.push('/equipment-management/set-voice');
       }
     },
     mounted(): void {

@@ -11,6 +11,9 @@
       :label-position="formData.labelPosition || 'left'"
       :hide-required-asterisk="formProps.hideRequiredAsterisk || false"
   >
+    <!--    自定义插入内容--插入位置--前  -->
+    <slot name="before"/>
+
     <el-form-item
         v-for="(item, index) in formProps.items"
         :key="index"
@@ -21,7 +24,7 @@
       <GetFormItem :formData="formData" :item="item"/>
     </el-form-item>
 
-    <!--  自定义插入内容  -->
+    <!--  自定义插入内容--插入位置--后  -->
     <slot></slot>
 
     <el-form-item v-if="!formProps.hiddenFooter">

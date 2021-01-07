@@ -388,7 +388,7 @@ Mock.mock('/mock/equipment/deleteEquipment',(res,req)=>{
 });
 
 //设备管理--设备列表
-Mock.mock('/mock/equipment-management/selectList',(res,req)=>{
+Mock.mock('/mock/equipment/selectList',(res,req)=>{
   const body = JSON.parse(res.body);
 
   let list = [];
@@ -448,6 +448,37 @@ Mock.mock('/mock/equipment-management/selectList',(res,req)=>{
         pageNum:body.pageNum
       },
     }
+  }
+});
+
+//设备管理--语音播报--语音内容
+Mock.mock('/mock/equipment/voiceInfo',(res,req)=>{
+  const body = JSON.parse(res.body);
+
+  return {
+    data:{
+      normal:Random.csentence(1,29),
+      face:Random.csentence(1,19),
+      safeHat:Random.csentence(1,19),
+      reflectiveClothing:Random.csentence(1,19),
+      workArea:Random.csentence(1,19),
+      fire:Random.csentence(1,19),
+      stop:Random.csentence(1,19),
+      climb:Random.csentence(1,19),
+      fall:Random.csentence(1,19),
+      count:Random.integer(1,100),
+      time:Random.integer(1,1000),
+    }
+  }
+});
+
+//设备管理--更新语音
+Mock.mock('/mock/equipment/updateVoiceInfo',(res,req)=>{
+  const body = JSON.parse(res.body);
+  console.log('body',body)
+
+  return {
+    data:body ? true : false
   }
 });
 

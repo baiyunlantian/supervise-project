@@ -124,7 +124,6 @@
         getStationList().then(res=>{
           if (!res.data) return;
 
-          console.log(res.data)
           if (res.data.list && res.data.list.length > 0) {
             let data : any = {};
             let stationIds: any= [];

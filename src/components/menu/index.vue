@@ -1,5 +1,5 @@
 <template>
-  <div id="left-container">
+  <div id="menu-left-container">
     <router-link
         v-for="(menu, index) in menuList"
         :key="index"
