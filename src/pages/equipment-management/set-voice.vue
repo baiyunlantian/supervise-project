@@ -7,10 +7,19 @@
 
     <div class="normal-voice-content bgcAndShadow">
       <div class="operate-btn">
-        <i class="el-icon-edit-outline" v-if="disableInputs.normal" @click="handleChangeInputDisabled('normal',false)"/>
+        <SvgIcon
+            name="edit"
+            color="rgb(3, 114, 248)"
+            @click="handleChangeInputDisabled('normal',false)"
+            v-if="disableInputs.normal"
+        />
         <template v-else>
           <i class="el-icon-success" @click="handleUpdateNormalVoice('normal')"/>
-          <i class="el-icon-error" @click="handleCancelUpdateVoice('normal',true)"/>
+          <SvgIcon
+              name="goBack"
+              color="rgb(136, 136, 136)"
+              @click="handleCancelUpdateVoice('normal',true)"
+          />
         </template>
       </div>
 
@@ -37,10 +46,23 @@
             :key="index"
         >
           <div class="operate-btn">
-            <i class="el-icon-edit-outline" v-if="disableInputs[item.key]" @click="handleChangeInputDisabled(item.key,false)"/>
+            <SvgIcon
+              name="edit"
+              color="rgb(3, 114, 248)"
+              @click="handleChangeInputDisabled(item.key,false)"
+              v-if="disableInputs[item.key]"
+            />
             <template v-else>
-              <i class="el-icon-success" @click="handleUpdateNormalVoice(item.key)"/>
-              <i class="el-icon-error" @click="handleCancelUpdateVoice(item.key,true)"/>
+              <SvgIcon
+                  name="voiceUpdate"
+                  color="rgb(0, 204, 51)"
+                  @click="handleUpdateNormalVoice(item.key)"
+              />
+              <SvgIcon
+                  name="goBack"
+                  color="rgb(136, 136, 136)"
+                  @click="handleCancelUpdateVoice(item.key,true)"
+              />
             </template>
           </div>
 
@@ -71,6 +93,7 @@
   import Vue from 'vue';
   import GoBackBtn from '@/components/goBackBtn.vue';
   import Form from '@/components/form/index.vue';
+  import SvgIcon from '@/components/svgIcon.vue';
   import { getVoiceInfo, updateVoiceInfo } from "@/request/equipment";
   import {showMessageAfterRequest} from "@/utils/common";
 
@@ -78,6 +101,7 @@
     components:{
       GoBackBtn,
       Form,
+      SvgIcon,
     },
     data() {
       return {

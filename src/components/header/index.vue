@@ -1,22 +1,26 @@
 <template>
   <div id="header-container">
     <div>工程监督智能服务平台</div>
-    <img :src="require('@/assets/logout.png')" alt="logout" @click="logout"/>
+    <SvgIcon
+      color="#fff"
+      name="logout"
+      @click="logout"
+    />
   </div>
 </template>
 
 <script lang="ts">
   import Vue from 'vue';
-  import moment from 'moment';
+  import SvgIcon from '@/components/svgIcon.vue';
 
   export default Vue.extend({
-    data(){
-      return{
-      }
+    components:{
+      SvgIcon,
     },
     methods:{
       logout: function () {
-        console.log('logout')
+        sessionStorage.clear();
+        this.$router.push('/login');
       }
     },
   })
