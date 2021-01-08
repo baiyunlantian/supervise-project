@@ -4,7 +4,8 @@
       <div class="fontBlackAndBold">发生时间：{{data.time}}</div>
       <div class="operate-btn">
         <div class="cursor" @click="showDetailDialog()">···</div>
-        <i class="el-icon-delete" @click="handleDelete(data.id)"/>
+<!--        <i class="el-icon-delete" @click="handleDelete(data.id)"/>-->
+        <SvgIcon name="delete" @click="handleDelete(data.id)"/>
       </div>
     </div>
 
@@ -42,6 +43,7 @@
 <script lang="ts">
   import Vue from 'vue';
   import VideoDialog from './video-dialog.vue';
+  import SvgIcon from '@/components/svgIcon.vue';
 
   export default Vue.extend({
     props:{
@@ -63,7 +65,8 @@
       }
     },
     components:{
-      VideoDialog
+      VideoDialog,
+      SvgIcon
     },
     data(){
       return {

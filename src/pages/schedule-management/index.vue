@@ -30,8 +30,8 @@
           </div>
 
           <div class="operate-btn">
-            <i class="el-icon-folder-add" />
-            <i class="el-icon-delete" @click="handleClickDelete(null)"/>
+            <SvgIcon name="downloadTemplate" />
+            <SvgIcon name="batchDelete" @click="handleClickDelete(null)"/>
           </div>
         </div>
       </div>
@@ -73,7 +73,7 @@
             <router-link :to="{ path: '/schedule-management/mission-detail', query: { arrangeId: row.arrangeId }}">
               ···
             </router-link>
-            <i class="el-icon-delete" @click="handleClickDelete(row.arrangeId)"/>
+            <SvgIcon name="delete" @click="handleClickDelete(row.arrangeId)"/>
           </div>
         </template>
 
@@ -91,6 +91,7 @@
   import SearchInput from '@/components/search-input/index.vue';
   import ScheduleDialog from './component/schedule-dialog.vue';
   import moment from "moment";
+  import SvgIcon from "@/components/svgIcon.vue";
   import { batchDeleteSchedule } from "@/request/schedule";
   import {showMessageAfterRequest} from "@/utils/common";
 
@@ -101,6 +102,7 @@
       SearchForm,
       Table,
       ScheduleDialog,
+      SvgIcon,
     },
     data() {
       return {

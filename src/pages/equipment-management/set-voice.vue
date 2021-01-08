@@ -9,7 +9,6 @@
       <div class="operate-btn">
         <SvgIcon
             name="edit"
-            color="rgb(3, 114, 248)"
             @click="handleChangeInputDisabled('normal',false)"
             v-if="disableInputs.normal"
         />
@@ -48,7 +47,6 @@
           <div class="operate-btn">
             <SvgIcon
               name="edit"
-              color="rgb(3, 114, 248)"
               @click="handleChangeInputDisabled(item.key,false)"
               v-if="disableInputs[item.key]"
             />

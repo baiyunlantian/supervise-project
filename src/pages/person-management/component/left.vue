@@ -4,10 +4,15 @@
       <div class="fontBlackAndBold">人员组织架构</div>
       <div class="operate-btn">
         <div class="add-group cursor" @click="setStationDialogVisible = true">
-          <img :src="require('@/assets/person/set-station.png')"/>
+          <SvgIcon name="setStation" color="#fff"/>
         </div>
         <div class="add-group cursor" @click="handleClickAddOrUpdateDepart('add')">
-          <img :src="require('@/assets/person/add-group.png')"/>
+          <SvgIcon
+              name="addFirstDepart"
+              color="#fff"
+              width="1.09375rem"
+              height="1.09375rem"
+          />
         </div>
       </div>
     </div>
@@ -33,9 +38,9 @@
             <div class="label" :class="{active:node.expanded === true}">
               <span>{{data.label}}</span>
               <div class="operate-btn" v-if="node.expanded === true">
-                <i class="el-icon-edit" @click="handleClickAddOrUpdateDepart('edit',data)"/>
-                <i class="el-icon-folder-add" @click="handleClickAddOrUpdateDepart('add', data)"/>
-                <i class="el-icon-delete" @click="setData('department',data, 'deleteDialogVisible', true)"/>
+                <SvgIcon name="edit" @click="handleClickAddOrUpdateDepart('edit', data)"/>
+                <SvgIcon name="addChildDepart" @click="handleClickAddOrUpdateDepart('add', data)"/>
+                <SvgIcon name="delete" @click="setData('department',data, 'deleteDialogVisible', true)"/>
               </div>
             </div>
           </div>
@@ -75,6 +80,7 @@
   import DeleteDialog from './delete-dialog.vue';
   import AddOrEditDepartmentDialog from './add-or-edit-department-dialog.vue';
   import SetStationDialog from "@/pages/person-management/component/set-station-dialog.vue";
+  import SvgIcon from '@/components/svgIcon.vue';
   import {
     addDepart,
     updateDepart,
@@ -88,6 +94,7 @@
       DeleteDialog,
       AddOrEditDepartmentDialog,
       SetStationDialog,
+      SvgIcon,
     },
     data() {
       return {
@@ -139,7 +146,7 @@
               fatherId:item.fatherId,
               departId:item.departId,
               name:item.departName,
-              label:`${item.departName}（${item.num}人）`,
+              label:`${item.departName}(${item.num}人)`,
               leaf: false,
               type:0
             });

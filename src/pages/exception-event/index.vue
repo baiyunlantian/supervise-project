@@ -5,7 +5,10 @@
         <div class="fontBlackAndBold title">异常预警统计</div>
         <div class="content">
           <div class="img">
-            <img :src="require('@/assets/menu/equipment.png')" alt="***" />
+            <SvgIcon
+                name="exceptionCensus"
+                color="#fff"
+            />
           </div>
           <div class="item">
             <div class="label">总预警统计</div>
@@ -18,7 +21,7 @@
         </div>
       </div>
 
-      <div class="right bgcAndShadow">
+      <div class="right">
         <div class="fontBlackAndBold title">今日异常预警分析</div>
         <WarningCensus :data="warningCensus"/>
       </div>
@@ -32,7 +35,7 @@
           <div class="lately-item bgcAndShadow">
             <div class="operate-btn">
               <div class="cursor" @click="showDetailDialog(true, latelyList[0])">···</div>
-              <i class="el-icon-delete" @click="deleteItem(latelyList[0].id)"/>
+              <SvgIcon name="delete" @click="deleteItem(latelyList[0].id)"/>
             </div>
 
             <DetailMainContent :data="latelyList[0]" @toggleVideo="(res)=>showDetailDialog(res, latelyList[0])"/>
@@ -84,6 +87,7 @@
   import DetailMainContent from './component/detail-main-content.vue';
   import ExceptionItem from './component/exception-item.vue';
   import DetailDialog from './component/detail-dialog.vue';
+  import SvgIcon from '@/components/svgIcon.vue';
   import { getWarningCensus } from '@/request/schedule';
   import { getLatelyList } from '@/request/exception-event';
 
@@ -95,6 +99,7 @@
       DetailMainContent,
       ExceptionItem,
       DetailDialog,
+      SvgIcon,
     },
     data() {
       return {

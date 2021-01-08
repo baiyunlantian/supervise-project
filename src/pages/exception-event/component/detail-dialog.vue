@@ -26,7 +26,7 @@
           <div class="info">
             <div><span class="label">姓名</span><span>:</span>{{item.name}}</div>
             <div><span class="label">性别</span><span>:</span>{{item.sex === 0 ? '男' : '女'}}</div>
-            <div><span class="label">身份证号</span><span>:</span>{{item.ipCard}}</div>
+            <div><span class="label">身份证号</span><span>:</span>{{item.ipNum}}</div>
             <div><span class="label">手机号</span><span>:</span>{{item.phone}}</div>
             <div><span class="label">部门</span><span>:</span>{{item.group}}</div>
             <div><span class="label">岗位</span><span>:</span>{{item.station}}</div>

@@ -3,8 +3,8 @@
     <div class="title">
       <div class="fontBlackAndBold">人员列表</div>
       <div class="operate-btn">
-        <i class="el-icon-folder-add" @click="exportPersonExcel"/>
-        <i class="el-icon-delete" @click="batchDeletePerson"/>
+        <SvgIcon name="downloadTemplate" @click="exportPersonExcel"/>
+        <SvgIcon name="delete" @click="batchDeletePerson"/>
       </div>
     </div>
 
@@ -13,8 +13,8 @@
         <img :src="row.url || require('@/assets/mission-person.jpg')" alt="头像"/>
       </template>
       <template v-slot:operate="{row}" class="operate-btn">
-        <i class="el-icon-edit" @click="triggerParentEvent('personInfo',row, 'personDialogVisible', true)"/>
-        <i class="el-icon-delete" @click="toggleDialog('personId',row.personId, 'deleteDialogVisible', true)"/>
+        <SvgIcon name="edit" @click="triggerParentEvent('personInfo',row, 'personDialogVisible', true)"/>
+        <SvgIcon name="delete" @click="triggerParentEvent('personId',row.personId, 'deleteDialogVisible', true)"/>
       </template>
     </Table>
 
@@ -35,6 +35,7 @@
   import Table from '@/components/table/index.vue';
   import AddOrUpdatePersonDialog from './add-or-update-person-dialog.vue';
   import DeleteDialog from './delete-dialog.vue';
+  import SvgIcon from '@/components/svgIcon.vue';
   import { deletePerson, createBatchImportPersonExcel } from '@/request/person';
   import {showMessageAfterRequest} from "@/utils/common";
 
@@ -44,6 +45,7 @@
       Table,
       AddOrUpdatePersonDialog,
       DeleteDialog,
+      SvgIcon,
     },
     data() {
       return {

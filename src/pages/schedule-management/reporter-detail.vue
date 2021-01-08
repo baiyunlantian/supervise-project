@@ -14,7 +14,7 @@
     </div>
 
     <div class="info-census">
-      <div class="title fontBlackAndBold">预警信息统计</div>
+      <div class="title ">预警信息统计</div>
       <WarningCensus :data="censusData"/>
     </div>
 

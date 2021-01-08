@@ -24,7 +24,7 @@ axios.interceptors.request.use( (config:any) => {
         }
     }
     config.data = {...data, ...params};
-    config.headers.common['token'] = token || '';
+    // config.headers.common['web_token'] = token || '';
     return config;
 }, function (error) {
     // Do something with request error

@@ -7,57 +7,38 @@
         :class="data[item.key] === 0 ? 'normal' : 'active'"
     >
       <div class="img">
-        <img :src="data[item.key] !== 0 ? item.normal : item.active" alt="***"/>
+        <SvgIcon
+          :name="item.key"
+          :color="data[item.key] === 0 ? colors[1] : colors[0]"
+        />
       </div>
-      <div class="text">
-        <div class="label">{{item.label}}</div>
-        <div class="count">{{data[item.key]}}</div>
-      </div>
+      <div class="label">{{item.label}}</div>
+      <div class="count">{{data[item.key]}}</div>
+
     </div>
   </div>
 </template>
 
 <script lang="ts">
   import Vue from 'vue';
+  import SvgIcon from '@/components/svgIcon.vue';
 
   export default Vue.extend({
+    components:{SvgIcon},
     props:['data'],
     data() {
       return {
         censusConfig:[
-          { key:'face',label:'人脸识别预警',
-            normal:require('@/assets/menu/equipment.png'),
-            active:require('@/assets/menu/equipment-active.png'),
-          },
-          { key:'safeHat',label:'安全帽预警',
-            normal:require('@/assets/menu/exception.png'),
-            active:require('@/assets/menu/exception-active.png'),
-          },
-          { key:'workArea',label:'作业区域预警',
-            normal:require('@/assets/menu/monitor.png'),
-            active:require('@/assets/menu/monitor-active.png'),
-          },
-          { key:'clothes',label:'反光衣预警',
-            normal:require('@/assets/menu/person.png'),
-            active:require('@/assets/menu/person-active.png'),
-          },
-          { key:'climb',label:'登高预警',
-            normal:require('@/assets/menu/schedule.png'),
-            active:require('@/assets/menu/schedule-active.png'),
-          },
-          { key:'stop',label:'静止预警',
-            normal:require('@/assets/menu/equipment.png'),
-            active:require('@/assets/menu/equipment-active.png'),
-          },
-          { key:'fire',label:'火灾预警',
-            normal:require('@/assets/menu/exception.png'),
-            active:require('@/assets/menu/exception-active.png'),
-          },
-          { key:'fall',label:'跌倒预警',
-            normal:require('@/assets/menu/monitor.png'),
-            active:require('@/assets/menu/monitor-active.png'),
-          },
+          { key:'face',label:'人脸识别预警',},
+          { key:'safeHat',label:'安全帽预警',},
+          { key:'workArea',label:'人员入侵预警',},
+          { key:'clothes',label:'反光衣预警',},
+          { key:'climb',label:'高空作业安全带预警',},
+          { key:'stop',label:'静止预警',},
+          { key:'fire',label:'火灾预警',},
+          { key:'fall',label:'跌倒预警',},
         ],
+        colors:['#fff','rgb(102, 102, 102)'],
       }
     },
   })

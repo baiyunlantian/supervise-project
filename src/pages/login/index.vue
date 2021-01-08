@@ -78,8 +78,8 @@
           if (valid) {
             console.log('doLogin');
             login(this.loginData).then((res:any)=>{
-              if (!res.data || !res.data.token) return;
-              sessionStorage.setItem('token',res.data.token);
+              if (!res.data || !res.data.web_token) return;
+              sessionStorage.setItem('token',res.data.web_token);
               this.$router.push('/');
             });
           } else {

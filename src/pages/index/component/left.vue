@@ -21,7 +21,7 @@
           <div class="count" style="color: rgb(152, 70, 209)">{{flowCensus.totalFlow || 0}}M</div>
         </div>
       </div>
-      <i class="el-icon-setting" @click="flowDialog = true"/>
+      <SvgIcon name="setFlow" @click="flowDialog = true"/>
     </div>
 
     <div class="terminal-container bgcAndShadow">
@@ -77,6 +77,7 @@
 <script lang="ts">
   import Vue from "vue";
   import SearchInput from '@/components/search-input/index.vue';
+  import SvgIcon from '@/components/svgIcon.vue';
   import { getFlowCensus } from "@/request";
   import {
     getTerminalTree,
@@ -86,6 +87,7 @@
   export default Vue.extend({
     components:{
       SearchInput,
+      SvgIcon,
     },
     data(){
       return{

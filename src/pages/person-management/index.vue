@@ -23,11 +23,17 @@
                 :data="batchImportOptions.data"
                 :headers="batchImportOptions.headers"
             >
-              <img :src="require('@/assets/person/batch-import.png')" />
+              <SvgIcon name="batchImport" color="#fff"/>
             </el-upload>
           </div>
           <div>
-            <img :src="require('@/assets/person/adduser.png')" @click="toggleDialog('personInfo',{}, 'personDialogVisible', true)"/>
+            <SvgIcon
+                name="addPerson"
+                color="#fff"
+                width="1.09375rem"
+                height="1.09375rem"
+                @click="toggleDialog('personInfo',{}, 'personDialogVisible', true)"
+            />
           </div>
         </div>
       </div>
@@ -44,6 +50,7 @@
   import Vue from 'vue';
   import SearchInput from '@/components/search-input/index.vue';
   import SearchForm from '@/components/search-form/index.vue';
+  import SvgIcon from '@/components/svgIcon.vue';
   import NormalPersonList from './component/tableList.vue';
   import AddOrUpdatePersonDialog from './component/add-or-update-person-dialog.vue';
   import SetStationDialog from './component/set-station-dialog.vue';
@@ -59,6 +66,7 @@
       AddOrUpdatePersonDialog,
       SetStationDialog,
       Left,
+      SvgIcon,
     },
     data() {
       return {

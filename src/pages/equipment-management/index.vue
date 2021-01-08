@@ -8,7 +8,12 @@
           :class="item.key"
       >
         <div class="img">
-          <img :src="item.img" alt="***"/>
+          <SvgIcon
+            :name="item.iconName"
+            :color="item.color"
+            width="1.09375rem"
+            height="1.09375rem"
+          />
         </div>
         <div class="text">{{item.label}}</div>
         <div class="count">{{census[item.key]}}</div>
@@ -21,7 +26,13 @@
         @search="search"
     >
       <div class="img">
-        <img :src="require('@/assets/equipment/voice.png')" alt="语音设置" @click="jump"/>
+        <SvgIcon
+            name="intoVoicePage"
+            color="#fff"
+            width="1.09375rem"
+            height="1.09375rem"
+            @click="jump"
+        />
       </div>
     </SearchForm>
 
@@ -58,8 +69,8 @@
         </template>
 
         <template v-slot:operate="{row}">
-          <i class="el-icon-edit" @click="handleClickEdit(row)"/>
-          <i class="el-icon-delete" @click="handleClickDelete(row.id)"/>
+          <SvgIcon name="edit" @click="handleClickEdit(row)"/>
+          <SvgIcon name="delete" @click="handleClickDelete(row.id)"/>
         </template>
       </Table>
     </div>
@@ -77,6 +88,7 @@
   import Table from '@/components/table/index.vue';
   import SearchForm from '@/components/search-form/index.vue';
   import Dialog from './dialog.vue';
+  import SvgIcon from '@/components/svgIcon.vue';
   import { getEquipmentCensus, deleteEquipment } from "@/request/equipment";
   import {showMessageAfterRequest} from "@/utils/common";
 
@@ -93,17 +105,18 @@
       Table,
       SearchForm,
       Dialog,
+      SvgIcon,
     },
     data() {
       return {
         census:{},
         searchParams:{},
         censusConfig:[
-          {key:'total',label:'设备总数',img:require('@/assets/logout.png')},
-          {key:'onLine',label:'在线设备',img:require('@/assets/person/add-group.png')},
-          {key:'offLine',label:'离线设备',img:require('@/assets/person/adduser.png')},
-          {key:'error',label:'故障设备',img:require('@/assets/person/batch-import.png')},
-          {key:'stop',label:'闲置设备',img:require('@/assets/person/set-station.png')},
+          {key:'total',label:'设备总数',iconName:'serviceTotal',color:'rgb(0, 131, 255)'},
+          {key:'onLine',label:'在线设备',iconName:'onLine',color:'rgb(0, 161, 76)'},
+          {key:'offLine',label:'离线设备',iconName:'offLine',color:'rgb(131, 131, 131)'},
+          {key:'error',label:'故障设备',iconName:'error',color:'rgb(255, 3, 3)'},
+          {key:'stop',label:'闲置设备',iconName:'idle',color:'rgb(255, 190, 19)'},
         ],
         formItemsProp:[
           {key:'name',label:'设备名称',type:'input'},

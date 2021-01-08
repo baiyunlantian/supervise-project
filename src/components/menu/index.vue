@@ -6,7 +6,10 @@
         :to="menu.path"
     >
       <div :class="{active: handlePathIsActive(menu.path) === true}">
-        <img alt="" :src=" handlePathIsActive(menu.path) === true ? menu.active : menu.normal"/>
+        <SvgIcon
+            :name="menu.name"
+            :color="handlePathIsActive(menu.path) === true ? 'rgb(3, 114, 248)' : '#fff'"
+        />
       </div>
     </router-link>
   </div>
@@ -14,35 +17,34 @@
 
 <script lang="ts">
   import Vue from 'vue';
+  import SvgIcon from '@/components/svgIcon.vue';
 
   export default Vue.extend({
+    components:{
+      SvgIcon
+    },
     data() {
       return {
         menuList:[
           {
             path:'/',
-            normal:require('@/assets/menu/monitor.png'),
-            active:require('@/assets/menu/monitor-active.png'),
+            name:'monitor',
           },
           {
             path:'/exception-event',
-            normal:require('@/assets/menu/exception.png'),
-            active:require('@/assets/menu/exception-active.png'),
+            name:'exceptionCensus',
           },
           {
             path:'/schedule-management',
-            normal:require('@/assets/menu/schedule.png'),
-            active:require('@/assets/menu/schedule-active.png'),
+            name:'schedule',
           },
           {
             path:'/person-management',
-            normal:require('@/assets/menu/person.png'),
-            active:require('@/assets/menu/person-active.png'),
+            name:'userGroup',
           },
           {
             path:'/equipment-management',
-            normal:require('@/assets/menu/equipment.png'),
-            active:require('@/assets/menu/equipment-active.png'),
+            name:'equipment',
           },
         ],
         currentPath:'/',

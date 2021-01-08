@@ -1,6 +1,6 @@
 <template>
   <div id="right-container">
-    <WarningCensus :data="warningCensus" class="bgcAndShadow top"/>
+    <WarningCensus :data="warningCensus" class="top"/>
 
     <div class="monitor-container">
       <div class="operate">
@@ -55,10 +55,16 @@
           <div class="operate-content">
             <div class="text">摄像头{{index}}</div>
             <div class="operate-btn">
-              <i class="el-icon-video-play" v-on:click="play(index)" v-if="!isPlayArray[index]" />
-              <i class="el-icon-video-pause" @click="pause(index)" v-else />
-              <img :src="require('@/assets/fullscreen.png')" alt="全屏" @click="fullScreenHandle(index)"/>
-              <i class="el-icon-circle-close" />
+              <SvgIcon name="play" color="#fff" v-on:click="play(index)" v-if="!isPlayArray[index]" />
+              <SvgIcon name="pause" color="#fff" @click="pause(index)" v-else />
+              <SvgIcon
+                  name="fullScreen"
+                  color="#fff"
+                  @click="fullScreenHandle(index)"
+                  width="0.625rem"
+                  height="0.625rem"
+              />
+              <SvgIcon name="circleClose" color="#fff" />
             </div>
           </div>
 
@@ -71,12 +77,14 @@
 <script lang="ts">
   import Vue from "vue";
   import WarningCensus from '@/components/warning-census/index.vue';
+  import SvgIcon from '@/components/svgIcon.vue';
   import { getWarningCensus } from '@/request/schedule';
   import {VideoSrc} from "@/utils/common";
 
   export default Vue.extend({
     components:{
       WarningCensus,
+      SvgIcon,
     },
     data(){
       return{
