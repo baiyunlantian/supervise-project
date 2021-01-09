@@ -67,9 +67,9 @@
             {key:'phone',label:'手机号',type:'input'},
             {key:'departId',label:'部门',type:'select',
               options:[
-                {value:1,label:'部门1'},
-                {value:2,label:'部门2'},
-                {value:3,label:'部门3'},
+                {value:'1',label:'部门1'},
+                {value:'2',label:'部门2'},
+                {value:'3',label:'部门3'},
               ]
             },
             {key:'station',label:'岗位',type:'input'},
@@ -108,6 +108,7 @@
         //@ts-ignore
         this.$refs.form.validate((valid) => {
           let formData = new FormData();
+          formData.append('companyCode',sessionStorage.getItem('companyCode') || '');
 
           Object.keys(this.formData).forEach(key=>{
             //@ts-ignore

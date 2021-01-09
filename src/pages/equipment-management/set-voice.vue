@@ -66,7 +66,9 @@
 
           <div class="content">
             <div class="label">
-              <div class="img"><img :src="item.img" alt="***"/></div>
+              <div class="img">
+                <SvgIcon :name="item.key"/>
+              </div>
               <div class="text">{{item.label}}</div>
             </div>
 
@@ -134,14 +136,14 @@
           fall:true,
         },
         exceptionFormItems:[
-          {key:'face',label:'人脸识别预警',img:require('@/assets/menu/equipment-active.png')},
-          {key:'safeHat',label:'安全帽预警',img:require('@/assets/menu/exception-active.png')},
-          {key:'reflectiveClothing',label:'反光衣预警',img:require('@/assets/menu/monitor-active.png')},
-          {key:'workArea',label:'作业区域预警',img:require('@/assets/menu/person-active.png')},
-          {key:'fire',label:'火灾预警',img:require('@/assets/menu/schedule-active.png')},
-          {key:'stop',label:'静止预警',img:require('@/assets/menu/equipment-active.png')},
-          {key:'climb',label:'登高预警',img:require('@/assets/menu/exception-active.png')},
-          {key:'fall',label:'跌倒预警',img:require('@/assets/menu/monitor-active.png')},
+          {key:'face',label:'人脸识别预警',},
+          {key:'safeHat',label:'安全帽预警',},
+          {key:'reflectiveClothing',label:'反光衣预警',},
+          {key:'workArea',label:'作业区域预警',},
+          {key:'fire',label:'火灾预警',},
+          {key:'stop',label:'静止预警',},
+          {key:'climb',label:'登高预警',},
+          {key:'fall',label:'跌倒预警',},
         ],
         exceptionValidate:{
           face:true,

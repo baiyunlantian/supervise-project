@@ -32,7 +32,7 @@
           { key:'face',label:'人脸识别预警',},
           { key:'safeHat',label:'安全帽预警',},
           { key:'workArea',label:'人员入侵预警',},
-          { key:'clothes',label:'反光衣预警',},
+          { key:'reflectiveClothing',label:'反光衣预警',},
           { key:'climb',label:'高空作业安全带预警',},
           { key:'stop',label:'静止预警',},
           { key:'fire',label:'火灾预警',},

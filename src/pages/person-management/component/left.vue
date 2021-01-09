@@ -132,7 +132,7 @@
       },
       handleGetTreeSelectList: function (resolve:Function, fatherId?:string, type?:string) {
         let data = {
-          fatherId:fatherId ? fatherId : localStorage.getItem('companyCode'),
+          fatherId:fatherId ? fatherId : sessionStorage.getItem('companyCode'),
         }
 
         getDepartmentTreeList(data).then(res=>{
@@ -213,7 +213,7 @@
       },
       //手动刷新节点树
       customRefreshTree: function (fatherId:string) {
-        if (fatherId === localStorage.getItem('companyCode')) {
+        if (fatherId === sessionStorage.getItem('companyCode')) {
           //操作一级部门
           this.loadTree(this.firstNode, this.resolveFn, 'custom')
         }else {

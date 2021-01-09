@@ -94,6 +94,7 @@
   import SvgIcon from "@/components/svgIcon.vue";
   import { batchDeleteSchedule } from "@/request/schedule";
   import {showMessageAfterRequest} from "@/utils/common";
+  import { PERSON, MOCK } from "@/request/type";
 
 
   export default Vue.extend({
@@ -127,7 +128,7 @@
 
         ],
         tableProps:{
-          url:'/mock/arrange/arrangeSelectList',
+          url:`${PERSON}/arrange/arrangeSelectList`,
           rowKey:'personId',
           firstColumn:{
             show:true,

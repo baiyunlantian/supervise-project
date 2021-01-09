@@ -1,5 +1,11 @@
 import VueRouter from "vue-router"
 
+const originalPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push (location:string) {
+  // @ts-ignore
+  return originalPush.call(this, location).catch((err:any) => err)
+}
+
 export default new VueRouter({
   routes: [
     {

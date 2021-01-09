@@ -2,13 +2,13 @@ import Vue from 'vue'
 import router from '@/router'
 import axios from 'axios'
 axios.defaults.withCredentials = false;
-axios.defaults.headers['Content-Type'] = 'application/json';
 axios.defaults.headers['Accept'] = 'application/json';
 
 //添加一个请求拦截器
-/*
 axios.interceptors.request.use( (config:any) => {
     const token = sessionStorage.getItem('token');
+    const companyCode = sessionStorage.getItem('companyCode');
+    console.log(config.headers);
     let { data, url } : { data:object ,url:string} = config;
     let params = {};
 
@@ -19,12 +19,11 @@ axios.interceptors.request.use( (config:any) => {
 
     } else {
         //添加统一入参
-        params = {
-            companyCode:100003,
-        }
+        params = { companyCode, }
     }
     config.data = {...data, ...params};
-    // config.headers.common['web_token'] = token || '';
+    config.headers.common['webToken'] = token || '';
+    config.headers.common['Content-Type'] = config.ContentType || 'application/json';
     return config;
 }, function (error) {
     // Do something with request error
@@ -32,9 +31,9 @@ axios.interceptors.request.use( (config:any) => {
     console.info(error);
     return Promise.reject(error);
 });
-*/
 
-/*
+
+
 // 添加一个响应拦截器
 axios.interceptors.response.use(function (response) {
     if (response.status === 202){
@@ -51,16 +50,27 @@ axios.interceptors.response.use(function (response) {
             message: error.response.data.msg || '登录凭证已失效，请重新登录',
             type: 'error'
         });
-        sessionStorage.setItem('token','');
+        sessionStorage.clear();
         router.push({path: '/login'}).then(r => r);
     }
     return Promise.reject(error);
 })
-*/
 
 //通用方法
 export const POST = (url:string, params?:object) => {
     return axios.post(`${url}`, params).then(res => {
+        return res.data;
+    })
+}
+
+//FormData
+export const FormData = (url:string, params?:object) => {
+    return axios({
+        url,
+        params,
+        method: 'post',
+        headers:{'ContentType':'multipart/form-data'},
+    }).then(res => {
         return res.data;
     })
 }

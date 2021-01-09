@@ -40,7 +40,7 @@
       },
       onOk: function () {
         let id = '';
-        let fatherId = this.$props.department.departId || localStorage.getItem('companyCode');
+        let fatherId = this.$props.department.departId || sessionStorage.getItem('companyCode');
         if (this.$props.okText === '修改'){
           id = this.$props.department.departId;
         }else {

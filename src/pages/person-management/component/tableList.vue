@@ -38,6 +38,8 @@
   import SvgIcon from '@/components/svgIcon.vue';
   import { deletePerson, createBatchImportPersonExcel } from '@/request/person';
   import {showMessageAfterRequest} from "@/utils/common";
+  import { PERSON } from "@/request/type";
+
 
   export default Vue.extend({
     props:['searchParams'],
@@ -50,7 +52,7 @@
     data() {
       return {
         tableProps:{
-          url:'/mock/person/personSelectList',
+          url:`${PERSON}/person/personSelectList`,
           rowKey:'personId',
           firstColumn:{
             show:true,

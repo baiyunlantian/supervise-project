@@ -39,10 +39,18 @@
 
 <style lang="less">
   .main-container{
-    display: flex;
-    height: 95vh !important;
+    >div{
+      height: 95vh !important;
+    }
     >div:last-child{
-      flex: 1;
+      /*
+        同时拥有overflow hidden 和 display inline-block 的元素，会对行内元素垂直对齐 有影响，
+        导致原因是 overflow hidden 改变了默认对齐方式
+        解决方法：添加vertical-align
+      */
+      display: inline-block;
+      vertical-align: initial;
+      width: calc(100% - 50px) !important;
       padding: 1% 3% 0 1%;
       background-color: rgb(240, 247, 255);
     }

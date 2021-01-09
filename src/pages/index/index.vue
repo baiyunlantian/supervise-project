@@ -16,14 +16,14 @@
       Right,
     },
 
-    // beforeRouteEnter (to, from, next) {
-    //   const token = window.sessionStorage.getItem('token');
-    //   if (token === null || token == undefined || token === '' || token === 'null' || token === 'undefined' || token === '') {
-    //     next({ path: '/login' })
-    //   } else {
-    //     next();
-    //   }
-    // },
+    beforeRouteEnter (to, from, next) {
+      const token = window.sessionStorage.getItem('token');
+      if (token === null || token == undefined || token === '' || token === 'null' || token === 'undefined' || token === '') {
+        next({ path: '/login' })
+      } else {
+        next();
+      }
+    },
   })
 </script>
 

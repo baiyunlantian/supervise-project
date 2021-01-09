@@ -1,4 +1,4 @@
-export const PERSON = '/api/person-server';
-export const DATA = '/api/v-community/data';
-export const ACCOUNT = '/api/account-server';
+export const PERSON = '/api/v-project/person';
+export const DATA = '/api/v-project/data';
+export const ACCOUNT = '/api/v-project/account';
 export const MOCK = '/mock';

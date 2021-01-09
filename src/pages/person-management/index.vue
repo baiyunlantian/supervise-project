@@ -55,6 +55,7 @@
   import AddOrUpdatePersonDialog from './component/add-or-update-person-dialog.vue';
   import SetStationDialog from './component/set-station-dialog.vue';
   import Left from './component/left.vue';
+  import { PERSON } from "@/request/type";
 
   import { batchImportPerson,} from '@/request/person';
 
@@ -80,10 +81,10 @@
         personDialogVisible:false,
         personInfo:{},
         batchImportOptions:{
-          action:"/mock/person/personBatchInsert",
+          action:`${PERSON}/person/personBatchInsert`,
           name:'file',
           data:{
-            companyCode:'1',
+            companyCode:sessionStorage.getItem('companyCode'),
           },
           headers: {
             token: sessionStorage.getItem('token'),
@@ -121,8 +122,6 @@
         });
       }
     },
-    mounted(): void {
-    }
   })
 </script>
 

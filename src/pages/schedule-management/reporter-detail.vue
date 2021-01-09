@@ -150,7 +150,6 @@
       }
     },
     mounted(): void {
-      console.log('ok');
       this.formData = this.$route.query;
 
       getWarningCensus().then(res=>{

@@ -1,7 +1,10 @@
 const DEV_PROXY = {
     '/api': {
-        target: 'https://www.v-edu.net.cn',
+        target: 'http://192.168.1.21:82',
         changeOrigin: true,
+        // pathRewrite: {
+        //     '^/api' : ''
+        // },
     }
 };
 

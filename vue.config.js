@@ -14,9 +14,9 @@ module.exports = {
     runtimeCompiler: true, // 是否使用包含运行时编译器的 Vue 构建版本
     productionSourceMap: false, // 生产环境的 source map
     parallel: require('os').cpus().length > 1,
-    // devServer: {
-    //     proxy: IS_PROD === true ? PRO_PROXY : DEV_PROXY
-    // },
+    devServer: {
+        proxy: IS_PROD === true ? PRO_PROXY : DEV_PROXY
+    },
     css: {
         // requireModuleExtension: false,   //引入此配置会导致elementUI样式失效
         loaderOptions:{
@@ -83,6 +83,17 @@ module.exports = {
                 ...plugins
             ];
         }
+
+        //压缩图片
+        // config.module
+        //   .rule('images')
+        //   .test(/\.(png|jpe?g|gif|svg)(\?.*)?$/)
+        //   .use('image-webpack-loader')
+        //   .loader('image-webpack-loader')
+        //   .options({
+        //       bypassOnDebug: true
+        //   })
+        //   .end()
     },
     configureWebpack: config => {
         config.entry.app = ["babel-polyfill", "./src/main.ts"];

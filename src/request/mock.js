@@ -490,7 +490,7 @@ Mock.mock('/mock/schedule-management/reporter/infoCensus',(res,req)=>{
       face:Random.integer(0,20),
       safeHat:Random.integer(0,1),
       workArea:Random.integer(0,20),
-      clothes:Random.integer(0,20),
+      reflectiveClothing:Random.integer(0,20),
       climb:Random.integer(0,1),
       stop:Random.integer(0,20),
       fire:Random.integer(0,20),

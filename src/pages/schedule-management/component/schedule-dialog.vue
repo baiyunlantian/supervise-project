@@ -44,28 +44,28 @@
             {key:'detail',label:'任务详情',type:'textarea'},
             {key:'personList',label:'安排人员',type:'select',multiple:true,
               options:[
-                {value:1,label:'佩恩'},
-                {value:2,label:'自来也'},
-                {value:3,label:'佐助'},
-                {value:4,label:'柱间'},
-                {value:5,label:'鸣人'},
+                {value:'1',label:'佩恩'},
+                {value:'2',label:'自来也'},
+                {value:'3',label:'佐助'},
+                {value:'4',label:'柱间'},
+                {value:'5',label:'鸣人'},
               ],
             },
             {key:'dutyPersonId',label:'负责人',type:'select',
               options:[
-                {value:1,label:'长门'},
-                {value:2,label:'三代'},
-                {value:3,label:'大蛇丸'},
-                {value:4,label:'六道木'},
-                {value:5,label:'波风水门'},
+                {value:'1',label:'长门'},
+                {value:'2',label:'三代'},
+                {value:'3',label:'大蛇丸'},
+                {value:'4',label:'六道木'},
+                {value:'5',label:'波风水门'},
               ],
             },
             {key:'boxId',label:'绑定设备',type:'select',
               options:[
-                {value:1,label:'设备1'},
-                {value:2,label:'设备2'},
-                {value:3,label:'设备3'},
-                {value:4,label:'设备4'},
+                {value:'1',label:'设备1'},
+                {value:'2',label:'设备2'},
+                {value:'3',label:'设备3'},
+                {value:'4',label:'设备4'},
               ]
             },
           ],
@@ -97,8 +97,8 @@
             if (!data[key]) {
               delete data[key];
             }else if (key === 'time'){
-              data.dutyStartTime = moment(data.time[0]).format('yyyy.MM.DD');
-              data.dutyEndTime = moment(data.time[1]).format('yyyy.MM.DD');
+              data.dutyStartTime = moment(data.time[0]).format('yyyy-MM-DD')+' 00:00:00';
+              data.dutyEndTime = moment(data.time[1]).format('yyyy-MM-DD')+' 00:00:00';
               delete data.time;
             }
           })
@@ -106,6 +106,11 @@
           addSchedule(data).then(res=>{
             showMessageAfterRequest(res.data, '新增成功', '新增失败');
             res.data === true ? this.close(true) : this.close();
+          }).catch(e=>{
+            this.$message({
+              type:'error',
+              message:'新增失败'
+            });
           })
 
         })
