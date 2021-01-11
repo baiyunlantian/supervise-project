@@ -70,6 +70,7 @@
     <SetStationDialog
         :visible="setStationDialogVisible"
         @close="setData"
+        @updateStation="updateStation"
     />
 
   </div>
@@ -130,7 +131,7 @@
           res.data === true ? this.customRefreshTree(this.department.fatherId) : ''
         })
       },
-      handleGetTreeSelectList: function (resolve:Function, fatherId?:string, type?:string) {
+      handleGetTreeSelectList: async function (resolve:Function, fatherId?:string, type?:string) {
         let data = {
           fatherId:fatherId ? fatherId : sessionStorage.getItem('companyCode'),
         }
@@ -140,8 +141,13 @@
 
           const { departList, personList } = res.data;
           let list : any = [];
+          let departSelectList : any = [];
+          let departCommonMap = new Map();
 
           departList.forEach((item:any)=>{
+            departSelectList.push({value:item.departId, label:item.departName});
+            departCommonMap.set(item.departId, item.departName);
+
             list.push({
               fatherId:item.fatherId,
               departId:item.departId,
@@ -169,6 +175,8 @@
             this.customTreeList = list;
             return;
           }
+
+          this.$emit('updateTreeOrStation', 'departSelectList', departSelectList, 'departCommonMap', departCommonMap);
 
           resolve(list);
         }).catch(e=>{
@@ -223,6 +231,9 @@
           node.loaded = false;
           node.expand();
         }
+      },
+      updateStation: function (list:any, map:any) {
+        this.$emit('updateTreeOrStation', 'stationSelectList', list, 'stationCommonMap', map);
       }
     },
   })

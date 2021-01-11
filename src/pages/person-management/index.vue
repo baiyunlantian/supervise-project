@@ -1,6 +1,6 @@
 <template>
   <div id="person-management-container">
-    <Left />
+    <Left @updateTreeOrStation="setData"/>
 
     <div class="right">
       <div class="top">
@@ -32,16 +32,29 @@
                 color="#fff"
                 width="1.09375rem"
                 height="1.09375rem"
-                @click="toggleDialog('personInfo',{}, 'personDialogVisible', true)"
+                @click="setData('personInfo',{}, 'personDialogVisible', true)"
             />
           </div>
         </div>
       </div>
 
-      <NormalPersonList @toggleDialog="toggleDialog" :searchParams="searchParams" ref="childTable"/>
+      <NormalPersonList
+          ref="childTable"
+          @toggleDialog="setData"
+          :searchParams="searchParams"
+          :depart-common-map="departCommonMap"
+          :station-common-map="stationCommonMap"
+      />
     </div>
 
-    <AddOrUpdatePersonDialog :person-info="personInfo" :visible="personDialogVisible" @close="toggleDialog" @initTable="searchTable"/>
+    <AddOrUpdatePersonDialog
+        :person-info="personInfo"
+        :visible="personDialogVisible"
+        :depart-select-list="departSelectList"
+        :station-select-list="stationSelectList"
+        @close="setData"
+        @initTable="searchTable"
+    />
 
   </div>
 </template>
@@ -90,10 +103,14 @@
             token: sessionStorage.getItem('token'),
           },
         },
+        departSelectList:[],
+        departCommonMap:new Map(),
+        stationSelectList:[],
+        stationCommonMap:new Map(),
       }
     },
     methods: {
-      toggleDialog: function (key1:string, value1:any, key2:string, value2:any ) {
+      setData: function (key1:string, value1:any, key2:string, value2:any ) {
         this.$data[key1] = value1;
         this.$data[key2] = value2;
       },
@@ -120,7 +137,7 @@
           type: 'error',
           message: '导入失败!'
         });
-      }
+      },
     },
   })
 </script>

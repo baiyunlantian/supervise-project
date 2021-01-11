@@ -14,7 +14,7 @@
       </template>
       <template v-slot:operate="{row}" class="operate-btn">
         <SvgIcon name="edit" @click="triggerParentEvent('personInfo',row, 'personDialogVisible', true)"/>
-        <SvgIcon name="delete" @click="triggerParentEvent('personId',row.personId, 'deleteDialogVisible', true)"/>
+        <SvgIcon name="delete" @click="toggleDialog('personId',row.personId, 'deleteDialogVisible', true)"/>
       </template>
     </Table>
 
@@ -42,7 +42,7 @@
 
 
   export default Vue.extend({
-    props:['searchParams'],
+    props:['searchParams', 'departCommonMap', 'stationCommonMap', ],
     components:{
       Table,
       AddOrUpdatePersonDialog,
@@ -66,14 +66,22 @@
             {prop:'url',label:'照片',insertHtml:true,},
             {prop:'name',label:'姓名',},
             { prop:'sex',label:'性别',
-              format: function (value:number) {
+              format: (value:number) => {
                 return value === 1 ? '男' : '女'
               }
             },
             {prop:'ipNum',label:'身份证号',width: 200},
             {prop:'phone',label:'手机号',},
-            {prop:'departId',label:'部门',},
-            {prop:'station',label:'岗位'},
+            {prop:'departId',label:'部门',
+              format: (value:string) => {
+                return this.$props.departCommonMap.get(value);
+              }
+            },
+            {prop:'station',label:'岗位',
+              format: (value:string) => {
+                return this.$props.stationCommonMap.get(value);
+              }
+            },
             {prop:'code',label:'工号'},
             {prop:'remark',label:'备注'},
             {prop:'operate',label:'操作',insertHtml:true,width:100},
@@ -116,6 +124,10 @@
         formData.append('companyCode','1');
 
         createBatchImportPersonExcel(formData).then(res=>{})
+      },
+      initTable: function (data:object) {
+        //@ts-ignore
+        this.$refs.table.initTable(data);
       }
     },
   })

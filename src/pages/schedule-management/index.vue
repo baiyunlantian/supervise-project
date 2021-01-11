@@ -132,7 +132,8 @@
           rowKey:'personId',
           firstColumn:{
             show:true,
-            type:'selection'
+            type:'selection',
+            width:100
           },
           pagination:{
             pageSize:13

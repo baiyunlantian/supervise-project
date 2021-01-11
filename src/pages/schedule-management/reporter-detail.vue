@@ -6,7 +6,7 @@
     </div>
 
     <div class="form-content">
-      <i class="el-icon-cloudy" />
+      <SvgIcon name="exportReporterList"/>
       <Form
         :form-props="formProps"
         :form-data="formData"
@@ -22,82 +22,26 @@
       <div class="title fontBlackAndBold borderBottom">预警详情</div>
       <div class="warning-type-content">
 
-        <div class="type-items">
-          <div class="title">人脸识别预警</div>
+        <div
+            class="type-items"
+            v-for="(item, index) in censusList"
+            :key="index"
+        >
+          <div class="title">{{item.label || ''}}预警</div>
 
           <div class="list">
             <div
                 class="item"
-                v-for="(warningItem,index1) in faceList"
-                :key="index1"
+                v-for="(valueItem,valueIndex) in item.value || []"
+                :key="valueIndex"
             >
-              <div class="borderBottom">发生时间：{{warningItem.time}}</div>
+              <div class="borderBottom">发生时间：{{valueItem.createTime}}</div>
               <div class="img">
                 <img :src="require('@/assets/mission-person.jpg')" alt="***"/>
               </div>
-              <div>事件名称：{{warningItem.name}}</div>
-              <div>关联人员：{{warningItem.person}}</div>
-              <div>异常状态：{{warningItem.status}}</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="type-items">
-          <div class="title">安全帽预警</div>
-
-          <div class="list">
-            <div
-                class="item"
-                v-for="(warningItem,index1) in safeHatList"
-                :key="index1"
-            >
-              <div class="borderBottom">发生时间：{{warningItem.time}}</div>
-              <div class="img">
-                <img :src="require('@/assets/mission-person.jpg')" alt="***"/>
-              </div>
-              <div>事件名称：{{warningItem.name}}</div>
-              <div>关联人员：{{warningItem.person}}</div>
-              <div>异常状态：{{warningItem.status}}</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="type-items">
-          <div class="title">火灾预警</div>
-
-          <div class="list">
-            <div
-                class="item"
-                v-for="(warningItem,index1) in fireList"
-                :key="index1"
-            >
-              <div class="borderBottom">发生时间：{{warningItem.time}}</div>
-              <div class="img">
-                <img :src="require('@/assets/mission-person.jpg')" alt="***"/>
-              </div>
-              <div>事件名称：{{warningItem.name}}</div>
-              <div>关联人员：{{warningItem.person}}</div>
-              <div>异常状态：{{warningItem.status}}</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="type-items">
-          <div class="title">登高预警</div>
-
-          <div class="list">
-            <div
-                class="item"
-                v-for="(warningItem,index1) in climbList"
-                :key="index1"
-            >
-              <div class="borderBottom">发生时间：{{warningItem.time}}</div>
-              <div class="img">
-                <img :src="require('@/assets/mission-person.jpg')" alt="***"/>
-              </div>
-              <div>事件名称：{{warningItem.name}}</div>
-              <div>关联人员：{{warningItem.person}}</div>
-              <div>异常状态：{{warningItem.status}}</div>
+              <div>事件名称：{{valueItem.person || ''}}</div>
+              <div>关联人员：{{valueItem.personName || ''}}</div>
+              <div>异常状态：{{valueItem.isDeal === 0 ? '未处理' : '已处理'}}</div>
             </div>
           </div>
         </div>
@@ -112,20 +56,22 @@
   import GoBackBtn from '@/components/goBackBtn.vue';
   import Form from "@/components/form/index.vue";
   import WarningCensus from "@/components/warning-census/index.vue";
-  import { getWarningCensus, getWarningSelectList } from '@/request/schedule';
+  import SvgIcon from '@/components/svgIcon.vue';
+  import { getArrangeReportExceptionCensus,} from '@/request/schedule';
 
   export default Vue.extend({
     components:{
       GoBackBtn,
       Form,
       WarningCensus,
+      SvgIcon,
     },
     data() {
       return {
         formProps:{
           items:[
             {key:'code',label:'编号',type:'input'},
-            {key:'date',label:'日期',type:'input'},
+            {key:'buildTime',label:'日期',type:'input'},
             {key:'startTime',label:'开始检测时间',type:'input'},
             {key:'endTime',label:'结束检测时间',type:'input'},
           ],
@@ -133,7 +79,7 @@
         },
         formData:{},
         censusData:{},
-        warningList: [],
+        censusList:[],
         faceList:[],
         fireList:[],
         safeHatList:[],
@@ -141,45 +87,73 @@
       }
     },
     methods: {},
-    watch:{
-      warningList: {
-        handler: function (newVal, oldVal) {
-          console.log(newVal)
-        },
-        deep:true
-      }
-    },
     mounted(): void {
-      this.formData = this.$route.query;
+      // this.formData = this.$route.query.data || {};
+      //@ts-ignore
+      // let reportId = this.$route.query.data.reportId || '';
 
-      getWarningCensus().then(res=>{
-        if (!res.data) return
-        this.censusData = res.data;
+      getArrangeReportExceptionCensus().then(res=>{
+        if (!res.data) return;
+
+        let data = new Map();
+
+        ['face','fire','helmet','motionless','refectiveVest','region','tumble','climbHeight'].forEach((item,index)=>{
+          let list = [];
+          for (let i = 0; i < 4; i++){
+            list.push({
+              createTime:'2021-01-4 21:10:31',
+              personName:'佩恩',
+              person:'自来也',
+              isDeal:0,
+            });
+          }
+           data.set(item, list);
+        })
+
+        let censusData : any = {};
+        let censusList : any = [];
+
+        data.forEach((value:any, key:string)=>{
+          switch (key) {
+            case 'face':
+              censusData[key] = value.length || 0;
+              censusList.push({key, value, label:'人脸识别'});
+              break;
+            case 'fire':
+              censusData[key] = value.length || 0;
+              censusList.push({key, value, label:'火灾'});
+              break;
+            case 'helmet':
+              censusData['workArea'] = value.length || 0;
+              censusList.push({key, value, label:'人员入侵'});
+              break;
+            case 'motionless':
+              censusData['stop'] = value.length || 0;
+              censusList.push({key, value, label:'静止'});
+              break;
+            case 'refectiveVest':
+              censusData['reflectiveClothing'] = value.length || 0;
+              censusList.push({key, value, label:'反光衣'});
+              break;
+            case 'region':
+              censusData['safeHat'] = value.length || 0;
+              censusList.push({key, value, label:'安全帽'});
+              break;
+            case 'tumble':
+              censusData['fall'] = value.length || 0;
+              censusList.push({key, value, label:'跌倒'});
+              break;
+            case 'climbHeight':
+              censusData['climb'] = value.length || 0;
+              censusList.push({key, value, label:'登高'});
+              break;
+          }
+        })
+
+        this.censusData = censusData;
+        this.censusList = censusList;
       })
 
-      getWarningSelectList().then(res=>{
-        if (!res.data) return
-        //@ts-ignore
-        this.faceList = res.data.list;
-      })
-
-      getWarningSelectList().then(res=>{
-        if (!res.data) return
-        //@ts-ignore
-        this.safeHatList = res.data.list;
-      })
-
-      getWarningSelectList().then(res=>{
-        if (!res.data) return
-        //@ts-ignore
-        this.fireList = res.data.list;
-      })
-
-      getWarningSelectList().then(res=>{
-        if (!res.data) return
-        //@ts-ignore
-        this.climbList = res.data.list;
-      })
     },
   })
 </script>

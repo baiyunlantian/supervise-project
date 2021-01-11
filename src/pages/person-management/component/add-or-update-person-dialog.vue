@@ -48,7 +48,7 @@
   import {showMessageAfterRequest} from "@/utils/common";
 
   export default Vue.extend({
-    props:['visible','personInfo'],
+    props:['visible','personInfo', 'departSelectList', 'stationSelectList'],
     components:{
       Form,
     },
@@ -65,14 +65,8 @@
             },
             {key:'ipNum',label:'身份证号',type:'input'},
             {key:'phone',label:'手机号',type:'input'},
-            {key:'departId',label:'部门',type:'select',
-              options:[
-                {value:'1',label:'部门1'},
-                {value:'2',label:'部门2'},
-                {value:'3',label:'部门3'},
-              ]
-            },
-            {key:'station',label:'岗位',type:'input'},
+            {key:'departId',label:'部门',type:'select', options:[]},
+            {key:'station',label:'岗位',type:'select', options:[]},
             {key:'code',label:'工号',type:'input'},
           ],
           rules:{
@@ -162,7 +156,37 @@
     watch:{
       personInfo:{
         handler: function (newVal, oldVal) {
-          this.formData = newVal;
+          this.formData = JSON.parse(JSON.stringify(newVal));
+        },
+        deep:true,
+      },
+      departSelectList: {
+        handler: function (newVal, oldVal) {
+          //@ts-ignore
+          let items = JSON.parse(JSON.stringify(this.formProps.items));
+
+          items.forEach((item:any)=>{
+            if (item.key === 'departId'){
+              item.options = newVal;
+            }
+          })
+
+          this.$set(this.formProps, 'items', items);
+        },
+        deep:true,
+      },
+      stationSelectList: {
+        handler: function (newVal, oldVal) {
+          //@ts-ignore
+          let items = JSON.parse(JSON.stringify(this.formProps.items));
+
+          items.forEach((item:any)=>{
+            if (item.key === 'station'){
+              item.options = newVal;
+            }
+          })
+
+          this.$set(this.formProps, 'items', items);
         },
         deep:true,
       },

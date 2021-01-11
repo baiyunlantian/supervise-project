@@ -96,19 +96,6 @@
       }
     },
     methods: {
-      submit: function () {
-        let data : any = {};
-        this.stationList.forEach((item:any)=>{
-          //@ts-ignore
-          if (this.stationData[item.key]){
-            //@ts-ignore
-            data[item.key] = this.stationData[item.key];
-          }
-        });
-
-        console.log(data);
-        this.close();
-      },
       close: function () {
         this.operateType = '';
         this.disabledInput = true;
@@ -123,11 +110,16 @@
 
         getStationList().then(res=>{
           if (!res.data) return;
+          let stationSelectList : any = [];
+          let stationCommonMap = new Map();
 
           if (res.data.list && res.data.list.length > 0) {
             let data : any = {};
             let stationIds: any= [];
             let list = res.data.list.map((item:any)=>{
+              item.stationId = String(item.stationId);
+              stationSelectList.push({value:item.stationId, label:item.stationName});
+              stationCommonMap.set(item.stationId, item.stationName);
               data[item.stationId] = item.stationName;
               stationIds.push(item.stationId);
               return {key:item.stationId, label:'岗位：'}
@@ -137,6 +129,8 @@
             this.baseStationData = JSON.parse(JSON.stringify(data));
             this.stationList = list;
             this.stationIds = stationIds;
+
+            this.$emit('updateStation', stationSelectList, stationCommonMap);
           }
         })
       },
@@ -145,6 +139,15 @@
         let handleFn : any;
         let text : string;
         let list : any = [];
+
+        if (this.checkedStation.length === 0) {
+          this.$message({
+            type:'info',
+            message:'请选择岗位！'
+          });
+
+          return;
+        }
 
         if (this.operateType === 'edit'){
           handleFn = updateStation;
@@ -158,18 +161,19 @@
           handleFn = deleteStation;
           text = '删除';
           list =  this.checkedStation;
+        }
 
-          if (this.checkedStation.length === 0) {
-            this.$message({
-              type:'info',
-              message:'请选择岗位！'
-            });
+        if (list.length === 0) {
+          this.$message({
+            type:'info',
+            message:'请选择岗位！'
+          });
 
-            return;
-          }
+          return;
         }
 
         handleFn({list}).then((res:any)=>{
+          this.close();
           showMessageAfterRequest(res.data, text+'岗位成功', text+'岗位失败');
           res.data === true ? this.initStationList() : '';
         })

@@ -8,7 +8,6 @@ axios.defaults.headers['Accept'] = 'application/json';
 axios.interceptors.request.use( (config:any) => {
     const token = sessionStorage.getItem('token');
     const companyCode = sessionStorage.getItem('companyCode');
-    console.log(config.headers);
     let { data, url } : { data:object ,url:string} = config;
     let params = {};
 

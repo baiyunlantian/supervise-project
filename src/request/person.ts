@@ -3,11 +3,29 @@ import { MOCK, PERSON } from './type';
 
 
 export function addPerson (params?:object)  {
-  return API.FormData(`${PERSON}/person/personAdd`, params)
+  return fetch(`${PERSON}/person/personAdd`,
+    {
+      method: 'post',
+      //@ts-ignore
+      headers:{
+        webToken: sessionStorage.getItem('token')
+      },
+      //@ts-ignore
+      body: params,
+    }).then(res => res);
 }
 
 export function updatePerson (params?:object)  {
-  return API.FormData(`${PERSON}/person/personUpdate`, params)
+  return fetch(`${PERSON}/person/personUpdate`,
+    {
+      method: 'post',
+      //@ts-ignore
+      headers:{
+        webToken: sessionStorage.getItem('token')
+      },
+      //@ts-ignore
+      body: params,
+    }).then(res => res);
 }
 
 export function deletePerson (params?:object)  {

@@ -1,7 +1,7 @@
 <template>
   <div id="header-container">
     <div class="title">
-      <img :src="logoUrl || require('@/assets/vtouch.png')" alt="logo" />
+      <img :src="require('@/assets/vtouch.png')" alt="logo" />
       <div class="text">工程监督智能服务平台</div>
     </div>
     <SvgIcon

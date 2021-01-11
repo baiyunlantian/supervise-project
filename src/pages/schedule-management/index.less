@@ -1,6 +1,18 @@
 #schedule-management-container{
   #search-form-container{
     /deep/
+    .el-form-item__content{
+      .el-date-editor--daterange.el-input__inner{
+        width: auto;
+        background: transparent;
+      }
+      input{
+        width: 10vw;
+      }
+    }
+
+
+    /deep/
     .search-form-operate{
       .el-form-item__content{
         position: unset;
@@ -48,7 +60,8 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        width: 30%;
+        width: auto;
+        min-width: 30%;
         .mission-status{
           span{
             margin-left: 0.46875rem;

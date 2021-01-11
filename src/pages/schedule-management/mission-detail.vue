@@ -45,7 +45,7 @@
           <router-link
               :to="{
             path: '/schedule-management/reporter-detail',
-            query:{code:row.code, date:row.date, startTime:row.startTime, endTime:row.endTime}
+            query:{data:row}
           }">
             查看详情>>
           </router-link>
@@ -63,6 +63,7 @@
   import moment from "moment";
   import { exportExcl, showMessageAfterRequest } from '@/utils/common';
   import { getScheduleDetail, updateSchedule, batchDeleteSchedule } from "@/request/schedule";
+  import { PERSON } from "@/request/type";
 
   export default Vue.extend({
     components:{
@@ -121,17 +122,17 @@
           hiddenFooter:true
         },
         tableProps:{
-          url:'/mock/schedule-detail/reportSelectList',
+          url:`${PERSON}/arrange/arrangeReportSelect`,
           rowKey:'id',
           pagination:{
             pageSize:12
           },
           tableColumn:[
-            {prop:'date',label:'日期'},
+            {prop:'buildTime',label:'日期'},
             {prop:'code',label:'编号'},
             {prop:'startTime',label:'开始检测日期'},
             {prop:'endTime',label:'结束检测日期'},
-            {prop:'warningCount',label:'预警条数'},
+            {prop:'num',label:'预警条数'},
             {prop:'operate',label:'操作',insertHtml:true},
           ],
         },
@@ -150,11 +151,11 @@
         dataList.forEach((item:any,index:number)=>{
           let obj = [
             index+1,
-            moment(item.date).format('YYYY.MM.DD'),
+            moment(item.buildTime).format('YYYY.MM.DD'),
             item.code,
             item.startTime,
             item.endTime,
-            item.warningCount,
+            item.num,
           ];
           sheetData.push(obj);
         });

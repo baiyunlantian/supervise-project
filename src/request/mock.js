@@ -500,22 +500,25 @@ Mock.mock('/mock/schedule-management/reporter/infoCensus',(res,req)=>{
 });
 
 //排班管理--监督报告--预警信息统计
-Mock.mock('/mock/schedule-management/reporter/warningList',(res,req)=>{
-  let list = [];
+Mock.mock('/mock/arrange/arrangeReportExceptionCensus',(res,req)=>{
+  let data = new Map();
 
-  for (let i = 0; i < Random.integer(4,15); i++){
-    list.push({
-      time:Random.datetime('yyyy.MM.dd HH.mm.ss'),
-      name:Random.csentence(3,6),
-      person:Random.csentence(3,6),
-      status:Random.integer(0,4),
-    });
-  }
+  ['face','fire','helmet','motionless','refectiveVest','region','tumble','climbHeight'].forEach((item,index)=>{
+    let list = [];
+    for (let i = 0; i < Random.integer(1,8); i++){
+      list.push({
+        createTime:Random.datetime('yyyy.MM.dd HH.mm.ss'),
+        personName:Random.csentence(3,6),
+        person:Random.csentence(3,6),
+        isDeal:Random.integer(0,1),
+      });
+    }
+    data.set(item, list);
+  })
+
 
   return {
-    data:{
-      list
-    }
+    data
   }
 });
 
