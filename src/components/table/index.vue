@@ -2,7 +2,8 @@
   <div id="table-wrapper">
     <el-table
         :data="tableList"
-        :row-key="rowKey"
+        :row-key="tableProps.rowKey"
+        :expand-row-keys="expandRowKeys"
         style="width: 100%"
         :stripe="tableProps.showStripe"
         :border="tableProps.showBorder"
@@ -136,7 +137,11 @@
         type: Object as PropType<TABLE_PROPS>,
         required: true,
       },
-      searchParams:{}
+      searchParams:{},
+      expandRowKeys:{
+        type: Array,
+        required:false,
+      },
     },
     components:{
       Pagination,
@@ -144,7 +149,6 @@
     data() {
       return {
         url: '',
-        rowKey: '',
         pagination: {
           hideOnSinglePage: true,
           pageNum: 1,
@@ -226,7 +230,7 @@
 
       expandChange: function (row:any, expand:any) {
         //（展开行时，回调的第二个参数为 expandedRows；树形表格时第二参数为 expanded）
-
+        this.$emit('expandChange',row, expand);
       }
     },
 

@@ -13,6 +13,7 @@
       clearable
       :class="item.className"
       :multiple="item.multiple"
+      @change="selectChange"
   >
     <el-option
         v-for="(option, index) in item.options"
@@ -56,6 +57,11 @@
       formData:{
         type:Object,
         required:true,
+      }
+    },
+    methods:{
+      selectChange: function (option:any) {
+        this.$emit('selectChange', option);
       }
     },
   })

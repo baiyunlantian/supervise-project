@@ -9,28 +9,28 @@
       <div class="operate-btn">
         <SvgIcon
             name="edit"
-            @click="handleChangeInputDisabled('normal',false)"
-            v-if="disableInputs.normal"
+            @click="handleChangeInputDisabled('realtimeVoice',false)"
+            v-if="disableInputs.realtimeVoice"
         />
         <template v-else>
-          <i class="el-icon-success" @click="handleUpdateNormalVoice('normal')"/>
+          <i class="el-icon-success" @click="handleUpdateNormalVoice('realtimeVoice')"/>
           <SvgIcon
               name="goBack"
               color="rgb(136, 136, 136)"
-              @click="handleCancelUpdateVoice('normal',true)"
+              @click="handleCancelUpdateVoice('realtimeVoice',true)"
           />
         </template>
       </div>
 
       <Form
           ref="form"
-          :disabled="disableInputs.normal"
+          :disabled="disableInputs.realtimeVoice"
           :form-data="voiceFormData"
           :form-props="normalFormProps"
       >
-        <el-form-item label="播报内容：" prop="normal" slot="before">
-          <el-input v-model="voiceFormData.normal"/>
-          <span class="compute-num">{{voiceFormData.normal ? voiceFormData.normal.length : 0}}/30</span>
+        <el-form-item label="播报内容：" prop="realtimeVoice" slot="before">
+          <el-input v-model="voiceFormData.realtimeVoice"/>
+          <span class="compute-num">{{voiceFormData.realtimeVoice ? voiceFormData.realtimeVoice.length : 0}}/30</span>
         </el-form-item>
       </Form>
     </div>
@@ -67,7 +67,7 @@
           <div class="content">
             <div class="label">
               <div class="img">
-                <SvgIcon :name="item.key"/>
+                <SvgIcon :name="item.key.slice(0, item.key.length - 5)"/>
               </div>
               <div class="text">{{item.label}}</div>
             </div>
@@ -107,53 +107,55 @@
       return {
         normalFormProps:{
           items:[
-            {key:'count', label:'播报次数',type:'number'},
-            {key:'time', label:'间隔时间',type:'number'},
+            {key:'realtimeVoiceCount', label:'播报次数',type:'number'},
+            {key:'realtimeVoiceIntervalTime', label:'间隔时间',type:'number'},
           ],
           rules:{
-            normal:[{max:30, message: '超出最大限制', trigger: 'change'}],
+            realtimeVoice:[{max:30, message: '超出最大限制', trigger: 'change'}],
+            realtimeVoiceCount:[{max:30, message: '超出最大限制', trigger: 'change'}],
+            realtimeVoiceIntervalTime:[{max:3600, message: '超出最大限制', trigger: 'change'}],
           },
           showMessage:true,
           hiddenFooter:true,
         },
         //传给后台的值
         voiceFormData:{
-          normal:'',
-          count:0,
-          time:0
+          realtimeVoice:'',
+          realtimeVoiceCount:0,
+          realtimeVoiceIntervalTime:0
         },
         //仅用来展示
         baseVoiceFormData:{},
         disableInputs:{
-          normal:true,
-          face:true,
-          safeHat:true,
-          reflectiveClothing:true,
-          workArea:true,
-          fire:true,
-          stop:true,
-          climb:true,
-          fall:true,
+          realtimeVoice:true,
+          faceVoice:true,
+          helmetVoice:true,
+          refectiveVestVoice:true,
+          regionVoice:true,
+          fireVoice:true,
+          motionlessVoice:true,
+          climbHeightVoice:true,
+          tumbleVoice:true,
         },
         exceptionFormItems:[
-          {key:'face',label:'人脸识别预警',},
-          {key:'safeHat',label:'安全帽预警',},
-          {key:'reflectiveClothing',label:'反光衣预警',},
-          {key:'workArea',label:'作业区域预警',},
-          {key:'fire',label:'火灾预警',},
-          {key:'stop',label:'静止预警',},
-          {key:'climb',label:'登高预警',},
-          {key:'fall',label:'跌倒预警',},
+          {key:'faceVoice',label:'人脸识别预警',},
+          {key:'helmetVoice',label:'安全帽预警',},
+          {key:'refectiveVestVoice',label:'反光衣预警',},
+          {key:'regionVoice',label:'作业区域预警',},
+          {key:'fireVoice',label:'火灾预警',},
+          {key:'motionlessVoice',label:'静止预警',},
+          {key:'climbHeightVoice',label:'登高预警',},
+          {key:'tumbleVoice',label:'跌倒预警',},
         ],
         exceptionValidate:{
-          face:true,
-          safeHat:true,
-          reflectiveClothing:true,
-          workArea:true,
-          fire:true,
-          stop:true,
-          climb:true,
-          fall:true,
+          faceVoice:true,
+          helmetVoice:true,
+          refectiveVestVoice:true,
+          regionVoice:true,
+          fireVoice:true,
+          motionlessVoice:true,
+          climbHeightVoice:true,
+          tumbleVoice:true,
         },
       }
     },
@@ -163,13 +165,13 @@
         this.$set(this.disableInputs,key,value)
       },
       handleUpdateNormalVoice: function (key:string) {
-        let data : any = {};
+        let data : any = JSON.parse(JSON.stringify(this.baseVoiceFormData));
 
-        if (key === 'normal'){
+        if (key === 'realtimeVoice'){
           //@ts-ignore   校验实时播报内容长度
           this.$refs.form.validate((valid)=>{
-            const {normal, count, time} = this.voiceFormData;
-            data = {normal, count, time};
+            const {realtimeVoice, realtimeVoiceCount, realtimeVoiceIntervalTime} = this.voiceFormData;
+            data = {realtimeVoice, realtimeVoiceCount, realtimeVoiceIntervalTime};
           })
         }else {
           //@ts-ignore  校验异常语音内容长度
@@ -180,6 +182,9 @@
           //@ts-ignore
           data[key] = this.voiceFormData[key]
         }
+
+        data.realtimeVoiceCount = String(data.realtimeVoiceCount);
+        data.realtimeVoiceIntervalTime = String(data.realtimeVoiceIntervalTime);
 
         updateVoiceInfo(data).then(res=>{
           showMessageAfterRequest(res.data, '更新成功', '更新失败');
@@ -199,11 +204,11 @@
         //@ts-ignore    重置对应input的value
         this.$set(this.voiceFormData,disabledInputKey,this.baseVoiceFormData[disabledInputKey]);
 
-        if (disabledInputKey === 'normal'){
+        if (disabledInputKey === 'realtimeVoice'){
           //@ts-ignore
-          this.$set(this.voiceFormData,'count',this.baseVoiceFormData.count);
+          this.$set(this.voiceFormData,'realtimeVoiceCount',this.baseVoiceFormData.realtimeVoiceCount);
           //@ts-ignore
-          this.$set(this.voiceFormData,'time',this.baseVoiceFormData.time);
+          this.$set(this.voiceFormData,'realtimeVoiceIntervalTime',this.baseVoiceFormData.realtimeVoiceIntervalTime);
         }
       },
       //计算异常语音内容长度

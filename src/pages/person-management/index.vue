@@ -1,6 +1,9 @@
 <template>
   <div id="person-management-container">
-    <Left @updateTreeOrStation="setData"/>
+    <Left
+        @updateDepart="initDepart"
+        @updateStation="setData"
+    />
 
     <div class="right">
       <div class="top">
@@ -41,6 +44,7 @@
       <NormalPersonList
           ref="childTable"
           @toggleDialog="setData"
+          @initTableAndTree="initTableAndTree"
           :searchParams="searchParams"
           :depart-common-map="departCommonMap"
           :station-common-map="stationCommonMap"
@@ -53,7 +57,7 @@
         :depart-select-list="departSelectList"
         :station-select-list="stationSelectList"
         @close="setData"
-        @initTable="searchTable"
+        @initTableAndTree="initTableAndTree"
     />
 
   </div>
@@ -69,6 +73,7 @@
   import SetStationDialog from './component/set-station-dialog.vue';
   import Left from './component/left.vue';
   import { PERSON } from "@/request/type";
+  import { getDepartSelectList } from '@/request/department';
 
   import { batchImportPerson,} from '@/request/person';
 
@@ -138,7 +143,30 @@
           message: '导入失败!'
         });
       },
+      initTableAndTree: function () {
+        this.searchTable();
+        this.initTree();
+      },
+      initTree: function () {
+        //@ts-ignore
+        this.$refs.left.customRefreshTree();
+      },
+      initDepart: function () {
+        getDepartSelectList().then((res:any)=>{
+          if (!res.data) return;
+          let map = new Map();
+
+          res.data.list.forEach((item:any)=>{
+            map.set(item.departId, item.departName);
+          })
+          this.departSelectList = res.data.list || [];
+          this.departCommonMap = map;
+        })
+      }
     },
+    mounted(): void {
+      this.initDepart();
+    }
   })
 </script>
 

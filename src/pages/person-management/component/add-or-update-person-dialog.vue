@@ -48,7 +48,7 @@
   import {showMessageAfterRequest} from "@/utils/common";
 
   export default Vue.extend({
-    props:['visible','personInfo', 'departSelectList', 'stationSelectList'],
+    props:['visible','personInfo', 'stationSelectList'],
     components:{
       Form,
     },
@@ -126,7 +126,7 @@
 
           handleFn(formData).then((res:any)=>{
             showMessageAfterRequest(res.data, text+'人员成功', text+'人员失败');
-            res.data === true ? this.$emit('initTable') : '';
+            res.data === true ? this.$emit('initTableAndTree') : '';
             this.close();
           })
         });
@@ -157,21 +157,6 @@
       personInfo:{
         handler: function (newVal, oldVal) {
           this.formData = JSON.parse(JSON.stringify(newVal));
-        },
-        deep:true,
-      },
-      departSelectList: {
-        handler: function (newVal, oldVal) {
-          //@ts-ignore
-          let items = JSON.parse(JSON.stringify(this.formProps.items));
-
-          items.forEach((item:any)=>{
-            if (item.key === 'departId'){
-              item.options = newVal;
-            }
-          })
-
-          this.$set(this.formProps, 'items', items);
         },
         deep:true,
       },

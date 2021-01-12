@@ -80,17 +80,13 @@
         formData:{},
         censusData:{},
         censusList:[],
-        faceList:[],
-        fireList:[],
-        safeHatList:[],
-        climbList:[],
       }
     },
     methods: {},
     mounted(): void {
-      // this.formData = this.$route.query.data || {};
+      this.formData = this.$route.query.data || {};
       //@ts-ignore
-      // let reportId = this.$route.query.data.reportId || '';
+      let reportId = this.$route.query.data.reportId || '';
 
       getArrangeReportExceptionCensus().then(res=>{
         if (!res.data) return;
@@ -113,38 +109,31 @@
         let censusData : any = {};
         let censusList : any = [];
 
-        data.forEach((value:any, key:string)=>{
+        res.data.forEach((value:any, key:string)=>{
+          censusData[key] = value.length || 0;
           switch (key) {
             case 'face':
-              censusData[key] = value.length || 0;
               censusList.push({key, value, label:'人脸识别'});
               break;
             case 'fire':
-              censusData[key] = value.length || 0;
               censusList.push({key, value, label:'火灾'});
               break;
             case 'helmet':
-              censusData['workArea'] = value.length || 0;
               censusList.push({key, value, label:'人员入侵'});
               break;
             case 'motionless':
-              censusData['stop'] = value.length || 0;
               censusList.push({key, value, label:'静止'});
               break;
             case 'refectiveVest':
-              censusData['reflectiveClothing'] = value.length || 0;
               censusList.push({key, value, label:'反光衣'});
               break;
             case 'region':
-              censusData['safeHat'] = value.length || 0;
               censusList.push({key, value, label:'安全帽'});
               break;
             case 'tumble':
-              censusData['fall'] = value.length || 0;
               censusList.push({key, value, label:'跌倒'});
               break;
             case 'climbHeight':
-              censusData['climb'] = value.length || 0;
               censusList.push({key, value, label:'登高'});
               break;
           }

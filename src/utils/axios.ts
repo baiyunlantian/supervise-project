@@ -12,8 +12,8 @@ axios.interceptors.request.use( (config:any) => {
     let params = {};
 
     if (url.indexOf('/doLogin') < 0 && !token) {
-        sessionStorage.setItem('token','');
-        router.push({path: '/login'}).then(r => r);
+        // sessionStorage.setItem('token','');
+        // router.push({path: '/login'}).then(r => r);
     }else if (url.indexOf('/doLogin') > 0) {
 
     } else {

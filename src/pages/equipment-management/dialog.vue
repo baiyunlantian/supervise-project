@@ -37,14 +37,12 @@
             {key:'name',label:'设备名称',type:'input'},
             {key:'ip',label:'IP',type:'input',},
             {key:'port',label:'端口',type:'input'},
-            {key:'account',label:'账号',type:'input'},
+            {key:'username',label:'账号',type:'input'},
             {key:'password',label:'密码',type:'input',},
-            {key:'status',label:'状态',type:'select',
+            {key:'trouble',label:'状态',type:'select',
               options:[
-                {value:0,label:'在线'},
-                {value:1,label:'离线'},
-                {value:2,label:'故障'},
-                {value:3,label:'闲置'},
+                {value:0,label:'正常'},
+                {value:1,label:'故障'},
               ]
             },
             {key:'remark',label:'备注',type:'input'},

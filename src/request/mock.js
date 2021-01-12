@@ -452,23 +452,24 @@ Mock.mock('/mock/equipment/selectList',(res,req)=>{
 });
 
 //设备管理--语音播报--语音内容
-Mock.mock('/mock/equipment/voiceInfo',(res,req)=>{
-  const body = JSON.parse(res.body);
+Mock.mock('/mock/camera/cameraList',(res,req)=>{
+  let list = [];
+
+  for (let i = 0; i < 3; i++){
+    list.push({
+      id:Random.integer(1,99999),
+      name:'摄像头'+Random.integer(1,1000),
+      ip:'127.0.0.1',
+      port:Random.integer(50,200),
+      account:'admin',
+      password:'123456',
+      enable:Random.integer(0,1),
+      remark:Random.csentence(3,5),
+    });
+  }
 
   return {
-    data:{
-      normal:Random.csentence(1,29),
-      face:Random.csentence(1,19),
-      safeHat:Random.csentence(1,19),
-      reflectiveClothing:Random.csentence(1,19),
-      workArea:Random.csentence(1,19),
-      fire:Random.csentence(1,19),
-      stop:Random.csentence(1,19),
-      climb:Random.csentence(1,19),
-      fall:Random.csentence(1,19),
-      count:Random.integer(1,100),
-      time:Random.integer(1,1000),
-    }
+    data:list
   }
 });
 

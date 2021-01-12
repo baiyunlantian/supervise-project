@@ -30,13 +30,13 @@
       return {
         censusConfig:[
           { key:'face',label:'人脸识别预警',},
-          { key:'safeHat',label:'安全帽预警',},
-          { key:'workArea',label:'人员入侵预警',},
-          { key:'reflectiveClothing',label:'反光衣预警',},
-          { key:'climb',label:'高空作业安全带预警',},
-          { key:'stop',label:'静止预警',},
+          { key:'region',label:'安全帽预警',},
+          { key:'helmet',label:'人员入侵预警',},
+          { key:'refectiveVest',label:'反光衣预警',},
+          { key:'climbHeight',label:'高空作业安全带预警',},
+          { key:'motionless',label:'静止预警',},
           { key:'fire',label:'火灾预警',},
-          { key:'fall',label:'跌倒预警',},
+          { key:'tumble',label:'跌倒预警',},
         ],
         colors:['#fff','rgb(102, 102, 102)'],
       }

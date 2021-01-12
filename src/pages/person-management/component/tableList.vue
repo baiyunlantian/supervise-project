@@ -111,12 +111,11 @@
         this.handleDeletePerson({personIds})
       },
       handleDeletePerson: function (personIds:object) {
-        console.log(personIds)
 
         deletePerson(personIds).then(res=>{
           showMessageAfterRequest(res.data, '删除人员成功', '删除人员失败');
           //@ts-ignore
-          res.data === true ? this.$refs.table.initTable(this.$props.searchParams) : '';
+          res.data === true ? this.$emit('initTableAndTree') : '';
         })
       },
       exportPersonExcel: function () {

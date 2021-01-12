@@ -14,6 +14,7 @@
         ref="form"
         :form-data="formData"
         :form-props="formProps"
+        @selectChange="selectChange"
     />
 
     <template slot="footer">
@@ -27,7 +28,7 @@
   import Vue from 'vue';
   import Form from '@/components/form/index.vue';
   import moment from "moment";
-  import { addSchedule } from "@/request/schedule";
+  import {addSchedule, getPersonSelectList} from "@/request/schedule";
   import {showMessageAfterRequest} from "@/utils/common";
 
   export default Vue.extend({
@@ -42,24 +43,8 @@
             {key:'time',label:'任务时间',type:'daterange',startPlaceholder:'开始时间',endPlaceholder:'结束时间'},
             {key:'arrangeName',label:'任务名称',type:'input'},
             {key:'detail',label:'任务详情',type:'textarea'},
-            {key:'personList',label:'安排人员',type:'select',multiple:true,
-              options:[
-                {value:'1',label:'佩恩'},
-                {value:'2',label:'自来也'},
-                {value:'3',label:'佐助'},
-                {value:'4',label:'柱间'},
-                {value:'5',label:'鸣人'},
-              ],
-            },
-            {key:'dutyPersonId',label:'负责人',type:'select',
-              options:[
-                {value:'1',label:'长门'},
-                {value:'2',label:'三代'},
-                {value:'3',label:'大蛇丸'},
-                {value:'4',label:'六道木'},
-                {value:'5',label:'波风水门'},
-              ],
-            },
+            {key:'personList',label:'安排人员',type:'select',multiple:true, options:[],},
+            {key:'dutyPersonId',label:'负责人',type:'select', options:[],},
             {key:'boxId',label:'绑定设备',type:'select',
               options:[
                 {value:'1',label:'设备1'},
@@ -114,9 +99,34 @@
           })
 
         })
+      },
+      selectChange: function (options:any) {
+        let items = JSON.parse(JSON.stringify(this.formProps.items));
 
+        items.forEach((item:any)=>{
+          if (item.key === 'dutyPersonId'){
+            item.options = options || [];
+          }
+        })
+
+        this.$set(this.formProps, 'items', items);
       }
     },
+    mounted(): void {
+      getPersonSelectList().then((res:any)=>{
+        if (!res.data) return;
+
+        let items = JSON.parse(JSON.stringify(this.formProps.items));
+
+        items.forEach((item:any)=>{
+          if (item.key === 'personId'){
+            item.options = res.data.list || [];
+          }
+        })
+
+        this.$set(this.formProps, 'items', items);
+      })
+    }
   })
 </script>
 

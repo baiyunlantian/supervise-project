@@ -125,7 +125,6 @@
               {value:3,label:'已归还'},
             ]
           },
-
         ],
         tableProps:{
           url:`${PERSON}/arrange/arrangeSelectList`,

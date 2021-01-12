@@ -141,12 +141,8 @@
 
           const { departList, personList } = res.data;
           let list : any = [];
-          let departSelectList : any = [];
-          let departCommonMap = new Map();
 
           departList.forEach((item:any)=>{
-            departSelectList.push({value:item.departId, label:item.departName});
-            departCommonMap.set(item.departId, item.departName);
 
             list.push({
               fatherId:item.fatherId,
@@ -176,7 +172,7 @@
             return;
           }
 
-          this.$emit('updateTreeOrStation', 'departSelectList', departSelectList, 'departCommonMap', departCommonMap);
+          this.$emit('updateDepart');
 
           resolve(list);
         }).catch(e=>{
@@ -220,7 +216,7 @@
         this.$data[key2] = value2;
       },
       //手动刷新节点树
-      customRefreshTree: function (fatherId:string) {
+      customRefreshTree: function (fatherId = sessionStorage.getItem('companyCode')) {
         if (fatherId === sessionStorage.getItem('companyCode')) {
           //操作一级部门
           this.loadTree(this.firstNode, this.resolveFn, 'custom')
@@ -233,7 +229,7 @@
         }
       },
       updateStation: function (list:any, map:any) {
-        this.$emit('updateTreeOrStation', 'stationSelectList', list, 'stationCommonMap', map);
+        this.$emit('updateStation', 'stationSelectList', list, 'stationCommonMap', map);
       }
     },
   })

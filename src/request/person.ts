@@ -1,5 +1,5 @@
 import * as API from '@/utils/axios';
-import { MOCK, PERSON } from './type';
+import { PERSON } from './type';
 
 
 export function addPerson (params?:object)  {

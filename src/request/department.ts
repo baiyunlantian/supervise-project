@@ -1,5 +1,5 @@
 import * as API from '@/utils/axios';
-import { MOCK, PERSON } from './type';
+import { MOCK, PERSON, ACCOUNT } from './type';
 
 
 export function getDepartmentTreeList (params?:object)  {
@@ -32,4 +32,19 @@ export function updateStation (params?:object)  {
 
 export function deleteStation (params?:object)  {
   return API.POST(`${PERSON}/depart/stationDelete`, params)
+}
+
+export function getDepartSelectList() {
+  return fetch(`${ACCOUNT}/assist/departList`,
+    {
+      method: 'post',
+      //@ts-ignore
+      headers:{
+        webToken: sessionStorage.getItem('token')
+      },
+      body: {
+        //@ts-ignore
+        companyCode:sessionStorage.getItem('companyCode')
+      },
+    }).then(res => res);
 }

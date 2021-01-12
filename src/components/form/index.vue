@@ -21,7 +21,11 @@
         :prop="item.key"
         :label-width="item.width"
     >
-      <GetFormItem :formData="formData" :item="item"/>
+      <GetFormItem
+          :formData="formData"
+          :item="item"
+          @selectChange="selectChange"
+      />
     </el-form-item>
 
     <!--  自定义插入内容--插入位置--后  -->
@@ -93,7 +97,10 @@
             return false;
           }
         });
-      }
+      },
+      selectChange: function (option:any) {
+        this.$emit('selectChange', option);
+      },
     },
   })
 </script>
