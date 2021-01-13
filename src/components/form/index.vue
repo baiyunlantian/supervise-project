@@ -100,7 +100,7 @@
       },
       selectChange: function (option:any) {
         this.$emit('selectChange', option);
-      },
+      }
     },
   })
 </script>

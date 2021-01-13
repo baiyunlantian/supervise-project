@@ -80,7 +80,11 @@
       </Table>
     </div>
 
-    <ScheduleDialog :visible="visible" @toggle="toggleDialog"/>
+    <ScheduleDialog
+        :visible="visible"
+        :person-select-list="personSelectList"
+        @toggle="toggleDialog"
+    />
   </div>
 </template>
 
@@ -93,6 +97,7 @@
   import moment from "moment";
   import SvgIcon from "@/components/svgIcon.vue";
   import { batchDeleteSchedule } from "@/request/schedule";
+  import { getPersonSelectList } from "@/request/common";
   import {showMessageAfterRequest} from "@/utils/common";
   import { PERSON, MOCK } from "@/request/type";
 
@@ -109,7 +114,7 @@
       return {
         formItemsProp:[
           {key:'time',label:'任务时间',type:'daterange'},
-          {key:'personId',label:'人员',type:'input'},
+          {key:'personId',label:'人员',type:'select',options:[]},
           {key:'boxId',label:'设备',type:'select',
             options:[
               {value:1,label:'设备1'},
@@ -157,6 +162,7 @@
         arrangeName:'',
         visible:false,
         arrangeIds:[],
+        personSelectList:[],
       }
     },
     methods: {
@@ -214,7 +220,35 @@
       multipleSelectChange: function (value:any) {
         this.arrangeIds = value.map((item:any)=>item.arrangeId);
       },
+      initPersonSelectList: function (formData:object) {
+        getPersonSelectList(formData).then((res:any)=>{
+          if (!res.data) return;
+
+          let targetIndex = 0;
+          let targetItem : any = {};
+          let list = res.data.list.map((item:any)=>{
+            return {value:item.personId, label:item.personName}
+          })
+
+          this.formItemsProp.forEach((item:any, index:number)=>{
+            if (item.key === 'personId'){
+              targetIndex = index;
+              targetItem = JSON.parse(JSON.stringify(item));
+              targetItem.options = list;
+            }
+          })
+
+          this.personSelectList = list;
+          this.formItemsProp.splice(targetIndex, 1, targetItem)
+        })
+      }
     },
+    mounted(): void {
+      let formData = new FormData();
+      formData.append('companyCode', sessionStorage.getItem('companyCode') || '');
+
+      this.initPersonSelectList(formData);
+    }
   })
 </script>
 

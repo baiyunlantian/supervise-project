@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import router from '@/router'
 import axios from 'axios'
+import {PERSON} from "@/request/type";
 axios.defaults.withCredentials = false;
 axios.defaults.headers['Accept'] = 'application/json';
 
@@ -12,8 +13,8 @@ axios.interceptors.request.use( (config:any) => {
     let params = {};
 
     if (url.indexOf('/doLogin') < 0 && !token) {
-        // sessionStorage.setItem('token','');
-        // router.push({path: '/login'}).then(r => r);
+        sessionStorage.setItem('token','');
+        router.push({path: '/login'}).then(r => r);
     }else if (url.indexOf('/doLogin') > 0) {
 
     } else {
@@ -62,14 +63,17 @@ export const POST = (url:string, params?:object) => {
     })
 }
 
-//FormData
-export const FormData = (url:string, params?:object) => {
-    return axios({
-        url,
-        params,
-        method: 'post',
-        headers:{'ContentType':'multipart/form-data'},
-    }).then(res => {
-        return res.data;
-    })
+//接受FormData格式参数
+export const fetchCommon = (url:string, params?:object) => {
+    return fetch(url,
+      {
+          method: 'post',
+          //@ts-ignore
+          headers:{
+              webToken: sessionStorage.getItem('token')
+          },
+          //@ts-ignore
+          body: params,
+      })
+      .then(res => res.json());
 }

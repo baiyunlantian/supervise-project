@@ -30,8 +30,10 @@
       />
       <div class="remark-item">
         <div class="label">备注</div>
-        <el-input v-model="formData.remark"/>
+        <el-input v-model="formData.remark" @input="value=>checkRemarkLength(value)"/>
+        <div class="tip" v-show="!remarkValid">最大长度不能超过30个字</div>
       </div>
+
     </div>
 
     <template slot="footer">
@@ -48,7 +50,7 @@
   import {showMessageAfterRequest} from "@/utils/common";
 
   export default Vue.extend({
-    props:['visible','personInfo', 'stationSelectList'],
+    props:['visible','personInfo', 'stationSelectList', 'departSelectList'],
     components:{
       Form,
     },
@@ -70,18 +72,13 @@
             {key:'code',label:'工号',type:'input'},
           ],
           rules:{
-            // name:[{ required: true, message: '请输入姓名', trigger: 'blur'},],
-            // sex:[{ required: true, message: '请选择性别', trigger: 'blur'},],
-            // ipNum:[
-            //   { required: true, message: '请输入身份证号', trigger: 'blur'},
-            //   { min: 16, max: 18, message: '请输入16-18位的身份证号', trigger: 'blur' }
-            // ],
+            name:[{ min: 1, max: 10,message: '最大长度为10个字',trigger: 'blur'},],
+            ipNum:[{ min: 16, max: 18, message: '请输入16-18位的身份证号', trigger: 'blur' }],
             phone:[
               { required: true, message: '请输入手机号', trigger: 'blur'},
               { min: 11, max: 11,message: '请输入11位数的手机号',trigger: 'blur'}
             ],
             departId:[{ required: true, message: '请选择部门', trigger: 'blur'},],
-            // station:[{ required: true, message: '请填写岗位', trigger: 'blur'},],
           },
           hiddenFooter:true,
           inlineMessage:false,
@@ -91,14 +88,18 @@
           remark:''
         },
         imgUrl:'',
+        imgFile:'',
+        remarkValid:true,
       }
     },
     methods: {
       close: function () {
         this.imgUrl = '';
+        this.imgFile = '';
         this.$emit('close','personDialogVisible', false, 'personInfo',{})
       },
       submit: function() {
+        if (!this.remarkValid) return;
         //@ts-ignore
         this.$refs.form.validate((valid) => {
           let formData = new FormData();
@@ -112,8 +113,8 @@
             }
           })
 
-          if (this.imgUrl){
-            formData.append('file',this.imgUrl);
+          if (this.imgFile){
+            formData.append('file',this.imgFile);
           }
 
           let handleFn : Function = addPerson;
@@ -125,13 +126,14 @@
           }
 
           handleFn(formData).then((res:any)=>{
-            showMessageAfterRequest(res.data, text+'人员成功', text+'人员失败');
+            showMessageAfterRequest(res.data, text+'人员成功', res.msg || text+'人员失败');
             res.data === true ? this.$emit('initTableAndTree') : '';
             this.close();
           })
         });
       },
       getFile: function (file:any, fileList:any) {
+        this.imgFile = file.raw;
         this.getBase64(file.raw).then((base64:any) => {
           this.imgUrl = base64;
         });
@@ -152,6 +154,14 @@
           };
         });
       },
+      checkRemarkLength: function (value:string) {
+        console.log(value)
+        if (value && value.length > 30){
+          this.remarkValid = false;
+        }else {
+          this.remarkValid = true;
+        }
+      }
     },
     watch:{
       personInfo:{
@@ -167,6 +177,21 @@
 
           items.forEach((item:any)=>{
             if (item.key === 'station'){
+              item.options = newVal;
+            }
+          })
+
+          this.$set(this.formProps, 'items', items);
+        },
+        deep:true,
+      },
+      departSelectList: {
+        handler: function (newVal, oldVal) {
+          //@ts-ignore
+          let items = JSON.parse(JSON.stringify(this.formProps.items));
+
+          items.forEach((item:any)=>{
+            if (item.key === 'departId'){
               item.options = newVal;
             }
           })

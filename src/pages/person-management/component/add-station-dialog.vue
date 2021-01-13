@@ -45,6 +45,13 @@
             this.valid = true;
           }
 
+          if (this.name.length > 10){
+            this.valid = false;
+            this.tipText = '最大长度为10个字';
+          }else {
+            this.valid = true;
+          }
+
         }else {
           this.tipText = '请填写岗位名称';
           this.valid = false;

@@ -28,18 +28,3 @@ export function getScheduleDetail (params?:object)  {
 export function getArrangeReportExceptionCensus (params?:object)  {
   return API.POST(`${MOCK}/arrange/arrangeReportExceptionCensus`, params)
 }
-
-export function getPersonSelectList ()  {
-  return fetch(`${PERSON}/assist/personList`,
-    {
-      method: 'post',
-      //@ts-ignore
-      headers:{
-        webToken: sessionStorage.getItem('token')
-      },
-      body: {
-        //@ts-ignore
-        companyCode:sessionStorage.getItem('companyCode')
-      },
-    }).then(res => res);
-}

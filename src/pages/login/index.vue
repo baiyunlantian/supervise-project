@@ -1,13 +1,6 @@
 <template>
   <div class="login-container">
     <div class="content">
-      <div class="text-content">
-        <div class="logo">
-          <img :src="require('@/assets/login-logo.png')"/>
-        </div>
-        <h1 class="title-main">工程监督智能服务平台</h1>
-        <h4 class="title-sub">ENGINEERING SUPERVISION FUNCTION SERVICE PLATFORM</h4>
-      </div>
 
       <el-form
           ref="form"

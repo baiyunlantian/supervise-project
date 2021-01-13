@@ -1,6 +1,7 @@
 <template>
   <div id="person-management-container">
     <Left
+        ref="left"
         @updateDepart="initDepart"
         @updateStation="setData"
     />
@@ -73,7 +74,7 @@
   import SetStationDialog from './component/set-station-dialog.vue';
   import Left from './component/left.vue';
   import { PERSON } from "@/request/type";
-  import { getDepartSelectList } from '@/request/department';
+  import { getDepartSelectList } from '@/request/common';
 
   import { batchImportPerson,} from '@/request/person';
 
@@ -152,14 +153,21 @@
         this.$refs.left.customRefreshTree();
       },
       initDepart: function () {
-        getDepartSelectList().then((res:any)=>{
+        let formData = new FormData();
+
+        formData.append('companyCode', sessionStorage.getItem('companyCode') || '');
+
+        getDepartSelectList(formData).then((res:any)=>{
           if (!res.data) return;
           let map = new Map();
+          let list : any = [];
 
           res.data.list.forEach((item:any)=>{
+            list.push({value:item.departId, label:item.departName})
             map.set(item.departId, item.departName);
           })
-          this.departSelectList = res.data.list || [];
+
+          this.departSelectList = list;
           this.departCommonMap = map;
         })
       }

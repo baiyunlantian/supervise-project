@@ -8,9 +8,9 @@
   >
     <div class="content">
       <span>部门名称</span>
-      <el-input v-model="name" @blur="checkValid"/>
+      <el-input v-model="name" @input="checkValid"/>
     </div>
-    <div class="tip" v-show="!valid">请填写部门名称</div>
+    <div class="tip" v-show="!valid">{{tipText}}</div>
 
     <template slot="footer">
       <el-button type="primary" @click="onOk">{{okText}}</el-button>
@@ -22,6 +22,7 @@
 <script lang="ts">
   import Vue from 'vue';
   import Form from '@/components/form/index.vue';
+  import {IllegalString} from "@/utils/common";
 
   export default Vue.extend({
     props:['department','visible','title','okText'],
@@ -32,6 +33,7 @@
       return {
         name:'',
         valid:true,
+        tipText:'',
       }
     },
     methods: {
@@ -58,7 +60,24 @@
         this.close();
       },
       checkValid: function () {
-        this.valid = this.name ? true : false;
+        if (this.name){
+          if(IllegalString.test(this.name)){
+            this.valid = false;
+            this.tipText = '含有非法字符';
+          }else {
+            this.valid = true;
+          }
+
+          if (this.name.length > 10){
+            this.valid = false;
+            this.tipText = '最大长度为10个字';
+          }else {
+            this.valid = true;
+          }
+        }else {
+          this.valid = false;
+          this.tipText = '请输入部门名称';
+        }
       }
     },
     watch:{

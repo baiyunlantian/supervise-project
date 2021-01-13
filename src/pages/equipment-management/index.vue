@@ -135,7 +135,7 @@
           },
         ],
         tableProps:{
-          url:`/mock/equipment/selectList`,
+          url:`${BOX}/edgebox/boxList`,
           rowKey:'boxId',
           highlight:true,
           pagination:{

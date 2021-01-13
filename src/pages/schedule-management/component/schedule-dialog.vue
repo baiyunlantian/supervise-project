@@ -28,11 +28,11 @@
   import Vue from 'vue';
   import Form from '@/components/form/index.vue';
   import moment from "moment";
-  import {addSchedule, getPersonSelectList} from "@/request/schedule";
+  import { addSchedule } from "@/request/schedule";
   import {showMessageAfterRequest} from "@/utils/common";
 
   export default Vue.extend({
-    props:['visible'],
+    props:['visible', 'personSelectList'],
     components:{
       Form,
     },
@@ -101,32 +101,45 @@
         })
       },
       selectChange: function (options:any) {
+        let list = this.filterDutyPersonList(options);
         let items = JSON.parse(JSON.stringify(this.formProps.items));
 
         items.forEach((item:any)=>{
           if (item.key === 'dutyPersonId'){
-            item.options = options || [];
+            item.options = list;
           }
         })
 
         this.$set(this.formProps, 'items', items);
+      },
+      filterDutyPersonList: function (options:any):object {
+        let dutyPersonList : any = [];
+
+        (options || []).forEach((option:string)=>{
+          let filterArray = this.$props.personSelectList.filter((item:any)=>item.value === option);
+
+          filterArray && filterArray.length > 0 ? dutyPersonList.push(filterArray[0]) : '';
+        })
+
+        return dutyPersonList;
       }
     },
-    mounted(): void {
-      getPersonSelectList().then((res:any)=>{
-        if (!res.data) return;
+    watch:{
+      personSelectList:{
+        handler: function(newVal, oldVal){
+          let items = JSON.parse(JSON.stringify(this.formProps.items));
 
-        let items = JSON.parse(JSON.stringify(this.formProps.items));
+          items.forEach((item:any)=>{
+            if (item.key === 'personList'){
+              item.options = newVal || [];
+            }
+          })
 
-        items.forEach((item:any)=>{
-          if (item.key === 'personId'){
-            item.options = res.data.list || [];
-          }
-        })
-
-        this.$set(this.formProps, 'items', items);
-      })
-    }
+          this.$set(this.formProps, 'items', items);
+        },
+        deep:true,
+      }
+    },
   })
 </script>
 

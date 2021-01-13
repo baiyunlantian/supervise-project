@@ -65,11 +65,8 @@
 <script lang="ts">
   import Vue from 'vue';
   import AddStationDialog from './add-station-dialog.vue';
-  import {
-    updateStation,
-    deleteStation,
-    getStationList
-  } from "@/request/department";
+  import { updateStation, deleteStation, } from "@/request/department";
+  import { getStationList } from "@/request/common";
   import {showMessageAfterRequest} from "@/utils/common";
 
   export default Vue.extend({
@@ -85,6 +82,7 @@
         rules: {
           stationName:[
             { required: true, message: '请输入岗位', trigger: 'blur'},
+            { min:1, max:10, message: '最大长度为10个字', trigger: 'blur'},
           ],
         },
         operateType:'',
@@ -107,8 +105,11 @@
       },
       initStationList: function (init = true) {
         if (!init) return;
+        let formData = new FormData();
 
-        getStationList().then(res=>{
+        formData.append('companyCode', sessionStorage.getItem('companyCode') || '');
+
+        getStationList(formData).then((res:any)=>{
           if (!res.data) return;
           let stationSelectList : any = [];
           let stationCommonMap = new Map();
@@ -119,7 +120,7 @@
             let list = res.data.list.map((item:any)=>{
               item.stationId = String(item.stationId);
               stationSelectList.push({value:item.stationId, label:item.stationName});
-              stationCommonMap.set(item.stationId, item.stationName);
+              stationCommonMap.set(Number(item.stationId), item.stationName);
               data[item.stationId] = item.stationName;
               stationIds.push(item.stationId);
               return {key:item.stationId, label:'岗位：'}
@@ -155,7 +156,7 @@
 
           Object.keys(this.stationData).forEach(key=>{
             //@ts-ignore
-            list.push(`${key},${this.stationData[key]}`)
+            list.push(`${key}-${this.stationData[key]}`)
           })
         }else if (this.operateType === 'delete'){
           handleFn = deleteStation;
