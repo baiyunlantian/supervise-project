@@ -93,7 +93,7 @@
   import Dialog from './dialog.vue';
   import SvgIcon from '@/components/svgIcon.vue';
   import { getEquipmentCensus, deleteEquipment } from "@/request/equipment";
-  import { getCameraList } from "@/request/camera";
+  import { getCameraList } from "@/request/equipment";
   import {showMessageAfterRequest} from "@/utils/common";
   import {BOX} from "@/request/type";
 

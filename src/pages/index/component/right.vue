@@ -78,7 +78,7 @@
   import Vue from "vue";
   import WarningCensus from '@/components/warning-census/index.vue';
   import SvgIcon from '@/components/svgIcon.vue';
-  import { getWarningCensus } from '@/request/schedule';
+  import { getExceptionCensus } from '@/request/exception';
   import {VideoSrc} from "@/utils/common";
 
   export default Vue.extend({
@@ -88,7 +88,16 @@
     },
     data(){
       return{
-        warningCensus:{},
+        warningCensus:{
+          face:0,
+          helmet:0,
+          region:0,
+          refectiveVest:0,
+          climbHeight:0,
+          motionless:0,
+          fire:0,
+          tumble:0
+        },
         status:false,
         layout:'three',
         monitorList:[1,2,3,4],
@@ -171,9 +180,42 @@
       },
     },
     mounted(): void {
-      getWarningCensus().then(res=>{
+      getExceptionCensus().then(res=>{
         if (!res.data) return
-        this.warningCensus = res.data;
+
+        let census : any= {};
+
+        res.data.list.forEach((item:any)=>{
+
+          switch (item.type) {
+            case 101:
+              census.climbHeight = item.todayNum;
+              break;
+            case 102:
+              census.face = item.todayNum;
+              break;
+            case 103:
+              census.fire = item.todayNum;
+              break;
+            case 104:
+              census.helmet = item.todayNum;
+              break;
+            case 105:
+              census.motionless = item.todayNum;
+              break;
+            case 106:
+              census.refectiveVest = item.todayNum;
+              break;
+            case 107:
+              census.region = item.todayNum;
+              break;
+            case 108:
+              census.tumble = item.todayNum;
+              break;
+          }
+        })
+
+        this.warningCensus = {...census, ...this.warningCensus};
       })
     }
   });

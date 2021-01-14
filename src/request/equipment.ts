@@ -20,3 +20,15 @@ export function getVoiceInfo (params?:object)  {
 export function updateVoiceInfo (params?:object)  {
   return API.POST(`${BOX}/edgebox/updateVoiceConfig`, params)
 }
+
+export function getCameraList (params?:object)  {
+  return API.POST(`${BOX}/camera/cameraList`, params)
+}
+
+export function getBoxList (params?:object)  {
+  return API.POST(`${BOX}/edgebox/boxList`, params)
+}
+
+export function getDeviceRunningCensus (params?:object)  {
+  return API.POST(`${BOX}/edgebox/deviceOrArrangeRunningStatistics`, params)
+}

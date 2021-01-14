@@ -26,16 +26,17 @@
 
     <div class="terminal-container bgcAndShadow">
 
-      <SearchInput placeholder=""/>
+      <SearchInput placeholder="" @search="filterBoxTree"/>
 
       <el-tree
           ref="tree"
           :props="defaultProps"
           :load="loadTree"
           :expand-on-click-node="false"
+          :filter-node-method="filterNode"
           lazy
           accordion
-          node-key="id"
+          node-key="boxId"
       >
         <template v-slot="{ node, data }" class="group">
           <div class="custom-tree-node">
@@ -78,11 +79,7 @@
   import Vue from "vue";
   import SearchInput from '@/components/search-input/index.vue';
   import SvgIcon from '@/components/svgIcon.vue';
-  import { getFlowCensus } from "@/request";
-  import {
-    getTerminalTree,
-    getTerminalChildTree,
-  } from '@/request';
+  import { getCameraList, getBoxList, getDeviceRunningCensus } from "@/request/equipment";
 
   export default Vue.extend({
     components:{
@@ -104,22 +101,23 @@
           totalFlow:0,
           todayFlow:0,
         },
-        warningCensus:{},
         flowDialog:false,
         flowMax:'',
+        firstNode:'',
+        resolveFn:new Function(),
+        customTreeList:[],
       }
     },
     methods:{
-      handleGetChildTree: function (id:string | number, resolve:Function) {
-        if (!id) return;
-        getTerminalChildTree({id}).then(res=>{
-          let list = res.data.list.map((item:any)=>{
+      handleGetChildTree: function (boxId:string | number, resolve:Function) {
+        if (!boxId) return;
+        getCameraList({boxId}).then(res=>{
+          let list = res.data.map((item:any)=>{
             return{
-              parentId:id,
-              id:item.id,
-              type:item.type,
+              parentId:boxId,
+              id:item.cameraId,
               label:item.name,
-              leaf: item.type === 0 ? false : true,
+              leaf: true,
             }
           });
           resolve(list);
@@ -128,13 +126,13 @@
         });
       },
       handleGetFirstTree: function (resolve:Function) {
-        getTerminalTree().then(res=>{
+        getBoxList({pageSize:40, pageNum:1}).then(res=>{
           let list = res.data.list.map((item:any)=>{
             return {
-              id:item.id,
+              id:item.boxId,
               name:item.name,
               label:item.name,
-              leaf: item.personCount > 0 ? false : true,
+              leaf:false,
               type:0
             };
           });
@@ -146,18 +144,28 @@
       loadTree: function (node:any, resolve:Function) {
         // console.log('loadTree',node);
         if (node.level === 0) {
+          this.firstNode = node;
+          this.resolveFn = resolve;
           this.handleGetFirstTree(resolve);
         }else {
-          this.handleGetChildTree(node.data.id, resolve);
+          this.handleGetChildTree(node.data.boxId, resolve);
         }
       },
       save: function () {
         console.log(this.flowMax);
         this.flowDialog = false;
+      },
+      filterBoxTree: function (boxName:any) {
+        //@ts-ignore
+        this.$refs.tree.filter(boxName);
+      },
+      filterNode(value:string, data:any) {
+        if (!value) return true;
+        return data.label.indexOf(value) !== -1;
       }
     },
     mounted(): void {
-      getFlowCensus().then(res=>{
+      getDeviceRunningCensus().then(res=>{
         if (!res.data) return
         this.flowCensus = res.data;
       })
