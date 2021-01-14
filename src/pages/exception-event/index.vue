@@ -32,10 +32,10 @@
         <div class="fontBlackAndBold title">最新异常预警信息</div>
 
         <div class="content">
-          <div class="lately-item bgcAndShadow">
+          <div class="lately-item bgcAndShadow" v-if="latelyList && latelyList.length > 0">
             <div class="operate-btn">
               <div class="cursor" @click="showDetailDialog(true, latelyList[0])">···</div>
-              <SvgIcon name="delete" @click="deleteItem(latelyList[0].id)"/>
+              <SvgIcon name="delete" @click="deleteItem(latelyList[0])"/>
             </div>
 
             <DetailMainContent :data="latelyList[0]" @toggleVideo="(res)=>showDetailDialog(res, latelyList[0])"/>
@@ -43,11 +43,12 @@
 
           <div class="items">
             <ExceptionItem
-                v-for="(item,index) in latelyList"
+                v-for="(item,index) in latelyList.slice(1,5)"
                 :key="index"
                 :data="item"
                 @showDetailDialog="showDetailDialog"
                 @delete="deleteItem"
+                @updateItem="updateItem"
             />
           </div>
         </div>
@@ -59,9 +60,13 @@
           <router-link to="/exception-event/history-list">查看更多>></router-link>
         </div>
 
-        <Table :table-props="tableProps">
-          <template v-slot:status="{row}">
-            <span v-if="row.status === 0" style="color: #ff4949">未处理</span>
+        <Table
+            ref="exceptionTable"
+            :table-props="tableProps"
+            @updatePagination="initLatelyList"
+        >
+          <template v-slot:isDeal="{row}">
+            <span v-if="row.isDeal === 0" style="color: #ff4949">未处理</span>
             <span v-else style="color: #13ce66">已处理</span>
           </template>
 
@@ -76,6 +81,7 @@
         :visible="detailVisible"
         :data="detailData"
         @close="showDetailDialog"
+        @initList="initHistoryList"
     />
   </div>
 </template>
@@ -88,8 +94,10 @@
   import ExceptionItem from './component/exception-item.vue';
   import DetailDialog from './component/detail-dialog.vue';
   import SvgIcon from '@/components/svgIcon.vue';
-  import { getWarningCensus } from '@/request/schedule';
-  import { getLatelyList } from '@/request/exception-event';
+  import { getExceptionCensus, deleteEvent, updateEvent } from '@/request/exception';
+  import { BOX } from "@/request/type";
+  import moment from "moment";
+  import {showMessageAfterRequest} from "@/utils/common";
 
 
   export default Vue.extend({
@@ -104,26 +112,43 @@
     data() {
       return {
         exceptionCensus:{
-          total:321,
-          today:34
+          total:0,
+          today:0
         },
-        warningCensus:{},
+        warningCensus:{
+          face:0,
+          helmet:0,
+          region:0,
+          refectiveVest:0,
+          climbHeight:0,
+          motionless:0,
+          fire:0,
+          tumble:0
+        },
         latelyList:[],
         tableProps:{
-          url:'/mock/exception-event/latelyList',
-          rowKey:'id',
+          url:`${BOX}/event/eventSelect`,
+          rowKey:'exceptionId',
           hiddenPagination:true,
           params:{
-            pageSize:20,
+            pageSize:17,
           },
           tableColumn:[
-            {prop:'time',label:'时间'},
+            {prop:'createTime',label:'时间',
+              format: function (value:string) {
+                return moment(value).format('MM-DD HH:mm:ss')
+              }
+            },
             {prop:'type',label:'事件类型'},
             {prop:'project',label:'所属项目'},
-            {prop:'name',label:'事件名称'},
-            {prop:'source',label:'异常来源'},
-            {prop:'person',label:'关联人员'},
-            {prop:'status',label:'异常状态',insertHtml:true},
+            {prop:'arrangeName',label:'事件名称'},
+            {prop:'boxName',label:'异常来源',
+              format: function (value:string, row:any) {
+                return `${value}-${row.cameraName}`;
+              }
+            },
+            {prop:'personName',label:'关联人员'},
+            {prop:'isDeal',label:'异常状态',insertHtml:true},
             {prop:'operate',label:'',insertHtml:true},
           ],
         },
@@ -136,29 +161,77 @@
         this.detailVisible = visible;
         this.detailData = data;
       },
-      deleteItem: function (id:number | string) {
-        if (!id) return
+      deleteItem: function (item:any) {
+        this.$confirm('确定删除该条信息吗？')
+          .then(res=>{
+            let {exceptionId, type} = item;
 
-        this.$message({
-          type:'success',
-          message:'删除成功'
-        });
-        getLatelyList({pageSize:4}).then(res=>{
-          if (!res.data) return
-          this.latelyList = res.data.list;
+            deleteEvent({exceptionId, type}).then(res=>{
+              showMessageAfterRequest(res.data, '删除成功','删除失败');
+              //@ts-ignore
+              res.data === true ? this.$refs.exceptionTable.initTable({pageSize:17}) : '';
+            })
+        }).catch(e=>e)
+
+      },
+      initLatelyList: function () {
+        //@ts-ignore
+        this.latelyList = this.$refs.exceptionTable.tableList.slice(0,5);
+      },
+      initHistoryList: function () {
+        //@ts-ignore
+        this.$refs.exceptionTable.initTable({pageSize:17});
+      },
+      updateItem: function (data:object) {
+        updateEvent(data).then(res=>{
+          showMessageAfterRequest(res.data, '更新成功','更新失败');
+          //@ts-ignore
+          res.data === true ? this.$refs.exceptionTable.initTable({pageSize:17}) : '';
         })
-      }
+      },
     },
     mounted(): void {
-      getWarningCensus().then(res=>{
+      getExceptionCensus().then(res=>{
         if (!res.data) return
-        this.warningCensus = res.data;
+
+        let total = 0, today = 0, census : any= {};
+
+        res.data.list.forEach((item:any)=>{
+          total += item.totalNum;
+          today += item.todayNum;
+
+          switch (item.type) {
+            case 101:
+              census.climbHeight = item.todayNum;
+              break;
+            case 102:
+              census.face = item.todayNum;
+              break;
+            case 103:
+              census.fire = item.todayNum;
+              break;
+            case 104:
+              census.helmet = item.todayNum;
+              break;
+            case 105:
+              census.motionless = item.todayNum;
+              break;
+            case 106:
+              census.refectiveVest = item.todayNum;
+              break;
+            case 107:
+              census.region = item.todayNum;
+              break;
+            case 108:
+              census.tumble = item.todayNum;
+              break;
+          }
+        })
+
+        this.warningCensus = {...census, ...this.warningCensus};
+        this.exceptionCensus = {today, total};
       })
 
-      getLatelyList({pageSize:4}).then(res=>{
-        if (!res.data) return
-        this.latelyList = res.data.list;
-      })
     }
   })
 </script>

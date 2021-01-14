@@ -1,35 +1,35 @@
 <template>
   <div class="exception-item bgcAndShadow">
     <div class="title">
-      <div class="fontBlackAndBold">发生时间：{{data.time}}</div>
+      <div class="fontBlackAndBold">发生时间：{{data.createTime}}</div>
       <div class="operate-btn">
         <div class="cursor" @click="showDetailDialog()">···</div>
-<!--        <i class="el-icon-delete" @click="handleDelete(data.id)"/>-->
-        <SvgIcon name="delete" @click="handleDelete(data.id)"/>
+        <SvgIcon name="delete" @click="handleDelete(data)"/>
       </div>
     </div>
 
     <div class="content">
       <div class="left">
-        <img :src="require('@/assets/mission-person.jpg')" alt="***"/>
+        <img :src="data.picUrl || require('@/assets/mission-person.jpg')" alt="***"/>
         <i class="el-icon-video-play play-icon" @click="visible = true"/>
       </div>
 
       <div class="right">
         <div>事件类型:<span>{{data.type}}</span></div>
-        <div>所属任务:<span>{{data.project}}</span></div>
+        <div>所属任务:<span>{{data.arrangeName}}</span></div>
         <div>事件名称:<span>{{data.name}}</span></div>
-        <div>异常来源:<span>{{data.source}}</span></div>
-        <div>关联人员:<span>{{data.person}}</span></div>
+        <div>异常来源:<span>{{data.boxName}}-{{data.cameraName}}</span></div>
+        <div>关联人员:<span>{{data.personName}}</span></div>
         <div>异常情况:<span>{{data.info}}</span></div>
         <div>
           异常状态:
           <el-switch
-              v-model="data.status === 0 ? true : false"
+              v-model="data.isDeal === 0 ? true : false"
               active-color="#ff4949"
               inactive-color="#13ce66"
               active-text="未处理"
               inactive-text="已处理"
+              @change="handleUpdate"
           >
           </el-switch>
         </div>
@@ -52,14 +52,17 @@
         required:true,
         default: function () {
           return {
-            time: '',
+            createTime: '',
             project:'',
             type:'',
-            name:'',
-            source:'',
-            person:'',
+            arrangeName:'',
+            personName:'',
             info:'',
-            id:'',
+            exceptionId:'',
+            picUrl:'',
+            videoUrl:'',
+            cameraName:'',
+            boxName:'',
           }
         }
       }
@@ -77,11 +80,17 @@
       showDetailDialog: function () {
         this.$emit('showDetailDialog', true, this.$props.data);
       },
-      handleDelete: function (id:string | number) {
-        this.$emit('delete', id);
+      handleDelete: function (item:object) {
+        this.$emit('delete', item);
       },
       close: function () {
         this.visible = false;
+      },
+      handleUpdate: function (value:boolean) {
+        let {exceptionId, type} = this.$props.data;
+        let isDeal = value === true ? 0 : 1;
+
+        this.$emit('updateItem', {exceptionId, type, isDeal});
       }
     },
   })

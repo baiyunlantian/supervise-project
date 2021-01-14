@@ -172,7 +172,7 @@
       searchParams:{
         handler: function(newVal:object, oldVal:object) {
           // 每次通过搜索表单查询列表时，默认跳回第一页
-          this.initTable({pageNum:1,...newVal});
+          this.initTable();
         },
         deep:true,
       },
@@ -209,7 +209,7 @@
       },
 
       changePageNum: function (pageNum: number) {
-        this.initTable({pageNum});
+        this.initTable();
       },
 
       filterChange: function (value: string | number | null, key:string) {
@@ -221,7 +221,7 @@
            _this.filteredValue[key] = value;
          }
 
-        this.initTable(_this.filteredValue);
+        this.initTable();
       },
 
       multipleSelectChange: function (selection:any) {

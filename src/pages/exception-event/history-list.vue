@@ -15,6 +15,7 @@
           :data="item"
           @showDetailDialog="showDetailDialog"
           @delete="deleteItem"
+          @updateItem="updateItem"
       />
     </div>
 
@@ -38,8 +39,9 @@
   import Pagination from '@/components/pagination/index.vue';
   import SearchForm from '@/components/search-form/index.vue';
   import GoBackBtn from '@/components/goBackBtn.vue';
-  import { getLatelyList } from '@/request/exception-event';
+  import {deleteEvent, getExceptionList, updateEvent} from '@/request/exception';
   import moment from "moment";
+  import {showMessageAfterRequest} from "@/utils/common";
 
   export default Vue.extend({
     components:{
@@ -62,7 +64,7 @@
               {value:4,label:'类型4'},
             ],
           },
-          {key:'mission',label:'所属任务',type:'select',
+          {key:'arrangeId',label:'所属任务',type:'select',
             options:[
               {value:1,label:'任务1'},
               {value:2,label:'任务2'},
@@ -70,7 +72,7 @@
               {value:4,label:'任务4'},
             ],
           },
-          {key:'equipment',label:'设备',type:'select',
+          {key:'boxId',label:'设备',type:'select',
             options:[
               {value:1,label:'设备1'},
               {value:2,label:'设备2'},
@@ -78,9 +80,9 @@
               {value:4,label:'设备4'},
             ],
           },
-          {key:'person',label:'关联人员',type:'input'},
+          {key:'personId',label:'关联人员',type:'input'},
           {key:'time',label:'时间',type:'datetimerange',format:'yyyy-MM-dd HH:mm:ss'},
-          {key:'status',label:'状态',type:'select',
+          {key:'isDeal',label:'状态',type:'select',
             options:[
               {value:1,label:'已处理'},
               {value:0,label:'未处理'},
@@ -105,7 +107,7 @@
           ...param
         };
 
-        getLatelyList(data).then(res=>{
+        getExceptionList(data).then(res=>{
           if (!res.data) return
           const {list, page} = res.data;
           this.list = list;
@@ -127,15 +129,25 @@
         this.detailVisible = visible;
         this.detailData = data;
       },
-      deleteItem: function (id:number | string) {
-        if (!id) return
+      deleteItem: function (item:any) {
+        this.$confirm('确定删除该条信息吗？')
+          .then(res=>{
+            let {exceptionId, type} = item;
 
-        this.$message({
-          type:'success',
-          message:'删除成功'
-        });
-        this.initList(this.searchParams);
-      }
+            deleteEvent({exceptionId, type}).then(res=>{
+              showMessageAfterRequest(res.data, '删除成功','删除失败');
+              //@ts-ignore
+              res.data === true ? this.initList(this.searchParams) : '';
+            })
+          }).catch(e=>e)
+      },
+      updateItem: function (data:object) {
+        updateEvent(data).then(res=>{
+          showMessageAfterRequest(res.data, '更新成功','更新失败');
+          //@ts-ignore
+          res.data === true ? this.initList(this.searchParams) : '';
+        })
+      },
     },
     mounted(): void {
       this.initList(this.pagination);

@@ -32,7 +32,6 @@
     },
     methods: {
       changePageNum: function (pageNumParam:number | string, type?:string) {
-        console.log(pageNumParam,type)
         const { pageNum:currentPageNum, totalPageNum} = this.$props.pagination;
 
         if (pageNumParam === currentPageNum || totalPageNum === 1) return;

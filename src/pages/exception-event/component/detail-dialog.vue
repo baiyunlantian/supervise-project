@@ -10,7 +10,7 @@
       <i class="el-icon-close" @click="close"/>
     </template>
 
-    <DetailMainContent :data="data" @toggleVideo="toggleVideo"/>
+    <DetailMainContent :data="data" @toggleVideo="toggleVideo" @updateItem="updateItem"/>
 
     <div class="person-list">
       <div class="title">关联人员信息</div>
@@ -37,7 +37,7 @@
       </div>
     </div>
 
-    <VideoDialog :visible="videoVisible" @close="toggleVideo"/>
+    <VideoDialog :visible="videoVisible" :videoUrl="data.videoUrl" @close="toggleVideo"/>
   </el-dialog>
 </template>
 
@@ -45,6 +45,9 @@
   import Vue from 'vue';
   import DetailMainContent from './detail-main-content.vue';
   import VideoDialog from './video-dialog.vue';
+  import { updateEvent } from '@/request/exception';
+  import {showMessageAfterRequest} from "@/utils/common";
+
 
   export default Vue.extend({
     props:{
@@ -53,13 +56,17 @@
         required:true,
         default: function () {
           return {
-            time: '',
+            createTime: '',
             project:'',
             type:'',
-            name:'',
-            source:'',
-            person:'',
+            arrangeName:'',
+            personName:'',
             info:'',
+            exceptionId:'',
+            picUrl:'',
+            videoUrl:'',
+            cameraName:'',
+            boxName:'',
           }
         }
       },
@@ -83,6 +90,13 @@
       },
       toggleVideo: function (res = false) {
         this.videoVisible = res;
+      },
+      updateItem: function (data:object) {
+        updateEvent(data).then(res=>{
+          showMessageAfterRequest(res.data, '更新成功','更新失败');
+          //@ts-ignore
+          res.data === true ? this.$emit('initList') : '';
+        })
       }
     },
   })

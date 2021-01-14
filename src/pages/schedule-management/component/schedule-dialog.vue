@@ -43,7 +43,7 @@
             {key:'time',label:'任务时间',type:'daterange',startPlaceholder:'开始时间',endPlaceholder:'结束时间'},
             {key:'arrangeName',label:'任务名称',type:'input'},
             {key:'detail',label:'任务详情',type:'textarea'},
-            {key:'personList',label:'安排人员',type:'select',multiple:true, options:[],},
+            {key:'personList',label:'安排人员',type:'select',multiple:true, options:[],onChange:true},
             {key:'dutyPersonId',label:'负责人',type:'select', options:[],},
             {key:'boxId',label:'绑定设备',type:'select',
               options:[
@@ -101,6 +101,7 @@
         })
       },
       selectChange: function (options:any) {
+        console.log('selectChange',options);
         let list = this.filterDutyPersonList(options);
         let items = JSON.parse(JSON.stringify(this.formProps.items));
 
@@ -114,6 +115,8 @@
       },
       filterDutyPersonList: function (options:any):object {
         let dutyPersonList : any = [];
+        //@ts-ignore
+        console.log(this.formData);
 
         (options || []).forEach((option:string)=>{
           let filterArray = this.$props.personSelectList.filter((item:any)=>item.value === option);
@@ -121,6 +124,7 @@
           filterArray && filterArray.length > 0 ? dutyPersonList.push(filterArray[0]) : '';
         })
 
+        console.log('dutyPersonList',dutyPersonList);
         return dutyPersonList;
       }
     },

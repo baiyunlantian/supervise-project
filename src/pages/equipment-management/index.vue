@@ -166,13 +166,13 @@
     methods: {
       search: function (data?:object) {
         //@ts-ignore
-        this.initTable(data);
+        this.initTable();
       },
       close: function (operate:string) {
         this.visible = false;
 
         if (operate === 'refresh'){
-          this.initTable(this.searchParams);
+          this.initTable();
         }
       },
       handleClickEdit: function (row:object) {
@@ -184,7 +184,7 @@
           .then(res=>{
             deleteEquipment({boxId}).then(res=>{
               showMessageAfterRequest(res.data, '解绑成功', '解绑失败');
-              res.data === true ? this.initTable(this.searchParams) : '';
+              res.data === true ? this.initTable() : '';
             })
           })
           .catch(e=>{
@@ -217,7 +217,7 @@
           }
         }
         //@ts-ignore
-        this.$refs.table.initTable(param);
+        this.$refs.table.initTable();
       },
       jump: function () {
         this.$router.push('/equipment-management/set-voice');

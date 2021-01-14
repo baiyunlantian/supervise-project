@@ -13,7 +13,7 @@
       clearable
       :class="item.className"
       :multiple="item.multiple"
-      @change="selectChange"
+      @change="item.onChange === true ? selectChange : autoChange"
   >
     <el-option
         v-for="(option, index) in item.options"
@@ -61,7 +61,11 @@
     },
     methods:{
       selectChange: function (option:any) {
+        console.log('select')
         this.$emit('selectChange', option);
+      },
+      autoChange: function () {
+        console.log('auto')
       }
     },
   })

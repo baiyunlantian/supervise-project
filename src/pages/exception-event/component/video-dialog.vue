@@ -21,10 +21,9 @@
 
 <script lang="ts">
   import Vue from 'vue';
-  import { VideoSrc } from '@/utils/common';
 
   export default Vue.extend({
-    props:['visible'],
+    props:['visible','videoUrl'],
     data() {
       return {
         playerOptions: {
@@ -39,19 +38,19 @@
           sources: [
             {
               type: "video/mp4", // 类型
-              src:VideoSrc,
+              src:this.$props.videoUrl,
             },
             {
               type:"video/webm", // 可以播放，用ogg也可打开
-              src:VideoSrc,
+              src:this.$props.videoUrl,
             },
             {
               type:"video/ogg",    // 可以播放，用webm也可打开
-              src:VideoSrc,
+              src:this.$props.videoUrl,
             },
             {
               type:"video/3gp",    // 可以播放
-              src:VideoSrc,
+              src:this.$props.videoUrl,
             }
           ],
           poster: '', // 封面地址
@@ -69,10 +68,12 @@
     methods: {
       close: function () {
         //@ts-ignore
-        this.$refs.videoPlayer.player.src(VideoSrc)
+        this.$refs.videoPlayer.player.src(this.$props.videoUrl)
         this.$emit('close');
       }
     },
+    mounted(): void {
+    }
   })
 </script>
 

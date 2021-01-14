@@ -198,7 +198,7 @@
 
         console.log(data);
         //@ts-ignore
-        this.$refs.table.initTable(data);
+        this.$refs.table.initTable();
       },
       handleClickDelete: function (id?:string) {
         let data = {

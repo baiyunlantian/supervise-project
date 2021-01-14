@@ -19,10 +19,10 @@ axios.interceptors.request.use( (config:any) => {
 
     } else {
         //添加统一入参
-        params = { companyCode, }
+        params = { companyCode, CpCode:companyCode}
     }
     config.data = {...data, ...params};
-    config.headers.common['webToken'] = token || '';
+    config.headers.common['token'] = token || '';
     config.headers.common['Content-Type'] = config.ContentType || 'application/json';
     return config;
 }, function (error) {
@@ -70,7 +70,7 @@ export const fetchCommon = (url:string, params?:object) => {
           method: 'post',
           //@ts-ignore
           headers:{
-              webToken: sessionStorage.getItem('token')
+              token: sessionStorage.getItem('token')
           },
           //@ts-ignore
           body: params,

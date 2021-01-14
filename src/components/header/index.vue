@@ -28,9 +28,13 @@
     },
     methods:{
       clickLogout: function () {
-        logout().then(res=>{})
-        sessionStorage.clear();
-        this.$router.push('/login');
+        logout().then(res=>{
+          sessionStorage.clear();
+          this.$router.push('/login');
+        }).catch(e=>{
+          sessionStorage.clear();
+          this.$router.push('/login');
+        })
       }
     },
     mounted(): void {
