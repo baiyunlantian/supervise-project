@@ -49,12 +49,7 @@
           id = fatherId;
         }
 
-        if (this.name){
-          this.valid = true;
-        }else {
-          this.valid = false;
-          return;
-        }
+        if (!this.valid) return;
 
         this.$emit('submit', this.name, id, fatherId);
         this.close();

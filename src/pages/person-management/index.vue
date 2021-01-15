@@ -170,6 +170,8 @@
           this.departSelectList = list;
           this.departCommonMap = map;
         })
+
+
       }
     },
     mounted(): void {

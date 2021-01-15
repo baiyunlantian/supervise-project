@@ -54,8 +54,8 @@
             >
               <td>{{item.name}}</td>
               <td>{{item.ip}}</td>
-              <td>{{item.port}}</td>
-              <td>{{item.account}}</td>
+              <td>{{item.httpPort}}</td>
+              <td>{{item.username}}</td>
               <td>{{item.password}}</td>
               <td v-if="row.enable === 1" :style="{color: 'rgb(0, 161, 76)'}">在线</td>
               <td v-else :style="{color: '#565656'}">离线</td>

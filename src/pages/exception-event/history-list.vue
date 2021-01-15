@@ -28,6 +28,7 @@
         :visible="detailVisible"
         :data="detailData"
         @close="showDetailDialog"
+        @initList="initList"
     />
   </div>
 </template>

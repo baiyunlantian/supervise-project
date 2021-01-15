@@ -141,14 +141,14 @@
         let text : string;
         let list : any = [];
 
-        if (this.checkedStation.length === 0) {
-          this.$message({
-            type:'info',
-            message:'请选择岗位！'
-          });
-
-          return;
-        }
+        // if (this.checkedStation.length === 0) {
+        //   this.$message({
+        //     type:'info',
+        //     message:'请选择岗位！'
+        //   });
+        //
+        //   return;
+        // }
 
         if (this.operateType === 'edit'){
           handleFn = updateStation;

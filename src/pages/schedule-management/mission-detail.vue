@@ -72,6 +72,7 @@
       Table
     },
     data() {
+      let _this = this;
       return {
         formProps:{
           items:[
@@ -123,9 +124,12 @@
         },
         tableProps:{
           url:`${PERSON}/arrange/arrangeReportSelect`,
-          rowKey:'id',
+          rowKey:'arrangeId',
           pagination:{
             pageSize:12
+          },
+          params:{
+            arrangeId:this.$route.query.arrangeId
           },
           tableColumn:[
             {prop:'buildTime',label:'日期'},

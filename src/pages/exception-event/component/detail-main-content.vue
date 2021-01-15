@@ -63,17 +63,13 @@
         }
       }
     },
-    data() {
-      return {
-      }
-    },
     methods: {
       toggleVideo: function (res:boolean) {
         this.$emit('toggleVideo',res);
       },
       handleUpdate: function (value:boolean) {
         let {exceptionId, type} = this.$props.data;
-        let isDeal = value === true ? 0 : 1;
+        let isDeal = value ? 0 : 1;
 
         this.$emit('updateItem', {exceptionId, type, isDeal});
       }

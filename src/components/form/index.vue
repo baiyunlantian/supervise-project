@@ -98,8 +98,8 @@
           }
         });
       },
-      selectChange: function (option:any) {
-        this.$emit('selectChange', option);
+      selectChange: function (option:any, key:string) {
+        this.$emit('selectChange', option, key);
       }
     },
   })

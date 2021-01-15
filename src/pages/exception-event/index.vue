@@ -38,7 +38,11 @@
               <SvgIcon name="delete" @click="deleteItem(latelyList[0])"/>
             </div>
 
-            <DetailMainContent :data="latelyList[0]" @toggleVideo="(res)=>showDetailDialog(res, latelyList[0])"/>
+            <DetailMainContent
+                :data="latelyList[0]"
+                @toggleVideo="(res)=>showDetailDialog(res, latelyList[0])"
+                @updateItem="updateItem"
+            />
           </div>
 
           <div class="items">
@@ -186,7 +190,7 @@
         updateEvent(data).then(res=>{
           showMessageAfterRequest(res.data, '更新成功','更新失败');
           //@ts-ignore
-          res.data === true ? this.$refs.exceptionTable.initTable({pageSize:17}) : '';
+          res.data === true ? this.initHistoryList() : '';
         })
       },
     },

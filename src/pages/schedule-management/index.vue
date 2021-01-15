@@ -41,15 +41,15 @@
           :table-props="tableProps"
           @multipleSelectChange="multipleSelectChange"
       >
-        <template v-slot:personCount="{row}">
+        <template v-slot:personList="{row}">
           <div class="custom-img-list">
             <template v-for="(item,index) in row.personList">
               <div class="img-item" v-if="index <= 5" :key="index">
-                <img v-if="index < 5" :src="require('@/assets/mission-person.jpg')" alt="头像"/>
+                <img v-if="index < 5" :src="item.url || require('@/assets/mission-person.jpg')" :alt="item.personName"/>
                 <span v-else-if="index === 5">····</span>
-                <div v-if="item.type === 0" class="header">
+                <div v-if="item.type === 1" class="header">
                   <i class="el-icon-collection-tag" />
-                  <span>负责人</span>
+                  <span>{{item.personName}}</span>
                 </div>
               </div>
             </template>
@@ -57,15 +57,15 @@
         </template>
 
         <template v-slot:boxStatus="{row}">
-          <span v-if="row.boxStatus === 1">未领取</span>
-          <span v-else-if="row.boxStatus === 2" class="active">已领取</span>
-          <span v-else-if="row.boxStatus === 3" class="green">已归还</span>
+          <span v-if="row.boxStatus === 0">未领取</span>
+          <span v-else-if="row.boxStatus === 1" class="active">已领取</span>
+          <span v-else-if="row.boxStatus === 2" class="green">已归还</span>
         </template>
 
         <template v-slot:arrangeStatus="{row}">
-          <span v-if="row.arrangeStatus === 1">未开始</span>
-          <span v-else-if="row.arrangeStatus === 2" class="active">进行中</span>
-          <span v-else-if="row.arrangeStatus === 3" class="green">已结束</span>
+          <span v-if="row.arrangeStatus === 0">未开始</span>
+          <span v-else-if="row.arrangeStatus === 1" class="active">进行中</span>
+          <span v-else-if="row.arrangeStatus === 2" class="green">已结束</span>
         </template>
 
         <template v-slot:operate="{row}">
@@ -82,6 +82,7 @@
 
     <ScheduleDialog
         :visible="visible"
+        :box-list="boxList"
         :person-select-list="personSelectList"
         @toggle="toggleDialog"
     />
@@ -97,9 +98,10 @@
   import moment from "moment";
   import SvgIcon from "@/components/svgIcon.vue";
   import { batchDeleteSchedule } from "@/request/schedule";
+  import { getBoxList } from "@/request/equipment";
   import { getPersonSelectList } from "@/request/common";
-  import {showMessageAfterRequest} from "@/utils/common";
-  import { PERSON, MOCK } from "@/request/type";
+  import {showMessageAfterRequest, insertOptionsToSearchFormItems} from "@/utils/common";
+  import { PERSON, } from "@/request/type";
 
 
   export default Vue.extend({
@@ -115,14 +117,7 @@
         formItemsProp:[
           {key:'time',label:'任务时间',type:'daterange'},
           {key:'personId',label:'人员',type:'select',options:[]},
-          {key:'boxId',label:'设备',type:'select',
-            options:[
-              {value:1,label:'设备1'},
-              {value:2,label:'设备2'},
-              {value:3,label:'设备3'},
-              {value:4,label:'设备4'},
-            ]
-          },
+          {key:'boxId',label:'设备',type:'select', options:[]},
           {key:'boxStatus',label:'设备状态',type:'select',
             options:[
               {value:1,label:'未领取'},
@@ -133,7 +128,7 @@
         ],
         tableProps:{
           url:`${PERSON}/arrange/arrangeSelectList`,
-          rowKey:'personId',
+          rowKey:'arrangerId',
           firstColumn:{
             show:true,
             type:'selection',
@@ -143,15 +138,19 @@
             pageSize:13
           },
           tableColumn:[
-            {prop:'time',label:'任务起止时间'},
+            {prop:'dutyStartTime',label:'任务起止时间',
+              format: (value:string, row:any) => {
+                return moment(value).format('yyyy.MM.DD')+'-'+moment(row.dutyEndTime).format('yyyy.MM.DD')
+              }
+            },
             {prop:'arrangeName',label:'任务名称'},
-            {prop:'personCount',label:'安排人员',insertHtml:true,width:300},
-            {prop:'boxId',label:'绑定设备'},
+            {prop:'personList',label:'安排人员',insertHtml:true,width:300},
+            {prop:'boxName',label:'绑定设备'},
             {prop:'boxStatus',label:'设备状态',insertHtml:true},
             {prop:'arrangeStatus',label:'任务状态',insertHtml:true},
-            { prop:'reporterStatus',label:'监督施工报告',
+            { prop:'reportBuild',label:'监督施工报告',
               format:function (value:number) {
-                return value === 0 ? '' : '报告已生成'
+                return value === 0 ? '未生成' : '已生成'
               }
             },
             {prop:'operate', label:'操作',insertHtml:true}
@@ -163,6 +162,7 @@
         visible:false,
         arrangeIds:[],
         personSelectList:[],
+        boxList:[],
       }
     },
     methods: {
@@ -196,7 +196,6 @@
           }
         })
 
-        console.log(data);
         //@ts-ignore
         this.$refs.table.initTable();
       },
@@ -205,7 +204,6 @@
           arrangeIds: id ? [id] : this.arrangeIds
         };
 
-        console.log(data);
         this.$confirm('确认删除任务吗？')
           .then(ok=>{
             batchDeleteSchedule(data).then(res=>{
@@ -224,20 +222,11 @@
         getPersonSelectList(formData).then((res:any)=>{
           if (!res.data) return;
 
-          let targetIndex = 0;
-          let targetItem : any = {};
           let list = res.data.list.map((item:any)=>{
             return {value:item.personId, label:item.personName}
           })
 
-          this.formItemsProp.forEach((item:any, index:number)=>{
-            if (item.key === 'personId'){
-              targetIndex = index;
-              targetItem = JSON.parse(JSON.stringify(item));
-              targetItem.options = list;
-            }
-          })
-
+          const {targetIndex, targetItem} = insertOptionsToSearchFormItems(this.formItemsProp, 'personId', list);
           this.personSelectList = list;
           this.formItemsProp.splice(targetIndex, 1, targetItem)
         })
@@ -248,6 +237,18 @@
       formData.append('companyCode', sessionStorage.getItem('companyCode') || '');
 
       this.initPersonSelectList(formData);
+
+      getBoxList({pageSize:40, pageNum:1}).then(res=>{
+        if (!res.data) return;
+
+        let list = res.data.list.map((item:any)=>{
+          return {value:item.boxId, label:item.name}
+        })
+
+        const {targetIndex, targetItem} = insertOptionsToSearchFormItems(this.formItemsProp, 'boxId', list);
+        this.boxList = list;
+        this.formItemsProp.splice(targetIndex, 1, targetItem)
+      })
     }
   })
 </script>

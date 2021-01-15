@@ -29,10 +29,10 @@
   import Form from '@/components/form/index.vue';
   import moment from "moment";
   import { addSchedule } from "@/request/schedule";
-  import {showMessageAfterRequest} from "@/utils/common";
+  import {showMessageAfterRequest, insertOptionsToFormItems} from "@/utils/common";
 
   export default Vue.extend({
-    props:['visible', 'personSelectList'],
+    props:['visible', 'personSelectList', 'boxList'],
     components:{
       Form,
     },
@@ -45,14 +45,7 @@
             {key:'detail',label:'任务详情',type:'textarea'},
             {key:'personList',label:'安排人员',type:'select',multiple:true, options:[],onChange:true},
             {key:'dutyPersonId',label:'负责人',type:'select', options:[],},
-            {key:'boxId',label:'绑定设备',type:'select',
-              options:[
-                {value:'1',label:'设备1'},
-                {value:'2',label:'设备2'},
-                {value:'3',label:'设备3'},
-                {value:'4',label:'设备4'},
-              ]
-            },
+            {key:'boxId',label:'绑定设备',type:'select', options:[]},
           ],
           rules:{
             arrangeName:[{ required: true, message: '请输入任务名称', trigger: 'blur'},],
@@ -100,23 +93,19 @@
 
         })
       },
-      selectChange: function (options:any) {
-        console.log('selectChange',options);
+      selectChange: function (options:any, key:string) {
+        if (key !== 'personList') return;
+
+        //@ts-ignore
+        if (options.includes(this.formData.dutyPersonId) === false){
+          this.$set(this.formData, 'dutyPersonId', '');
+        }
+
         let list = this.filterDutyPersonList(options);
-        let items = JSON.parse(JSON.stringify(this.formProps.items));
-
-        items.forEach((item:any)=>{
-          if (item.key === 'dutyPersonId'){
-            item.options = list;
-          }
-        })
-
-        this.$set(this.formProps, 'items', items);
+        this.$set(this.formProps, 'items', insertOptionsToFormItems(this.formProps.items, 'dutyPersonId',list));
       },
       filterDutyPersonList: function (options:any):object {
         let dutyPersonList : any = [];
-        //@ts-ignore
-        console.log(this.formData);
 
         (options || []).forEach((option:string)=>{
           let filterArray = this.$props.personSelectList.filter((item:any)=>item.value === option);
@@ -124,25 +113,22 @@
           filterArray && filterArray.length > 0 ? dutyPersonList.push(filterArray[0]) : '';
         })
 
-        console.log('dutyPersonList',dutyPersonList);
         return dutyPersonList;
-      }
+      },
     },
     watch:{
       personSelectList:{
         handler: function(newVal, oldVal){
-          let items = JSON.parse(JSON.stringify(this.formProps.items));
-
-          items.forEach((item:any)=>{
-            if (item.key === 'personList'){
-              item.options = newVal || [];
-            }
-          })
-
-          this.$set(this.formProps, 'items', items);
+          this.$set(this.formProps, 'items', insertOptionsToFormItems(this.formProps.items, 'personList',newVal));
         },
         deep:true,
-      }
+      },
+      boxList:{
+        handler: function(newVal, oldVal){
+          this.$set(this.formProps, 'items', insertOptionsToFormItems(this.formProps.items, 'boxId',newVal));
+        },
+        deep:true,
+      },
     },
   })
 </script>

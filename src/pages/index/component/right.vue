@@ -189,33 +189,33 @@
 
           switch (item.type) {
             case 101:
-              census.climbHeight = item.todayNum;
+              census.climbHeight = item.totalNum;
               break;
             case 102:
-              census.face = item.todayNum;
+              census.face = item.totalNum;
               break;
             case 103:
-              census.fire = item.todayNum;
+              census.fire = item.totalNum;
               break;
             case 104:
-              census.helmet = item.todayNum;
+              census.helmet = item.totalNum;
               break;
             case 105:
-              census.motionless = item.todayNum;
+              census.motionless = item.totalNum;
               break;
             case 106:
-              census.refectiveVest = item.todayNum;
+              census.refectiveVest = item.totalNum;
               break;
             case 107:
-              census.region = item.todayNum;
+              census.region = item.totalNum;
               break;
             case 108:
-              census.tumble = item.todayNum;
+              census.tumble = item.totalNum;
               break;
           }
         })
 
-        this.warningCensus = {...census, ...this.warningCensus};
+        this.warningCensus = {...this.warningCensus, ...census};
       })
     }
   });

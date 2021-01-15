@@ -4,21 +4,21 @@
       <div class="item">
         <div>
           <div class="text">当前在线设备</div>
-          <div class="count" style="color: rgb(0, 131, 255)">{{flowCensus.onLine || 0}}</div>
+          <div class="count" style="color: rgb(0, 131, 255)">{{boxCensus.boxRunningCount || 0}}</div>
         </div>
         <div>
           <div class="text">今日已开始任务</div>
-          <div class="count" style="color: rgb(4, 178, 82)">{{flowCensus.mission || 0}}</div>
+          <div class="count" style="color: rgb(4, 178, 82)">{{boxCensus.arrangeRunningCount || 0}}</div>
         </div>
       </div>
       <div class="item">
         <div>
           <div class="text">今日已用流量</div>
-          <div class="count" style="color: rgb(237, 56, 81)">{{flowCensus.todayFlow || 0}}M</div>
+          <div class="count" style="color: rgb(237, 56, 81)">{{flowCensus.todayOutByte}}M</div>
         </div>
         <div>
           <div class="text">共用流量</div>
-          <div class="count" style="color: rgb(152, 70, 209)">{{flowCensus.totalFlow || 0}}M</div>
+          <div class="count" style="color: rgb(152, 70, 209)">{{flowCensus.totalOutByte}}M</div>
         </div>
       </div>
       <SvgIcon name="setFlow" @click="flowDialog = true"/>
@@ -80,6 +80,7 @@
   import SearchInput from '@/components/search-input/index.vue';
   import SvgIcon from '@/components/svgIcon.vue';
   import { getCameraList, getBoxList, getDeviceRunningCensus } from "@/request/equipment";
+  import { getFlowCensus } from '@/request/index';
 
   export default Vue.extend({
     components:{
@@ -95,11 +96,13 @@
           id:'id',
           parentId:'parentId',
         },
+        boxCensus:{
+          boxRunningCount:0,
+          arrangeRunningCount:0,
+        },
         flowCensus:{
-          onLine:0,
-          mission:0,
-          totalFlow:0,
-          todayFlow:0,
+          totalOutByte:0,
+          todayOutByte:0,
         },
         flowDialog:false,
         flowMax:'',
@@ -148,7 +151,7 @@
           this.resolveFn = resolve;
           this.handleGetFirstTree(resolve);
         }else {
-          this.handleGetChildTree(node.data.boxId, resolve);
+          this.handleGetChildTree(node.data.id, resolve);
         }
       },
       save: function () {
@@ -156,6 +159,7 @@
         this.flowDialog = false;
       },
       filterBoxTree: function (boxName:any) {
+        console.log(boxName)
         //@ts-ignore
         this.$refs.tree.filter(boxName);
       },
@@ -165,10 +169,25 @@
       }
     },
     mounted(): void {
+      /*
       getDeviceRunningCensus().then(res=>{
         if (!res.data) return
+        this.boxCensus = res.data;
+      })
+
+      getFlowCensus().then(res=>{
+        if (!res.data) return
+
+        Object.keys(res.data).forEach(key=>{
+          if (res.data[key]){
+            res.data[key] = (res.data[key]/1024).toFixed(0);
+          }else {
+            res.data[key] = 0;
+          }
+        })
         this.flowCensus = res.data;
       })
+      */
     },
   });
 </script>

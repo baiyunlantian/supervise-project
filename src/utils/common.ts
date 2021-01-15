@@ -64,3 +64,29 @@ export const showMessageAfterRequest = function (status:boolean, successText:str
     });
   }
 }
+
+export const insertOptionsToFormItems = function (items:any, key:string, options:any) :object {
+
+  items.forEach((item:any)=>{
+    if (item.key === key){
+      item.options = options;
+    }
+  })
+
+  return items;
+}
+
+export const insertOptionsToSearchFormItems = function (searchFormItems:any, key:string, options:any) :any {
+  let targetIndex = 0;
+  let targetItem : any = {};
+
+  searchFormItems.forEach((item:any, index:number)=>{
+    if (item.key === key){
+      targetIndex = index;
+      targetItem = JSON.parse(JSON.stringify(item));
+      targetItem.options = options;
+    }
+  })
+
+  return {targetIndex, targetItem};
+}

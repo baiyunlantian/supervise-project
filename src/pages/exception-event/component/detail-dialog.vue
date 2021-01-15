@@ -10,7 +10,7 @@
       <i class="el-icon-close" @click="close"/>
     </template>
 
-    <DetailMainContent :data="data" @toggleVideo="toggleVideo" @updateItem="updateItem"/>
+    <DetailMainContent :data="detailData" @toggleVideo="toggleVideo" @updateItem="updateItem"/>
 
     <div class="person-list">
       <div class="title">关联人员信息</div>
@@ -82,6 +82,7 @@
     data() {
       return {
         videoVisible:false,
+        detailData:{},
       }
     },
     methods: {
@@ -91,13 +92,25 @@
       toggleVideo: function (res = false) {
         this.videoVisible = res;
       },
-      updateItem: function (data:object) {
+      updateItem: function (data:any) {
         updateEvent(data).then(res=>{
           showMessageAfterRequest(res.data, '更新成功','更新失败');
           //@ts-ignore
-          res.data === true ? this.$emit('initList') : '';
+          if (res.data === true){
+            this.$emit('initList');
+
+            this.$set(this.detailData, 'isDeal', data.isDeal);
+          }
         })
       }
+    },
+    watch:{
+      data:{
+        handler: function (newVal, oldVal) {
+          this.detailData = JSON.parse(JSON.stringify(newVal));
+        },
+        deep:true
+      },
     },
   })
 </script>

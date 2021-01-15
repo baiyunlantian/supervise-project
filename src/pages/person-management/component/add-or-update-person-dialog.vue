@@ -9,7 +9,7 @@
     <div class="body">
       <div class="upload-container">
         <div class="img-container">
-          <img :src="personInfo.url || imgUrl" alt="头像"/>
+          <img v-if="personInfo.url || imgUrl" :src="personInfo.url || imgUrl" alt=""/>
         </div>
         <el-upload
             action="#"
@@ -79,6 +79,7 @@
               { min: 11, max: 11,message: '请输入11位数的手机号',trigger: 'blur'}
             ],
             departId:[{ required: true, message: '请选择部门', trigger: 'blur'},],
+            code:{ max: 12,message: '最大长度为12个字',trigger: 'blur'}
           },
           hiddenFooter:true,
           inlineMessage:false,
@@ -155,7 +156,6 @@
         });
       },
       checkRemarkLength: function (value:string) {
-        console.log(value)
         if (value && value.length > 30){
           this.remarkValid = false;
         }else {

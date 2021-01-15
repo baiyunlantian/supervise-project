@@ -1,6 +1,6 @@
 const DEV_PROXY = {
     '/api': {
-        target: 'http://192.168.1.21:82',
+        target: 'http://192.168.1.105:83',
         changeOrigin: true,
         // pathRewrite: {
         //     '^/api' : ''
