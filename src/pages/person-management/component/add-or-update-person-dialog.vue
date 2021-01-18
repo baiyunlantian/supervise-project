@@ -128,7 +128,7 @@
 
           handleFn(formData).then((res:any)=>{
             showMessageAfterRequest(res.data, text+'人员成功', res.msg || text+'人员失败');
-            res.data === true ? this.$emit('initTableAndTree') : '';
+            res.data === true ? this.$emit('initTableAndSelectListAndTree') : '';
             this.close();
           })
         });

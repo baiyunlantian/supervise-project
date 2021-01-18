@@ -23,6 +23,7 @@ axios.interceptors.request.use( (config:any) => {
     }
     config.data = {...data, ...params};
     config.headers.common['token'] = token || '';
+    url.indexOf('/cameraStreamControl') > 0 ? config.headers.common['X-Auth-Token'] = token : '';
     config.headers.common['Content-Type'] = config.ContentType || 'application/json';
     return config;
 }, function (error) {

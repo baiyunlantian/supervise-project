@@ -42,7 +42,9 @@
   import GoBackBtn from '@/components/goBackBtn.vue';
   import {deleteEvent, getExceptionList, updateEvent} from '@/request/exception';
   import moment from "moment";
-  import {showMessageAfterRequest} from "@/utils/common";
+  import {insertOptionsToSearchFormItems, showMessageAfterRequest} from "@/utils/common";
+  import {getBoxList} from "@/request/equipment";
+  import {getPersonSelectList} from "@/request/common";
 
   export default Vue.extend({
     components:{
@@ -73,15 +75,8 @@
               {value:4,label:'任务4'},
             ],
           },
-          {key:'boxId',label:'设备',type:'select',
-            options:[
-              {value:1,label:'设备1'},
-              {value:2,label:'设备2'},
-              {value:3,label:'设备3'},
-              {value:4,label:'设备4'},
-            ],
-          },
-          {key:'personId',label:'关联人员',type:'input'},
+          {key:'boxId',label:'设备',type:'select', options:[],},
+          {key:'personId',label:'关联人员',type:'select', options:[],},
           {key:'time',label:'时间',type:'datetimerange',format:'yyyy-MM-dd HH:mm:ss'},
           {key:'isDeal',label:'状态',type:'select',
             options:[
@@ -151,7 +146,33 @@
       },
     },
     mounted(): void {
+      let formData = new FormData();
+      formData.append('companyCode', sessionStorage.getItem('companyCode') || '');
       this.initList(this.pagination);
+
+
+      getBoxList({pageSize:40, pageNum:1}).then(res=>{
+        if (!res.data) return;
+
+        let list = res.data.list.map((item:any)=>{
+          return {value:item.boxId, label:item.name}
+        })
+
+        const {targetIndex, targetItem} = insertOptionsToSearchFormItems(this.formItemsProp, 'boxId', list);
+        this.formItemsProp.splice(targetIndex, 1, targetItem)
+      })
+
+      getPersonSelectList(formData).then((res:any)=>{
+        if (!res.data) return;
+
+        let list = res.data.list.map((item:any)=>{
+          return {value:item.personId, label:item.personName}
+        })
+
+        const {targetIndex, targetItem} = insertOptionsToSearchFormItems(this.formItemsProp, 'personId', list);
+        this.formItemsProp.splice(targetIndex, 1, targetItem)
+      })
+
     }
   })
 </script>

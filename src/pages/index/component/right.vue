@@ -55,8 +55,8 @@
           <div class="operate-content">
             <div class="text">摄像头{{index}}</div>
             <div class="operate-btn">
-              <SvgIcon name="play" color="#fff" v-on:click="play(index)" v-if="!isPlayArray[index]" />
-              <SvgIcon name="pause" color="#fff" @click="pause(index)" v-else />
+              <SvgIcon name="play" color="#fff" v-on:click="play(index, item.cameraId)" v-if="!isPlayArray[index].play" />
+              <SvgIcon name="pause" color="#fff" @click="pause(index, item.cameraId)" v-else />
               <SvgIcon
                   name="fullScreen"
                   color="#fff"
@@ -79,9 +79,10 @@
   import WarningCensus from '@/components/warning-census/index.vue';
   import SvgIcon from '@/components/svgIcon.vue';
   import { getExceptionCensus } from '@/request/exception';
-  import {VideoSrc} from "@/utils/common";
+  import { getCameraStreamControl } from '@/request/index';
 
   export default Vue.extend({
+    props:['cameraList'],
     components:{
       WarningCensus,
       SvgIcon,
@@ -100,7 +101,7 @@
         },
         status:false,
         layout:'three',
-        monitorList:[1,2,3,4],
+        monitorList:[],
         renderList:[],
         playerOptions: {
           playbackRates: [0.5, 1.0, 1.5, 2.0], // 可选的播放速度
@@ -113,19 +114,19 @@
           sources: [
             {
               type: "video/mp4", // 类型
-              src:VideoSrc,
+              src:'',
             },
             {
               type:"video/webm", // 可以播放，用ogg也可打开
-              src:VideoSrc,
+              src:'',
             },
             {
               type:"video/ogg",    // 可以播放，用webm也可打开
-              src:VideoSrc,
+              src:'',
             },
             {
               type:"video/3gp",    // 可以播放
-              src:VideoSrc,
+              src:'',
             }
           ],
           poster: require('@/assets/mission-person.jpg'), // 封面地址
@@ -134,7 +135,12 @@
             fullscreenToggle: true
           }
         },
-        isPlayArray:[false,false,false,false]
+        isPlayArray:[
+          {play:false, encoded:''},
+          {play:false, encoded:''},
+          {play:false, encoded:''},
+          {play:false, encoded:''},
+        ]
       }
     },
     computed:{
@@ -146,22 +152,66 @@
           endIndex = 4;
         }
 
+        console.log(this.monitorList);
         //@ts-ignore
         return this.monitorList.slice(0, endIndex);
       },
     },
     methods:{
       // 播放
-      play: function(index:number){
-        this.$set(this.isPlayArray, index, true)
-        //@ts-ignore
-        this.$refs[index][0].player.play();
+      play: function(index:number, cameraId:string){
+        /*
+        * command:  101--开启推流   102--关闭推流
+        * encodedString:  关闭推流时传入
+        * */
+        let data = {
+          cameraId,
+          command:101
+        };
+        getCameraStreamControl(data).then(res=>{
+          if (!res.data) return;
+          let {encodedString, pullAddress, notify} = res.data;
+          let sources = JSON.parse(JSON.stringify(this.playerOptions.sources));
+
+          sources.forEach((item:any)=>item.src = pullAddress)
+
+          this.$set(this.playerOptions, 'sources', sources);
+          this.$set(this.isPlayArray, index, {play:true, encoded:encodedString},)
+          //@ts-ignore
+          this.$refs[index][0].player.play();
+        }).catch(e=>{
+          this.$message({
+            type:'error',
+            message:'播放失败'
+          });
+        })
+
       },
       // 暂停
-      pause: function(index:number){
-        this.$set(this.isPlayArray, index, false)
-        //@ts-ignore
-        this.$refs[index][0].player.pause();
+      pause: function(index:number, cameraId:string){
+        let data = {
+          cameraId,
+          command:102,
+          encodedString:this.isPlayArray[index].encoded,
+        };
+
+        getCameraStreamControl(data).then(res=>{
+          if (!res.data) return;
+          let {encodedString, pullAddress, notify} = res.data;
+          let sources = JSON.parse(JSON.stringify(this.playerOptions.sources));
+
+          sources.forEach((item:any)=>item.src = pullAddress)
+
+          this.$set(this.playerOptions, 'sources', sources);
+          this.$set(this.isPlayArray, index, {play:false, encoded:encodedString},)
+          //@ts-ignore
+          this.$refs[index][0].player.pause();
+        }).catch(e=>{
+          this.$message({
+            type:'error',
+            message:'关闭失败'
+          });
+        })
       },
       //全屏
       fullScreenHandle: function(index:number){
@@ -177,6 +227,14 @@
           //@ts-ignore
           this.$refs[index][0].player.isFullscreen(false);
         }
+      },
+    },
+    watch:{
+      cameraList:{
+        handler: function(newVal, oldVal){
+          this.monitorList = newVal;
+        },
+        deep:true
       },
     },
     mounted(): void {

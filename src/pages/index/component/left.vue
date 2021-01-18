@@ -124,7 +124,9 @@
             }
           });
           resolve(list);
+          this.$emit('updateCameraList',res.data);
         }).catch(e=>{
+          this.$emit('updateCameraList',[]);
           resolve([]);
         });
       },
@@ -159,7 +161,6 @@
         this.flowDialog = false;
       },
       filterBoxTree: function (boxName:any) {
-        console.log(boxName)
         //@ts-ignore
         this.$refs.tree.filter(boxName);
       },
@@ -169,7 +170,7 @@
       }
     },
     mounted(): void {
-      /*
+
       getDeviceRunningCensus().then(res=>{
         if (!res.data) return
         this.boxCensus = res.data;
@@ -187,7 +188,7 @@
         })
         this.flowCensus = res.data;
       })
-      */
+
     },
   });
 </script>

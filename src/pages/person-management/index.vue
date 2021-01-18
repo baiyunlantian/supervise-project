@@ -2,7 +2,7 @@
   <div id="person-management-container">
     <Left
         ref="left"
-        @updateDepart="initDepart"
+        @initTableAndSelectList="initTableAndSelectList"
         @updateStation="setData"
     />
 
@@ -45,7 +45,7 @@
       <NormalPersonList
           ref="childTable"
           @toggleDialog="setData"
-          @initTableAndTree="initTableAndTree"
+          @initTableAndSelectListAndTree="initTableAndSelectListAndTree"
           :searchParams="searchParams"
           :depart-common-map="departCommonMap"
           :station-common-map="stationCommonMap"
@@ -58,7 +58,7 @@
         :depart-select-list="departSelectList"
         :station-select-list="stationSelectList"
         @close="setData"
-        @initTableAndTree="initTableAndTree"
+        @initTableAndSelectListAndTree="initTableAndSelectListAndTree"
     />
 
   </div>
@@ -122,7 +122,7 @@
       },
       searchTable: function (data?:object) {
         //@ts-ignore
-        this.$refs.childTable.initTable();
+        this.$refs.childTable.initTable(data);
       },
       batchImportSuccess: function (res:any) {
         /*
@@ -144,15 +144,19 @@
           message: '导入失败!'
         });
       },
-      initTableAndTree: function () {
+      initTableAndSelectList: function () {
         this.searchTable();
+        this.initDepartSelectList();
+      },
+      initTableAndSelectListAndTree: function() {
+        this.initTableAndSelectList();
         this.initTree();
       },
       initTree: function () {
         //@ts-ignore
         this.$refs.left.customRefreshTree();
       },
-      initDepart: function () {
+      initDepartSelectList: function () {
         let formData = new FormData();
 
         formData.append('companyCode', sessionStorage.getItem('companyCode') || '');
@@ -171,11 +175,10 @@
           this.departCommonMap = map;
         })
 
-
       }
     },
     mounted(): void {
-      this.initDepart();
+      this.initDepartSelectList();
     }
   })
 </script>

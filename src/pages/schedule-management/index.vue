@@ -70,7 +70,7 @@
 
         <template v-slot:operate="{row}">
           <div class="operate-btn">
-            <router-link :to="{ path: '/schedule-management/mission-detail', query: { arrangeId: row.arrangeId }}">
+            <router-link :to="{ path: '/schedule-management/mission-detail', query: { data: row}}">
               ···
             </router-link>
             <SvgIcon name="delete" @click="handleClickDelete(row.arrangeId)"/>
@@ -190,14 +190,14 @@
           if (!data[key]) {
             delete data[key];
           }else if (key === 'time'){
-            data.dutyStartTime = moment(data.time[0]).format('yyyy.MM.DD');
-            data.dutyEndTime = moment(data.time[1]).format('yyyy.MM.DD');
+            data.dutyStartTime = moment(data.time[0]).format('yyyy-MM-DD')+' 00:00:00';
+            data.dutyEndTime = moment(data.time[1]).format('yyyy-MM-DD')+' 00:00:00';
             delete data.time;
           }
         })
 
         //@ts-ignore
-        this.$refs.table.initTable();
+        this.$refs.table.initTable(data);
       },
       handleClickDelete: function (id?:string) {
         let data = {

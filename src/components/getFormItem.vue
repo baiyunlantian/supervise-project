@@ -61,7 +61,6 @@
     },
     methods:{
       selectChange: function (option:any, key:string) {
-        console.log('select')
         this.$emit('selectChange', option, key);
       },
     },

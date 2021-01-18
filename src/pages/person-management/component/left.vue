@@ -31,7 +31,7 @@
         <template v-slot="{ node, data }" class="group">
           <div class="custom-tree-node">
             <div class="img">
-              <img v-if="data.type === 1" :src="data.url || require('@/assets/mission-person.jpg')" alt=""/>
+              <img v-if="data.type === 1" :src="data.url" alt=""/>
               <span v-else-if="data.type === 0 && node.expanded === true">-</span>
               <span v-else-if="data.type === 0 && node.expanded === false">+</span>
             </div>
@@ -127,8 +127,11 @@
 
         deleteDepart({departId:id}).then(res=>{
           showMessageAfterRequest(res.data, '删除部门成功', '删除部门失败');
-          //@ts-ignore
-          res.data === true ? this.customRefreshTree(this.department.fatherId) : ''
+          if (res.data === true){
+            //@ts-ignore
+            this.customRefreshTree(this.department.fatherId);
+            this.$emit('initTableAndSelectList');
+          }
         })
       },
       handleGetTreeSelectList: async function (resolve:Function, fatherId?:string, type?:string) {
@@ -142,18 +145,6 @@
           const { departList, personList } = res.data;
           let list : any = [];
 
-          departList.forEach((item:any)=>{
-
-            list.push({
-              fatherId:item.fatherId,
-              departId:item.departId,
-              name:item.departName,
-              label:`${item.departName}(${item.num}人)`,
-              leaf: false,
-              type:0
-            });
-          });
-
           personList.forEach((item:any)=>{
             list.push({
               personId:item.personId,
@@ -165,14 +156,24 @@
             });
           });
 
+          departList.forEach((item:any)=>{
+
+            list.push({
+              fatherId:item.fatherId,
+              departId:item.departId,
+              name:item.departName,
+              label:`${item.departName}(${item.num || 0}人)`,
+              leaf: false,
+              type:0
+            });
+          });
+
           //操作一级部门
           if (type === 'custom'){
             //@ts-ignore
             this.customTreeList = list;
             return;
           }
-
-          this.$emit('updateDepart');
 
           resolve(list);
         }).catch(e=>{
@@ -207,7 +208,10 @@
 
         handleFn(data).then((res:any)=>{
           showMessageAfterRequest(res.data, text+'部门成功', text+'部门失败');
-          res.data === true ? this.customRefreshTree(fatherId) : '';
+          if (res.data === true){
+            this.customRefreshTree(fatherId);
+            this.$emit('initTableAndSelectList');
+          }
         })
 
       },

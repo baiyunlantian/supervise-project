@@ -22,17 +22,29 @@
         </template>
       </div>
 
-      <Form
+      <el-form
           ref="form"
+          class="form-container"
           :disabled="disableInputs.realtimeVoice"
-          :form-data="voiceFormData"
-          :form-props="normalFormProps"
+          :model="voiceFormData"
       >
-        <el-form-item label="播报内容：" prop="realtimeVoice" slot="before">
-          <el-input v-model="voiceFormData.realtimeVoice"/>
+        <el-form-item label="播报内容：" prop="realtimeVoice">
+          <el-input v-model="voiceFormData.realtimeVoice" @input="value=>checkValidRealtime(value,'realtimeVoice')"/>
           <span class="compute-num">{{voiceFormData.realtimeVoice ? voiceFormData.realtimeVoice.length : 0}}/30</span>
+          <div class="error-text" :style="{visibility: exceptionValidate.realtimeVoice === true ? 'hidden' : 'visible'}">超出最大限制</div>
         </el-form-item>
-      </Form>
+
+        <el-form-item
+            v-for="(item, index) in items"
+            :key="index"
+            :label="item.label"
+            :prop="item.key"
+        >
+          <el-input v-model="voiceFormData[item.key]" :type="item.type" @input="(value)=>checkValidRealtime(value,item.key)"/>
+          <div class="error-text" :style="{visibility: exceptionValidate[item.key] === true ? 'hidden' : 'visible'}">超出最大限制</div>
+        </el-form-item>
+
+      </el-form>
     </div>
 
     <div class="exception-voice-content bgcAndShadow">
@@ -105,18 +117,14 @@
     },
     data() {
       return {
-        normalFormProps:{
-          items:[
-            {key:'realtimeVoiceCount', label:'播报次数',type:'number'},
-            {key:'realtimeVoiceIntervalTime', label:'间隔时间',type:'number'},
-          ],
-          rules:{
-            realtimeVoice:[{max:30, message: '超出最大限制', trigger: 'change'}],
-            realtimeVoiceCount:[{max:30, message: '超出最大限制', trigger: 'change'}],
-            realtimeVoiceIntervalTime:[{max:3600, message: '超出最大限制', trigger: 'change'}],
-          },
-          showMessage:true,
-          hiddenFooter:true,
+        items:[
+          {key:'realtimeVoiceCount', label:'播报次数',type:'number'},
+          {key:'realtimeVoiceIntervalTime', label:'间隔时间',type:'number'},
+        ],
+        rules:{
+          realtimeVoice:[{max:30, message: '超出最大限制', trigger: 'change'}],
+          // realtimeVoiceCount:[{max:30, type:'number', message: '请输入30以内的数', trigger: 'change'}],
+          // realtimeVoiceIntervalTime:[{max:3600, type:'number', message: '请输入3600以内的数', trigger: 'change'}],
         },
         //传给后台的值
         voiceFormData:{
@@ -148,6 +156,9 @@
           {key:'tumbleVoice',label:'跌倒预警',},
         ],
         exceptionValidate:{
+          realtimeVoice:true,
+          realtimeVoiceCount:true,
+          realtimeVoiceIntervalTime:true,
           faceVoice:true,
           helmetVoice:true,
           refectiveVestVoice:true,
@@ -165,24 +176,27 @@
         this.$set(this.disableInputs,key,value)
       },
       handleUpdateNormalVoice: function (key:string) {
+        let flag = true;
+        Object.keys(this.exceptionValidate).forEach(key=>{
+          //@ts-ignore
+          if (!this.exceptionValidate[key]){
+            flag = false;
+            return;
+          }
+        })
+
+        if (!flag) return;
+
         let data : any = JSON.parse(JSON.stringify(this.baseVoiceFormData));
 
         if (key === 'realtimeVoice'){
-          //@ts-ignore   校验实时播报内容长度
-          this.$refs.form.validate((valid)=>{
-            const {realtimeVoice, realtimeVoiceCount, realtimeVoiceIntervalTime} = this.voiceFormData;
-            data = {realtimeVoice, realtimeVoiceCount, realtimeVoiceIntervalTime};
-          })
-        }else {
-          //@ts-ignore  校验异常语音内容长度
-          if (this.exceptionValidate[key] === false){
-            return;
-          }
-
-          //@ts-ignore
-          data[key] = this.voiceFormData[key]
+          const {realtimeVoice, realtimeVoiceCount, realtimeVoiceIntervalTime} = this.voiceFormData;
+          data.realtimeVoice = realtimeVoice;
+          data.realtimeVoiceCount = realtimeVoiceCount;
+          data.realtimeVoiceIntervalTime = realtimeVoiceIntervalTime;
         }
-
+        //@ts-ignore
+        data[key] = this.voiceFormData[key];
         data.realtimeVoiceCount = String(data.realtimeVoiceCount);
         data.realtimeVoiceIntervalTime = String(data.realtimeVoiceIntervalTime);
 
@@ -221,6 +235,20 @@
           this.voiceFormData = res.data;
           this.baseVoiceFormData = JSON.parse(JSON.stringify(res.data));
         })
+      },
+      checkValidRealtime: function (value:string, key:string) {
+        if (!value) return;
+
+        let flag = true;
+        if(key === 'realtimeVoiceCount'){
+          flag = Number(value) > 30 ? false : true;
+        }else if (key === 'realtimeVoiceIntervalTime'){
+          flag = Number(value) > 3600 ? false : true;
+        }else if (key === 'realtimeVoice'){
+          flag = value.length > 30 ? false : true;
+        }
+
+        this.$set(this.exceptionValidate, key, flag);
       }
     },
     mounted(): void {

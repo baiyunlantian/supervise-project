@@ -1,7 +1,7 @@
 <template>
   <div id="home-container">
-    <Left />
-    <Right />
+    <Left @updateCameraList="updateCameraList"/>
+    <Right :camera-list="cameraList"/>
   </div>
 </template>
 
@@ -14,6 +14,16 @@
     components:{
       Left,
       Right,
+    },
+    data(){
+      return {
+        cameraList:[],
+      }
+    },
+    methods:{
+      updateCameraList: function (list = []) {
+        this.cameraList = list;
+      }
     },
 
     beforeRouteEnter (to, from, next) {

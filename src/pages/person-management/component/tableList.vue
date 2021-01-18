@@ -115,7 +115,7 @@
         deletePerson(personIds).then(res=>{
           showMessageAfterRequest(res.data, '删除人员成功', '删除人员失败');
           //@ts-ignore
-          res.data === true ? this.$emit('initTableAndTree') : '';
+          res.data === true ? this.$emit('initTableAndSelectListAndTree') : '';
         })
       },
       exportPersonExcel: function () {

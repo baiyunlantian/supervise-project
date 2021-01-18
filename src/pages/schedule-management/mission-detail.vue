@@ -23,9 +23,9 @@
         :disabled="disabledForm"
       >
         <el-form-item label="使用时间" prop="useTime">
-          <el-date-picker v-model="formData.useTime" type="date" placeholder="使用时间"></el-date-picker>
+          <el-date-picker v-model="formData.useStartTime" type="date" placeholder="使用时间"></el-date-picker>
           <div class="range-separator">——</div>
-          <el-date-picker v-model="formData.returnTime" type="date" placeholder="归还时间"></el-date-picker>
+          <el-date-picker v-model="formData.useEndTime" type="date" placeholder="归还时间"></el-date-picker>
         </el-form-item>
       </Form>
 
@@ -61,9 +61,15 @@
   import Form from '@/components/form/index.vue';
   import Table from '@/components/table/index.vue';
   import moment from "moment";
-  import { exportExcl, showMessageAfterRequest } from '@/utils/common';
-  import { getScheduleDetail, updateSchedule, batchDeleteSchedule } from "@/request/schedule";
+  import {
+    exportExcl,
+    insertOptionsToFormItems,
+    showMessageAfterRequest
+  } from '@/utils/common';
+  import { updateSchedule, batchDeleteSchedule } from "@/request/schedule";
   import { PERSON } from "@/request/type";
+  import {getPersonSelectList} from "@/request/common";
+  import {getBoxList} from "@/request/equipment";
 
   export default Vue.extend({
     components:{
@@ -72,51 +78,27 @@
       Table
     },
     data() {
-      let _this = this;
       return {
         formProps:{
           items:[
             {key:'time',label:'任务时间',type:'daterange',startPlaceholder:'开始时间',endPlaceholder:'结束时间'},
-            {key:'personList',label:'安排人员',type:'select',multiple:true,
-              options:[
-                {value:1,label:'佩恩'},
-                {value:2,label:'自来也'},
-                {value:3,label:'佐助'},
-                {value:4,label:'柱间'},
-                {value:5,label:'鸣人'},
-              ],
-            },
-            {key:'boxId',label:'绑定设备',type:'select',
-              options:[
-                {value:1,label:'设备1'},
-                {value:2,label:'设备2'},
-                {value:3,label:'设备3'},
-                {value:4,label:'设备4'},
-              ]
-            },
+            {key:'personList',label:'安排人员',type:'select',multiple:true, options:[],},
+            {key:'boxId',label:'绑定设备',type:'select', options:[]},
             {key:'arrangeName',label:'任务名称',type:'input'},
-            {key:'dutyPersonId',label:'负责人',type:'select',
-              options:[
-                {value:1,label:'长门'},
-                {value:2,label:'三代'},
-                {value:3,label:'大蛇丸'},
-                {value:4,label:'六道木'},
-                {value:5,label:'波风水门'},
-              ],
-            },
+            {key:'dutyPersonId',label:'负责人',type:'select', options:[],},
             {key:'boxStatus',label:'设备状态',type:'select',
               options:[
-                {value:1,label:'未领取'},
-                {value:2,label:'已领取'},
-                {value:3,label:'已归还'},
+                {value:0,label:'未领取'},
+                {value:1,label:'已领取'},
+                {value:2,label:'已归还'},
               ]
             },
             {key:'detail',label:'任务详情',type:'textarea'},
             {key:'arrangeStatus',label:'任务状态',type:'select',
               options:[
-                {value:1,label:'未开始'},
-                {value:2,label:'进行中'},
-                {value:3,label:'已结束'},
+                {value:0,label:'未开始'},
+                {value:1,label:'进行中'},
+                {value:2,label:'已结束'},
               ]
             },
           ],
@@ -129,7 +111,8 @@
             pageSize:12
           },
           params:{
-            arrangeId:this.$route.query.arrangeId
+            //@ts-ignore
+            arrangeId:this.$route.query.data.arrangeId
           },
           tableColumn:[
             {prop:'buildTime',label:'日期'},
@@ -144,6 +127,7 @@
         baseFormData:{},
         disabledForm:true,
         arrangeId:'',
+        personSelectList:[],
       }
     },
     methods: {
@@ -192,19 +176,45 @@
         .catch(e=>{
           console.log(e)
         })
-      }
+      },
+      initialValueForm: function () {
+        const {data} :any = this.$route.query;
+
+        let dutyPersonList = data.personList.filter((item:any)=>item.type === 0);
+        this.$set(this.formProps, 'items', insertOptionsToFormItems(this.formProps.items, 'dutyPersonId',dutyPersonList));
+
+        dutyPersonList && dutyPersonList.length > 0 ? data.dutyPersonId = dutyPersonList[0].personId : '';
+        this.arrangeId = data.arrangeId;
+        this.formData = data;
+        this.$set(this.formData, 'time', [data.dutyStartTime, data.dutyEndTime]);
+      },
     },
     mounted(): void {
-      const {arrangeId} = this.$route.query;
-      //@ts-ignore
-      this.arrangeId = arrangeId;
+      this.initialValueForm();
 
-      getScheduleDetail({arrangeId}).then(res=>{
+      let formData = new FormData();
+      formData.append('companyCode', sessionStorage.getItem('companyCode') || '');
+
+
+      getPersonSelectList(formData).then((res:any)=>{
         if (!res.data) return;
 
-        let time = [res.data.dutyStartTime, res.data.dutyEndTime];
-        this.formData = {time, ...res.data};
-        this.baseFormData = {time, ...res.data};
+        let list = res.data.list.map((item:any)=>{
+          return {value:item.personId, label:item.personName}
+        })
+
+        this.$set(this.formProps, 'items', insertOptionsToFormItems(this.formProps.items, 'personList',list));
+        this.$set(this.formProps, 'items', insertOptionsToFormItems(this.formProps.items, 'dutyPersonId',list));
+      })
+
+      getBoxList({pageSize:40, pageNum:1}).then(res=>{
+        if (!res.data) return;
+
+        let list = res.data.list.map((item:any)=>{
+          return {value:item.boxId, label:item.name}
+        })
+
+        this.$set(this.formProps, 'items',insertOptionsToFormItems(this.formProps.items, 'boxId', list));
       })
     }
   })

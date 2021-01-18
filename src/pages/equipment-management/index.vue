@@ -166,7 +166,7 @@
     methods: {
       search: function (data?:object) {
         //@ts-ignore
-        this.initTable();
+        this.initTable(data);
       },
       close: function (operate:string) {
         this.visible = false;
@@ -215,9 +215,10 @@
               param.running = 1;
               break;
           }
+          delete param.status;
         }
         //@ts-ignore
-        this.$refs.table.initTable();
+        this.$refs.table.initTable(param);
       },
       jump: function () {
         this.$router.push('/equipment-management/set-voice');
