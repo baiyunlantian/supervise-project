@@ -62,9 +62,10 @@
       <div class="content">
         <div class="form-item">
           <div class="label">流量使用提醒：</div>
-          <el-input type="number" v-model="flowMax"/>
+          <el-input type="input" v-model="flowMax" @input="checkFlowValid"/>
         </div>
         <div class="sub">(不做使用上限提醒时请输入0，单位：M)</div>
+        <div class="error-text" :style="{visibility: flowValid === true ? 'hidden' : 'visible'}">请输入大于等于0的正整数</div>
       </div>
 
       <template slot="footer">
@@ -80,7 +81,8 @@
   import SearchInput from '@/components/search-input/index.vue';
   import SvgIcon from '@/components/svgIcon.vue';
   import { getCameraList, getBoxList, getDeviceRunningCensus } from "@/request/equipment";
-  import { getFlowCensus } from '@/request/index';
+  import { getFlowCensus, getFlowAlert, updateFlowAlert, deleteFlowAlert } from '@/request/index';
+  import {showMessageAfterRequest} from "@/utils/common";
 
   export default Vue.extend({
     components:{
@@ -106,6 +108,7 @@
         },
         flowDialog:false,
         flowMax:'',
+        flowValid:true,
         firstNode:'',
         resolveFn:new Function(),
         customTreeList:[],
@@ -156,10 +159,6 @@
           this.handleGetChildTree(node.data.id, resolve);
         }
       },
-      save: function () {
-        console.log(this.flowMax);
-        this.flowDialog = false;
-      },
       filterBoxTree: function (boxName:any) {
         //@ts-ignore
         this.$refs.tree.filter(boxName);
@@ -167,10 +166,45 @@
       filterNode(value:string, data:any) {
         if (!value) return true;
         return data.label.indexOf(value) !== -1;
+      },
+      save: function () {
+        if (!this.flowValid) return;
+
+        let data :any = {};
+        let handleFn;
+
+        if (this.flowMax === '0'){
+          handleFn = deleteFlowAlert;
+        }else {
+          handleFn = updateFlowAlert;
+          data.flowByte = Number(this.flowMax) * 1024;    //转成字节传后端
+        }
+
+        handleFn(data).then((res:any)=>{
+          showMessageAfterRequest(res.data,'设置成功','设置失败');
+          this.flowDialog = false;
+        })
+      },
+      checkFlowValid: function (value:string) {
+        if (!value){
+          //为空时
+          this.flowValid = false;
+        }else if (value.length >= 2 && value.indexOf('0') === 0){
+          //输入0开头的数字
+          this.flowValid = false;
+        }else if (/^[1-9]\d*$/.test(value) === false && value !== '0'){
+          //非大于0的正整数
+          this.flowValid = false;
+        }else if (value === '0'){
+          this.flowValid = true;
+        }else {
+          this.flowValid = true;
+        }
       }
     },
     mounted(): void {
 
+      /*
       getDeviceRunningCensus().then(res=>{
         if (!res.data) return
         this.boxCensus = res.data;
@@ -189,6 +223,11 @@
         this.flowCensus = res.data;
       })
 
+      getFlowAlert().then(res=>{
+        if (!res.data) return
+        this.flowMax = res.data.preSettingFlowByte ? (res.data.preSettingFlowByte/1024).toFixed(0) : '0';
+      })
+      */
     },
   });
 </script>

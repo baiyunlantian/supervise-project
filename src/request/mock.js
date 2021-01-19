@@ -13,6 +13,17 @@ Mock.mock('/mock/index/flowCensus',(res,req)=>{
   }
 });
 
+//首页--流量统计
+Mock.mock('/mock/camera/cameraStreamControl',(res,req)=>{
+  return {
+    data:{
+      pullAddress:'https://www.runoob.com/try/demo_source/movie.mp4',
+      encodedString:'123456789',
+      notify:true,
+    }
+  }
+});
+
 //项目详情--人员管理--左侧部门列表
 Mock.mock('/mock/index/terminalTree',(res,req)=>{
 
@@ -389,11 +400,10 @@ Mock.mock('/mock/equipment/deleteEquipment',(res,req)=>{
 
 //设备管理--设备列表
 Mock.mock('/mock/equipment/selectList',(res,req)=>{
-  const body = JSON.parse(res.body);
 
   let list = [];
 
-  for (let i = 0; i < body.pageSize; i++){
+  for (let i = 0; i < 1; i++){
     list.push({
       id:Random.integer(1,99999),
       name:Random.csentence(3,5),
@@ -403,38 +413,6 @@ Mock.mock('/mock/equipment/selectList',(res,req)=>{
       password:'123456',
       status:Random.integer(0,3),
       remark:Random.csentence(3,5),
-      cameraList:[
-        {
-          id:Random.integer(1,99999),
-          name:'摄像头'+Random.integer(1,1000),
-          ip:'127.0.0.1',
-          port:Random.integer(50,200),
-          account:'admin',
-          password:'123456',
-          status:Random.integer(0,3),
-          remark:Random.csentence(3,5),
-        },
-        {
-          id:Random.integer(1,99999),
-          name:'摄像头'+Random.integer(1,1000),
-          ip:'127.0.0.1',
-          port:Random.integer(50,200),
-          account:'admin',
-          password:'123456',
-          status:Random.integer(0,3),
-          remark:Random.csentence(3,5),
-        },
-        {
-          id:Random.integer(1,99999),
-          name:'摄像头'+Random.integer(1,1000),
-          ip:'127.0.0.1',
-          port:Random.integer(50,200),
-          account:'admin',
-          password:'123456',
-          status:Random.integer(0,3),
-          remark:Random.csentence(3,5),
-        }
-      ],
     });
 
   }
@@ -442,22 +420,63 @@ Mock.mock('/mock/equipment/selectList',(res,req)=>{
   return {
     data:{
       list,
-      page:{
-        total:list.length * 10,
-        pageSize:body.pageSize,
-        pageNum:body.pageNum
-      },
     }
   }
 });
 
-//设备管理--语音播报--语音内容
+//设备管理--摄像头
+Mock.mock('/mock/edgebox/boxList',(res,req)=>{
+
+  let list = [];
+
+  for (let i = 0; i < 1; i++){
+    list.push({
+      boxId:Random.integer(1,99999),
+      name:'盒子'+Random.integer(1,1000),
+      ip:'127.0.0.1',
+      port:Random.integer(50,200),
+      account:'admin',
+      password:'123456',
+      status:Random.integer(0,3),
+      remark:Random.csentence(3,5),
+    })
+  }
+
+  return {
+    data:{
+      list,
+    }
+  }
+
+});
+
+//设备管理--视频是否同步到云端
+Mock.mock('/mock/edgebox/updateReportVideoConfig',(res,req)=>{
+  const body = JSON.parse(res.body);
+
+  return {
+    data:body.hasOwnProperty('isPushCloudStream') === true ? true : false
+  }
+});
+
+//设备管理--视频同步到云端状态
+Mock.mock('/mock/edgebox/reportVideoConfig',(res,req)=>{
+
+  return {
+    data:{
+      isPushCloudStream:1
+    }
+  }
+});
+
+
+//设备管理--摄像头列表
 Mock.mock('/mock/camera/cameraList',(res,req)=>{
   let list = [];
 
   for (let i = 0; i < 3; i++){
     list.push({
-      id:Random.integer(1,99999),
+      cameraId:Random.integer(1,99999),
       name:'摄像头'+Random.integer(1,1000),
       ip:'127.0.0.1',
       port:Random.integer(50,200),

@@ -1,10 +1,30 @@
 import * as API from '@/utils/axios';
-import { VIDEO } from './type';
+import { VIDEO, MOCK, BOX } from './type';
 
 export function getFlowCensus (params?:object)  {
   return API.POST(`${VIDEO}/visflow/flowStatistics`, params)
 }
 
+export function updateFlowAlert (params?:object)  {
+  return API.POST(`${VIDEO}/visflow/updateFlowAlert`, params)
+}
+
+export function getFlowAlert (params?:object)  {
+  return API.POST(`${VIDEO}/visflow/getFlowAlert`, params)
+}
+
+export function deleteFlowAlert (params?:object)  {
+  return API.POST(`${VIDEO}/visflow/deleteFlowAlert`, params)
+}
+
 export function getCameraStreamControl (params?:object)  {
-  return API.POST(`${VIDEO}/camera/cameraStreamControl`, params)
+  return API.POST(`${MOCK}/camera/cameraStreamControl`, params)
+}
+
+export function updateReportVideoConfig (params?:object)  {
+  return API.POST(`${MOCK}/edgebox/updateReportVideoConfig`, params)
+}
+
+export function getReportVideoConfig (params?:object)  {
+  return API.POST(`${MOCK}/edgebox/reportVideoConfig`, params)
 }

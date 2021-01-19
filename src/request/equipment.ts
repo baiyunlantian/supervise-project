@@ -1,5 +1,5 @@
 import * as API from '@/utils/axios';
-import { BOX } from './type';
+import {BOX, MOCK} from './type';
 
 export function getEquipmentCensus (params?:object)  {
   return API.POST(`${BOX}/edgebox/boxStatistics`, params)
@@ -22,11 +22,11 @@ export function updateVoiceInfo (params?:object)  {
 }
 
 export function getCameraList (params?:object)  {
-  return API.POST(`${BOX}/camera/cameraList`, params)
+  return API.POST(`${MOCK}/camera/cameraList`, params)
 }
 
 export function getBoxList (params?:object)  {
-  return API.POST(`${BOX}/edgebox/boxList`, params)
+  return API.POST(`${MOCK}/edgebox/boxList`, params)
 }
 
 export function getDeviceRunningCensus (params?:object)  {

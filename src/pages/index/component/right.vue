@@ -10,11 +10,12 @@
             <div class="sub">(开启将会产生流量费用)</div>
           </div>
           <el-switch
-              v-model="status"
+              :value="reportStatus"
               active-color="#ff4949"
               inactive-color="rgb(3, 114, 248)"
               active-text="OFF"
               inactive-text="ON"
+              @change="updateReportStatus"
           />
         </div>
 
@@ -41,7 +42,7 @@
       <div class="monitor-content" :class="[layout]">
         <div
             class="monitor-item"
-            v-for="(item,index) in sliceMonitorList"
+            v-for="(item,index) in monitorList"
             :key="index"
         >
 
@@ -49,11 +50,11 @@
               class="video-player vjs-custom-skin"
               :ref="index"
               :playsinline="true"
-              :options="playerOptions"
+              :options="item.playerOptions"
           />
 
           <div class="operate-content">
-            <div class="text">摄像头{{index}}</div>
+            <div class="text">{{item.name}}</div>
             <div class="operate-btn">
               <SvgIcon name="play" color="#fff" v-on:click="play(index, item.cameraId)" v-if="!isPlayArray[index].play" />
               <SvgIcon name="pause" color="#fff" @click="pause(index, item.cameraId)" v-else />
@@ -79,7 +80,8 @@
   import WarningCensus from '@/components/warning-census/index.vue';
   import SvgIcon from '@/components/svgIcon.vue';
   import { getExceptionCensus } from '@/request/exception';
-  import { getCameraStreamControl } from '@/request/index';
+  import { getCameraStreamControl, getReportVideoConfig, updateReportVideoConfig } from '@/request/index';
+  import {showMessageAfterRequest, VideoSrc} from "@/utils/common";
 
   export default Vue.extend({
     props:['cameraList'],
@@ -99,10 +101,9 @@
           fire:0,
           tumble:0
         },
-        status:false,
+        reportStatus:false,
         layout:'three',
         monitorList:[],
-        renderList:[],
         playerOptions: {
           playbackRates: [0.5, 1.0, 1.5, 2.0], // 可选的播放速度
           autoplay: false, // 如果为true,浏览器准备好时开始回放。
@@ -114,23 +115,24 @@
           sources: [
             {
               type: "video/mp4", // 类型
-              src:'',
+              // src:'https://www.runoob.com/try/demo_source/movie.mp4',
+              src:'https://www.w3cschool.cn/statics/demosource/mov_bbb.mp4',
             },
-            {
-              type:"video/webm", // 可以播放，用ogg也可打开
-              src:'',
-            },
-            {
-              type:"video/ogg",    // 可以播放，用webm也可打开
-              src:'',
-            },
-            {
-              type:"video/3gp",    // 可以播放
-              src:'',
-            }
+            // {
+            //   type:"video/webm", // 可以播放，用ogg也可打开
+            //   src:'',
+            // },
+            // {
+            //   type:"video/ogg",    // 可以播放，用webm也可打开
+            //   src:'',
+            // },
+            // {
+            //   type:"video/3gp",    // 可以播放
+            //   src:'',
+            // }
           ],
           poster: require('@/assets/mission-person.jpg'), // 封面地址
-          notSupportedMessage: '此视频暂无法播放，请稍后再试', // 允许覆盖Video.js无法播放媒体源时显示的默认信息。
+          notSupportedMessage: '', // 允许覆盖Video.js无法播放媒体源时显示的默认信息。
           controls: {
             fullscreenToggle: true
           }
@@ -152,9 +154,8 @@
           endIndex = 4;
         }
 
-        console.log(this.monitorList);
         //@ts-ignore
-        return this.monitorList.slice(0, endIndex);
+        return endIndex;
       },
     },
     methods:{
@@ -171,14 +172,17 @@
         getCameraStreamControl(data).then(res=>{
           if (!res.data) return;
           let {encodedString, pullAddress, notify} = res.data;
-          let sources = JSON.parse(JSON.stringify(this.playerOptions.sources));
+          let item = JSON.parse(JSON.stringify(this.playerOptions));
+          item.sources[0].src = pullAddress;
 
-          sources.forEach((item:any)=>item.src = pullAddress)
-
-          this.$set(this.playerOptions, 'sources', sources);
-          this.$set(this.isPlayArray, index, {play:true, encoded:encodedString},)
           //@ts-ignore
-          this.$refs[index][0].player.play();
+          this.monitorList.splice(index, 1, {...this.monitorList[index], playerOptions:item})
+          this.$set(this.isPlayArray, index, {play:true, encoded:encodedString},)
+          setTimeout(()=>{
+            //@ts-ignore
+            this.$refs[index][0].player.play();
+          },500)
+
         }).catch(e=>{
           this.$message({
             type:'error',
@@ -198,11 +202,7 @@
         getCameraStreamControl(data).then(res=>{
           if (!res.data) return;
           let {encodedString, pullAddress, notify} = res.data;
-          let sources = JSON.parse(JSON.stringify(this.playerOptions.sources));
 
-          sources.forEach((item:any)=>item.src = pullAddress)
-
-          this.$set(this.playerOptions, 'sources', sources);
           this.$set(this.isPlayArray, index, {play:false, encoded:encodedString},)
           //@ts-ignore
           this.$refs[index][0].player.pause();
@@ -228,16 +228,37 @@
           this.$refs[index][0].player.isFullscreen(false);
         }
       },
+      updateReportStatus: function(value:boolean) {
+        let isPushCloudStream = value === false ? 0 : 1;
+        updateReportVideoConfig({isPushCloudStream}).then(res=>{
+          this.reportStatus = res.data === true ? value : !value;
+          showMessageAfterRequest(res.data, '修改成功','修改失败');
+        }).catch(e=>{
+          this.$message({
+            type:'error',
+            message:'修改失败'
+          })
+          this.reportStatus = !value;
+        })
+      },
     },
     watch:{
       cameraList:{
         handler: function(newVal, oldVal){
-          this.monitorList = newVal;
+          let list = newVal.map((item:any, index:number)=>{
+            return{
+              ...item,
+              playerOptions:JSON.parse(JSON.stringify(this.playerOptions))
+            }
+            // this.$set(this.monitorList, index, JSON.parse(JSON.stringify(this.playerOptions)));
+          })
+          this.monitorList = list;
         },
         deep:true
       },
     },
     mounted(): void {
+      /*
       getExceptionCensus().then(res=>{
         if (!res.data) return
 
@@ -275,6 +296,12 @@
 
         this.warningCensus = {...this.warningCensus, ...census};
       })
+
+      getReportVideoConfig().then(res=>{
+        if (!res.data) return;
+        this.reportStatus = res.data.isPushCloudStream === 0 ? false : true;
+      })
+      */
     }
   });
 </script>
