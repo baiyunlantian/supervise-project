@@ -20,13 +20,13 @@
         <div class="right">
           <div class="mission-status">
             <span>任务状态：</span>
-            <span :class="{active: arrangeStatus === 0}" @click="setData(0,'arrangeStatus')">全部</span>
+            <span :class="{active: arrangeStatus === ''}" @click="setData('','arrangeStatus')">全部</span>
             <span>|</span>
-            <span  :class="{active: arrangeStatus === 1}" @click="setData(1,'arrangeStatus')">未开始</span>
+            <span  :class="{active: arrangeStatus == '0'}" @click="setData(0,'arrangeStatus')">未开始</span>
             <span>|</span>
-            <span  :class="{active: arrangeStatus === 2}" @click="setData(2,'arrangeStatus')">进行中</span>
+            <span  :class="{active: arrangeStatus == '1'}" @click="setData(1,'arrangeStatus')">进行中</span>
             <span>|</span>
-            <span  :class="{active: arrangeStatus === 3}" @click="setData(3,'arrangeStatus')">已结束</span>
+            <span  :class="{active: arrangeStatus == '2'}" @click="setData(2,'arrangeStatus')">已结束</span>
           </div>
 
           <div class="operate-btn">
@@ -120,9 +120,9 @@
           {key:'boxId',label:'设备',type:'select', options:[]},
           {key:'boxStatus',label:'设备状态',type:'select',
             options:[
-              {value:1,label:'未领取'},
-              {value:2,label:'已领取'},
-              {value:3,label:'已归还'},
+              {value:0,label:'未领取'},
+              {value:1,label:'已领取'},
+              {value:2,label:'已归还'},
             ]
           },
         ],
@@ -148,16 +148,11 @@
             {prop:'boxName',label:'绑定设备'},
             {prop:'boxStatus',label:'设备状态',insertHtml:true},
             {prop:'arrangeStatus',label:'任务状态',insertHtml:true},
-            { prop:'reportBuild',label:'监督施工报告',
-              format:function (value:number) {
-                return value === 0 ? '未生成' : '已生成'
-              }
-            },
             {prop:'operate', label:'操作',insertHtml:true}
           ],
         },
         searchParam:{},
-        arrangeStatus:0,
+        arrangeStatus:'',
         arrangeName:'',
         visible:false,
         arrangeIds:[],
@@ -187,7 +182,7 @@
         };
 
         Object.keys(data).forEach(key=>{
-          if (!data[key]) {
+          if (data[key] === '' || data[key] === null || data[key] == undefined) {
             delete data[key];
           }else if (key === 'time'){
             data.dutyStartTime = moment(data.time[0]).format('yyyy-MM-DD')+' 00:00:00';

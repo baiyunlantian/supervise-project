@@ -18,13 +18,13 @@ export function deleteFlowAlert (params?:object)  {
 }
 
 export function getCameraStreamControl (params?:object)  {
-  return API.POST(`${MOCK}/camera/cameraStreamControl`, params)
+  return API.POST(`${VIDEO}/camera/cameraStreamControl`, params)
 }
 
 export function updateReportVideoConfig (params?:object)  {
-  return API.POST(`${MOCK}/edgebox/updateReportVideoConfig`, params)
+  return API.POST(`${BOX}/edgebox/updateReportVideoConfig`, params)
 }
 
 export function getReportVideoConfig (params?:object)  {
-  return API.POST(`${MOCK}/edgebox/reportVideoConfig`, params)
+  return API.POST(`${BOX}/edgebox/reportVideoConfig`, params)
 }

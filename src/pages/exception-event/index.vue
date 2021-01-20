@@ -143,7 +143,35 @@
                 return moment(value).format('MM-DD HH:mm:ss')
               }
             },
-            {prop:'type',label:'事件类型'},
+            {prop:'type',label:'事件类型',
+              format:(key:number)=>{
+                let text = '人脸异常';
+                switch (key) {
+                  case 101:
+                    text = '登高异常';
+                    break;
+                  case 103:
+                    text = '火灾异常';
+                    break;
+                  case 104:
+                    text = '安全帽异常';
+                    break;
+                  case 105:
+                    text = '静止异常';
+                    break;
+                  case 106:
+                    text = '反光衣异常';
+                    break;
+                  case 107:
+                    text = '区域异常';
+                    break;
+                  case 108:
+                    text = '跌倒异常';
+                    break;
+                }
+                return text;
+              }
+            },
             {prop:'project',label:'所属项目'},
             {prop:'arrangeName',label:'事件名称'},
             {prop:'boxName',label:'异常来源',
@@ -158,6 +186,7 @@
         },
         detailVisible:false,
         detailData:{},
+        eventMap: new Map(),
       }
     },
     methods: {
@@ -195,6 +224,21 @@
       },
     },
     mounted(): void {
+      let map = new Map();
+      [
+        {key:101,label:'climbHeight'},
+        {key:102,label:'face'},
+        {key:103,label:'fire'},
+        {key:104,label:'helmet'},
+        {key:105,label:'motionless'},
+        {key:106,label:'refectiveVest'},
+        {key:107,label:'region'},
+        {key:108,label:'tumble'},
+      ].forEach(item=>{
+        map.set(item.key,item.label)
+      })
+
+      this.eventMap = map;
       getExceptionCensus().then(res=>{
         if (!res.data) return
 
@@ -203,36 +247,10 @@
         res.data.list.forEach((item:any)=>{
           total += item.totalNum;
           today += item.todayNum;
-
-          switch (item.type) {
-            case 101:
-              census.climbHeight = item.todayNum;
-              break;
-            case 102:
-              census.face = item.todayNum;
-              break;
-            case 103:
-              census.fire = item.todayNum;
-              break;
-            case 104:
-              census.helmet = item.todayNum;
-              break;
-            case 105:
-              census.motionless = item.todayNum;
-              break;
-            case 106:
-              census.refectiveVest = item.todayNum;
-              break;
-            case 107:
-              census.region = item.todayNum;
-              break;
-            case 108:
-              census.tumble = item.todayNum;
-              break;
-          }
+          census[map.get(item.type)] = item.todayNum;
         })
 
-        this.warningCensus = {...census, ...this.warningCensus};
+        this.warningCensus = {...this.warningCensus, ...census};
         this.exceptionCensus = {today, total};
       })
 

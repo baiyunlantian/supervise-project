@@ -66,6 +66,9 @@
 
   /deep/
   .el-tree{
+    .currentCamera{
+      background-color: gainsboro;
+    }
     .custom-tree-node{
       .active{
         background-color: transparent;
@@ -75,6 +78,18 @@
     .el-tree-node__children{
       .label{
         color: rgb(25, 144, 255);
+      }
+      .exception{
+        color: rgb(216, 0, 0);
+        .point{
+          display: inline-block;
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          background-color: rgb(216, 0, 0);
+          position: relative;
+          left: 50%
+        }
       }
     }
   }

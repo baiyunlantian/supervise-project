@@ -42,7 +42,7 @@
       <div class="monitor-content" :class="[layout]">
         <div
             class="monitor-item"
-            v-for="(item,index) in monitorList"
+            v-for="(item,index) in monitorList.slice(0, sliceMonitorList)"
             :key="index"
         >
 
@@ -53,20 +53,20 @@
               :options="item.playerOptions"
           />
 
-          <div class="operate-content">
+          <div class="operate-content" :class="{exception:item.enable === 0}">
             <div class="text">{{item.name}}</div>
-            <div class="operate-btn">
-              <SvgIcon name="play" color="#fff" v-on:click="play(index, item.cameraId)" v-if="!isPlayArray[index].play" />
-              <SvgIcon name="pause" color="#fff" @click="pause(index, item.cameraId)" v-else />
-              <SvgIcon
-                  name="fullScreen"
-                  color="#fff"
-                  @click="fullScreenHandle(index)"
-                  width="0.625rem"
-                  height="0.625rem"
-              />
-              <SvgIcon name="circleClose" color="#fff" />
-            </div>
+            <SvgIcon
+                name="fullScreen"
+                color="#fff"
+                @click="fullScreenHandle(index)"
+                width="0.625rem"
+                height="0.625rem"
+            />
+          </div>
+
+          <div class="operate-video-btn">
+            <SvgIcon name="play" width="3.125rem" height="3.125rem" color="rgb(3, 114, 248)" v-on:click="play(index, item.cameraId)" v-if="!isPlayArray[index].play" />
+            <SvgIcon name="pause" width="3.125rem" height="3.125rem" color="rgb(3, 114, 248)" @click="pause(index, item.cameraId)" v-else />
           </div>
 
         </div>
@@ -228,6 +228,7 @@
           this.$refs[index][0].player.isFullscreen(false);
         }
       },
+      //切换是否将视频同步到云端状态
       updateReportStatus: function(value:boolean) {
         let isPushCloudStream = value === false ? 0 : 1;
         updateReportVideoConfig({isPushCloudStream}).then(res=>{
@@ -251,13 +252,14 @@
               playerOptions:JSON.parse(JSON.stringify(this.playerOptions))
             }
           })
+          console.log(list);
           this.monitorList = list;
         },
         deep:true
       },
     },
     mounted(): void {
-      /*
+
       getExceptionCensus().then(res=>{
         if (!res.data) return
 
@@ -267,28 +269,28 @@
 
           switch (item.type) {
             case 101:
-              census.climbHeight = item.totalNum;
+              census.climbHeight = item.todayNum;
               break;
             case 102:
-              census.face = item.totalNum;
+              census.face = item.todayNum;
               break;
             case 103:
-              census.fire = item.totalNum;
+              census.fire = item.todayNum;
               break;
             case 104:
-              census.helmet = item.totalNum;
+              census.helmet = item.todayNum;
               break;
             case 105:
-              census.motionless = item.totalNum;
+              census.motionless = item.todayNum;
               break;
             case 106:
-              census.refectiveVest = item.totalNum;
+              census.refectiveVest = item.todayNum;
               break;
             case 107:
-              census.region = item.totalNum;
+              census.region = item.todayNum;
               break;
             case 108:
-              census.tumble = item.totalNum;
+              census.tumble = item.todayNum;
               break;
           }
         })
@@ -300,7 +302,7 @@
         if (!res.data) return;
         this.reportStatus = res.data.isPushCloudStream === 0 ? false : true;
       })
-      */
+
     }
   });
 </script>

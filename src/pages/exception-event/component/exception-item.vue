@@ -15,7 +15,7 @@
       </div>
 
       <div class="right">
-        <div>事件类型:<span>{{data.type}}</span></div>
+        <div>事件类型:<span>{{handleEventTypeCommon(data.type)}}</span></div>
         <div>所属任务:<span>{{data.arrangeName}}</span></div>
         <div>事件名称:<span>{{data.name}}</span></div>
         <div>异常来源:<span>{{data.boxName}}-{{data.cameraName}}</span></div>
@@ -91,7 +91,34 @@
         let isDeal = value === true ? 0 : 1;
 
         this.$emit('updateItem', {exceptionId, type, isDeal});
-      }
+      },
+      handleEventTypeCommon: function(type:number){
+        let text = '人脸异常';
+        switch (type) {
+          case 101:
+            text = '登高异常';
+            break;
+          case 103:
+            text = '火灾异常';
+            break;
+          case 104:
+            text = '安全帽异常';
+            break;
+          case 105:
+            text = '静止异常';
+            break;
+          case 106:
+            text = '反光衣异常';
+            break;
+          case 107:
+            text = '区域异常';
+            break;
+          case 108:
+            text = '跌倒异常';
+            break;
+        }
+        return text;
+      },
     },
   })
 </script>

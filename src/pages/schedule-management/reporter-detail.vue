@@ -91,21 +91,6 @@
       getArrangeReportExceptionCensus({reportId}).then(res=>{
         if (!res.data) return;
 
-        // let data = new Map();
-        //
-        // ['face','fire','helmet','motionless','refectiveVest','region','tumble','climbHeight'].forEach((item,index)=>{
-        //   let list = [];
-        //   for (let i = 0; i < 4; i++){
-        //     list.push({
-        //       createTime:'2021-01-4 21:10:31',
-        //       personName:'佩恩',
-        //       person:'自来也',
-        //       isDeal:0,
-        //     });
-        //   }
-        //    data.set(item, list);
-        // })
-
         let censusData : any = {};
         let censusList : any = [];
 

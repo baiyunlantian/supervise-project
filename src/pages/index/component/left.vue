@@ -39,13 +39,14 @@
           node-key="boxId"
       >
         <template v-slot="{ node, data }" class="group">
-          <div class="custom-tree-node">
+          <div class="custom-tree-node" @click="handleClickTreeNode(node, data)" :class="currentCameraId === data.id ? 'currentCamera' : ''">
             <div class="img">
               <span v-if="node.expanded === true || data.hasOwnProperty('parentId')">-</span>
               <span v-else-if="node.expanded === false">+</span>
             </div>
-            <div class="label" :class="{active:node.expanded === true}">
+            <div class="label" :class="{active:node.expanded === true, exception:data.exception === 0}">
               <span>{{data.label}}</span>
+              <span class="point" v-if="data.exception === 0"></span>
             </div>
           </div>
         </template>
@@ -111,7 +112,8 @@
         flowValid:true,
         firstNode:'',
         resolveFn:new Function(),
-        customTreeList:[],
+        cameraList:[],
+        currentCameraId:'',
       }
     },
     methods:{
@@ -124,12 +126,15 @@
               id:item.cameraId,
               label:item.name,
               leaf: true,
+              exception:item.enable
             }
           });
-          resolve(list);
           this.$emit('updateCameraList',res.data);
+          this.cameraList = res.data;
+          resolve(list);
         }).catch(e=>{
           this.$emit('updateCameraList',[]);
+          this.cameraList = [];
           resolve([]);
         });
       },
@@ -200,6 +205,23 @@
         }else {
           this.flowValid = true;
         }
+      },
+      handleClickTreeNode: function (node:any, data:any) {
+        if (node.level === 1) return;
+
+        let currentIndex = 0;
+        this.cameraList.forEach((item:any,index:number)=>{
+          if (item.cameraId === data.id) {
+            currentIndex = index;
+            return;
+          }
+        })
+
+        //将当前摄像头移动到播放列表第一位
+        this.currentCameraId = data.id;
+        let currentCamera = this.cameraList.splice(currentIndex,1);
+        this.$emit('updateCameraList', currentCamera.concat(this.cameraList));
+        this.cameraList = currentCamera.concat(this.cameraList);
       }
     },
     mounted(): void {

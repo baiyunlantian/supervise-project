@@ -474,7 +474,7 @@ Mock.mock('/mock/edgebox/reportVideoConfig',(res,req)=>{
 Mock.mock('/mock/camera/cameraList',(res,req)=>{
   let list = [];
 
-  for (let i = 0; i < 3; i++){
+  for (let i = 0; i < 5; i++){
     list.push({
       cameraId:Random.integer(1,99999),
       name:'摄像头'+Random.integer(1,1000),
