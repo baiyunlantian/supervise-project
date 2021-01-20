@@ -38,20 +38,8 @@
           sources: [
             {
               type: "video/mp4", // 类型
-              src:this.$props.videoUrl,
+              src:'https://www.w3cschool.cn/statics/demosource/mov_bbb.mp4',
             },
-            {
-              type:"video/webm", // 可以播放，用ogg也可打开
-              src:this.$props.videoUrl,
-            },
-            {
-              type:"video/ogg",    // 可以播放，用webm也可打开
-              src:this.$props.videoUrl,
-            },
-            {
-              type:"video/3gp",    // 可以播放
-              src:this.$props.videoUrl,
-            }
           ],
           poster: '', // 封面地址
           notSupportedMessage: '此视频暂无法播放，请稍后再试', // 允许覆盖Video.js无法播放媒体源时显示的默认信息。
@@ -72,8 +60,14 @@
         this.$emit('close');
       }
     },
-    mounted(): void {
-    }
+    watch:{
+      videoUrl: function(newVal, oldVal){
+        let sources = JSON.parse(JSON.stringify(this.playerOptions.sources));
+        sources[0].src = newVal || 'https://www.runoob.com/try/demo_source/movie.mp4';
+
+        this.$set(this.playerOptions, 'sources', sources);
+      },
+    },
   })
 </script>
 

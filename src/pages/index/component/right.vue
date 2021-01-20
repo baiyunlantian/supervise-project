@@ -250,7 +250,6 @@
               ...item,
               playerOptions:JSON.parse(JSON.stringify(this.playerOptions))
             }
-            // this.$set(this.monitorList, index, JSON.parse(JSON.stringify(this.playerOptions)));
           })
           this.monitorList = list;
         },
