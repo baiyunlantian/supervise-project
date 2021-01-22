@@ -20,6 +20,7 @@ Mock.mock('/mock/camera/cameraStreamControl',(res,req)=>{
       pullAddress:'https://www.runoob.com/try/demo_source/movie.mp4',
       encodedString:'123456789',
       notify:true,
+      visToken:'1234567'
     }
   }
 });

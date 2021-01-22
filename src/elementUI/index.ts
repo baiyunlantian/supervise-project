@@ -57,6 +57,7 @@ const element = {
     Vue.prototype.$alert = MessageBox.alert
     Vue.prototype.$confirm = MessageBox.confirm
     Vue.prototype.$message = Message
+    Vue.prototype.global_isReadExceptionBoxList = []  //首页左侧异常盒子列表，展开即代表已读状态，移除展开项
   }
 }
 export default element

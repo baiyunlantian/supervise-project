@@ -51,6 +51,7 @@
               :ref="index"
               :playsinline="true"
               :options="item.playerOptions"
+              @ready="playerReadied"
           />
 
           <div class="operate-content" :class="{exception:item.enable === 0}">
@@ -112,6 +113,8 @@
           language: 'zh-CN',
           aspectRatio: '16:9', // 将播放器置于流畅模式，并在计算播放器的动态大小时使用该值。值应该代表一个比例 - 用冒号分隔的两个数字（例如"16:9"或"4:3"）
           fluid: true, // 当true时，Video.js player将拥有流体大小。换句话说，它将按比例缩放以适应其容器。
+          techOrder: ['html5'],
+          html5: { hls: { withCredentials: false } },
           sources: [
             {
               type: "video/mp4", // 类型
@@ -171,7 +174,17 @@
         };
         getCameraStreamControl(data).then(res=>{
           if (!res.data) return;
-          let {encodedString, pullAddress, notify} = res.data;
+          console.log(res.data)
+          let {encodedString, pullAddress, notify, visToken} = res.data;
+
+          if (notify === false){
+            this.$message({
+              type:'info',
+              message:'该设备离线中，无法播放'
+            });
+            return;
+          }
+
           let item = JSON.parse(JSON.stringify(this.playerOptions));
           item.sources[0].src = pullAddress;
 
@@ -184,6 +197,7 @@
           },500)
 
         }).catch(e=>{
+          console.log(e)
           this.$message({
             type:'error',
             message:'播放失败'
@@ -202,6 +216,14 @@
         getCameraStreamControl(data).then(res=>{
           if (!res.data) return;
           let {encodedString, pullAddress, notify} = res.data;
+
+          if (notify === false){
+            this.$message({
+              type:'info',
+              message:'该设备离线中...'
+            });
+            return;
+          }
 
           this.$set(this.isPlayArray, index, {play:false, encoded:encodedString},)
           //@ts-ignore
@@ -242,6 +264,20 @@
           this.reportStatus = !value;
         })
       },
+      //准备播放，添加header
+      playerReadied: function(player:any){
+        console.log('player',player)
+        //@ts-ignore
+        console.log('videojs',window.videojs)
+        // console.log('player',player.xhr);
+        // player.tech_.hls.xhr.beforeRequest = function (options:any) {
+        //   console.log('options',options);
+        //   options.headers = {
+        //     'X-Auth-Token': this.visToken,
+        //   }
+        //   return options
+        // }
+      },
     },
     watch:{
       cameraList:{
@@ -252,7 +288,6 @@
               playerOptions:JSON.parse(JSON.stringify(this.playerOptions))
             }
           })
-          console.log(list);
           this.monitorList = list;
         },
         deep:true

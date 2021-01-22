@@ -22,9 +22,9 @@ export function getCameraStreamControl (params?:object)  {
 }
 
 export function updateReportVideoConfig (params?:object)  {
-  return API.POST(`${BOX}/edgebox/updateReportVideoConfig`, params)
+  return API.POST(`${BOX}/edgebox/updateUnifyConfig`, params)
 }
 
 export function getReportVideoConfig (params?:object)  {
-  return API.POST(`${BOX}/edgebox/reportVideoConfig`, params)
+  return API.POST(`${BOX}/edgebox/getUnifyConfig`, params)
 }

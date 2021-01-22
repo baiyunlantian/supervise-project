@@ -23,7 +23,6 @@ axios.interceptors.request.use( (config:any) => {
     }
     config.data = {...data, ...params};
     config.headers.common['token'] = token || '';
-    url.indexOf('/cameraStreamControl') > 0 ? config.headers.common['X-Auth-Token'] = token : '';
     config.headers.common['Content-Type'] = config.ContentType || 'application/json';
     return config;
 }, function (error) {
@@ -42,6 +41,11 @@ axios.interceptors.response.use(function (response) {
             message: response.data.msg || '',
             type: 'error'
         });
+    }else if (response.data.code === 202){
+        Vue.prototype.$message({
+            message: response.data.msg || '',
+            type: 'error'
+        });
     }
     return response;
 }, function (error) {
@@ -53,6 +57,11 @@ axios.interceptors.response.use(function (response) {
         });
         sessionStorage.clear();
         router.push({path: '/login'}).then(r => r);
+    }else if (error.response.data.code === 401){
+        Vue.prototype.$message({
+            message: error.response.data.msg || '',
+            type: 'error'
+        });
     }
     return Promise.reject(error);
 })
