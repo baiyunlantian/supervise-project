@@ -17,7 +17,7 @@ Mock.mock('/mock/index/flowCensus',(res,req)=>{
 Mock.mock('/mock/camera/cameraStreamControl',(res,req)=>{
   return {
     data:{
-      pullAddress:'https://www.runoob.com/try/demo_source/movie.mp4',
+      pullAddress:'https://122b09cc657a4d0ba64dd7a46e4c682f.apigw.cn-south-1.huaweicloud.com/live/work013?app=vis&stream=dasdas',
       encodedString:'123456789',
       notify:true,
       visToken:'1234567'

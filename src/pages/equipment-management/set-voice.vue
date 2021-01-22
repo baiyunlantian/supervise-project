@@ -30,7 +30,7 @@
       >
         <el-form-item label="播报内容：" prop="realtimeVoice">
           <el-input v-model="voiceFormData.realtimeVoice" @input="value=>checkValidRealtime(value,'realtimeVoice')"/>
-          <span class="compute-num">{{voiceFormData.realtimeVoice ? voiceFormData.realtimeVoice.length : 0}}/30</span>
+          <span class="compute-num">{{voiceFormData.realtimeVoice ? voiceFormData.realtimeVoice.length : 0}}/20</span>
           <div class="error-text" :style="{visibility: exceptionValidate.realtimeVoice === true ? 'hidden' : 'visible'}">超出最大限制</div>
         </el-form-item>
 
@@ -122,9 +122,7 @@
           {key:'realtimeVoiceIntervalTime', label:'间隔时间',type:'number'},
         ],
         rules:{
-          realtimeVoice:[{max:30, message: '超出最大限制', trigger: 'change'}],
-          // realtimeVoiceCount:[{max:30, type:'number', message: '请输入30以内的数', trigger: 'change'}],
-          // realtimeVoiceIntervalTime:[{max:3600, type:'number', message: '请输入3600以内的数', trigger: 'change'}],
+          realtimeVoice:[{max:20, message: '超出最大限制', trigger: 'change'}],
         },
         //传给后台的值
         voiceFormData:{
@@ -245,7 +243,7 @@
         }else if (key === 'realtimeVoiceIntervalTime'){
           flag = Number(value) > 3600 ? false : true;
         }else if (key === 'realtimeVoice'){
-          flag = value.length > 30 ? false : true;
+          flag = value.length > 20 ? false : true;
         }
 
         this.$set(this.exceptionValidate, key, flag);

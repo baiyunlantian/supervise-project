@@ -26,6 +26,7 @@
               type="password"
               placeholder="请输入密码"
               prefix-icon="el-icon-lock"
+              @keydown.enter.native="onOk"
           />
         </el-form-item>
 

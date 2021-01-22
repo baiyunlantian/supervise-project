@@ -45,14 +45,7 @@
             v-for="(item,index) in monitorList.slice(0, sliceMonitorList)"
             :key="index"
         >
-
-          <video-player
-              class="video-player vjs-custom-skin"
-              :ref="index"
-              :playsinline="true"
-              :options="item.playerOptions"
-              @ready="playerReadied"
-          />
+          <video :ref="index" class="video-player" muted></video>
 
           <div class="operate-content" :class="{exception:item.enable === 0}">
             <div class="text">{{item.name}}</div>
@@ -83,6 +76,7 @@
   import { getExceptionCensus } from '@/request/exception';
   import { getCameraStreamControl, getReportVideoConfig, updateReportVideoConfig } from '@/request/index';
   import {showMessageAfterRequest, VideoSrc} from "@/utils/common";
+  import flvjs from 'flv.js/dist/flv.min.js'
 
   export default Vue.extend({
     props:['cameraList'],
@@ -105,47 +99,13 @@
         reportStatus:false,
         layout:'three',
         monitorList:[],
-        playerOptions: {
-          playbackRates: [0.5, 1.0, 1.5, 2.0], // 可选的播放速度
-          autoplay: false, // 如果为true,浏览器准备好时开始回放。
-          muted: false, // 默认情况下将会消除任何音频。
-          loop: false, // 是否视频一结束就重新开始。
-          language: 'zh-CN',
-          aspectRatio: '16:9', // 将播放器置于流畅模式，并在计算播放器的动态大小时使用该值。值应该代表一个比例 - 用冒号分隔的两个数字（例如"16:9"或"4:3"）
-          fluid: true, // 当true时，Video.js player将拥有流体大小。换句话说，它将按比例缩放以适应其容器。
-          techOrder: ['html5'],
-          html5: { hls: { withCredentials: false } },
-          sources: [
-            {
-              type: "video/mp4", // 类型
-              // src:'https://www.runoob.com/try/demo_source/movie.mp4',
-              src:'https://www.w3cschool.cn/statics/demosource/mov_bbb.mp4',
-            },
-            // {
-            //   type:"video/webm", // 可以播放，用ogg也可打开
-            //   src:'',
-            // },
-            // {
-            //   type:"video/ogg",    // 可以播放，用webm也可打开
-            //   src:'',
-            // },
-            // {
-            //   type:"video/3gp",    // 可以播放
-            //   src:'',
-            // }
-          ],
-          poster: require('@/assets/mission-person.jpg'), // 封面地址
-          notSupportedMessage: '', // 允许覆盖Video.js无法播放媒体源时显示的默认信息。
-          controls: {
-            fullscreenToggle: true
-          }
-        },
         isPlayArray:[
           {play:false, encoded:''},
           {play:false, encoded:''},
           {play:false, encoded:''},
           {play:false, encoded:''},
-        ]
+        ],
+        playerList:[],
       }
     },
     computed:{
@@ -165,7 +125,7 @@
       // 播放
       play: function(index:number, cameraId:string){
         /*
-        * command:  101--开启推流   102--关闭推流
+        * command:  101--开启推流   100--关闭推流
         * encodedString:  关闭推流时传入
         * */
         let data = {
@@ -174,8 +134,8 @@
         };
         getCameraStreamControl(data).then(res=>{
           if (!res.data) return;
-          console.log(res.data)
           let {encodedString, pullAddress, notify, visToken} = res.data;
+          this.$set(this.isPlayArray, index, {play:true, encoded:encodedString},)
 
           if (notify === false){
             this.$message({
@@ -185,16 +145,31 @@
             return;
           }
 
-          let item = JSON.parse(JSON.stringify(this.playerOptions));
-          item.sources[0].src = pullAddress;
+          //@ts-ignore
+          let videoEl = this.$refs[index][0];
+
+          if(flvjs.isSupported()){
+            let player = flvjs.createPlayer({
+              type: 'flv',
+              url: pullAddress
+            },{
+              headers:{
+                'X-Auth-Token':visToken,
+              }
+            });
+
+            this.$set(this.playerList, index, player);
+          }else{
+            this.$message.error('不支持的格式');
+            return;
+          }
 
           //@ts-ignore
-          this.monitorList.splice(index, 1, {...this.monitorList[index], playerOptions:item})
-          this.$set(this.isPlayArray, index, {play:true, encoded:encodedString},)
-          setTimeout(()=>{
-            //@ts-ignore
-            this.$refs[index][0].player.play();
-          },500)
+          this.playerList[index].attachMediaElement(videoEl)
+          //@ts-ignore
+          this.playerList[index].load()
+          //@ts-ignore
+          this.playerList[index].play()
 
         }).catch(e=>{
           console.log(e)
@@ -209,7 +184,7 @@
       pause: function(index:number, cameraId:string){
         let data = {
           cameraId,
-          command:102,
+          command:100,
           encodedString:this.isPlayArray[index].encoded,
         };
 
@@ -225,9 +200,16 @@
             return;
           }
 
+          if (this.playerList[index]){
+            //@ts-ignore
+            this.playerList[index].pause();
+            //@ts-ignore
+            this.playerList[index].destroy();
+            //@ts-ignore
+            this.$set(this.playerList, index, null);
+          }
+
           this.$set(this.isPlayArray, index, {play:false, encoded:encodedString},)
-          //@ts-ignore
-          this.$refs[index][0].player.pause();
         }).catch(e=>{
           this.$message({
             type:'error',
@@ -238,16 +220,15 @@
       //全屏
       fullScreenHandle: function(index:number){
         //@ts-ignore
-        if(!this.$refs[index][0].player.isFullscreen()){
-          //@ts-ignore
-          this.$refs[index][0].player.requestFullscreen();
-          //@ts-ignore
-          this.$refs[index][0].player.isFullscreen(true);
-        }else{
-          //@ts-ignore
-          this.$refs[index][0].player.exitFullscreen();
-          //@ts-ignore
-          this.$refs[index][0].player.isFullscreen(false);
+        let ele = this.$refs[index][0];
+        if (ele.requestFullscreen) {
+          ele.requestFullscreen();
+        } else if (ele.mozRequestFullScreen) {
+          ele.mozRequestFullScreen();
+        } else if (ele.webkitRequestFullscreen) {
+          ele.webkitRequestFullscreen();
+        } else if (ele.msRequestFullscreen) {
+          ele.msRequestFullscreen();
         }
       },
       //切换是否将视频同步到云端状态
@@ -264,31 +245,11 @@
           this.reportStatus = !value;
         })
       },
-      //准备播放，添加header
-      playerReadied: function(player:any){
-        console.log('player',player)
-        //@ts-ignore
-        console.log('videojs',window.videojs)
-        // console.log('player',player.xhr);
-        // player.tech_.hls.xhr.beforeRequest = function (options:any) {
-        //   console.log('options',options);
-        //   options.headers = {
-        //     'X-Auth-Token': this.visToken,
-        //   }
-        //   return options
-        // }
-      },
     },
     watch:{
       cameraList:{
         handler: function(newVal, oldVal){
-          let list = newVal.map((item:any, index:number)=>{
-            return{
-              ...item,
-              playerOptions:JSON.parse(JSON.stringify(this.playerOptions))
-            }
-          })
-          this.monitorList = list;
+          this.monitorList = newVal;
         },
         deep:true
       },

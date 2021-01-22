@@ -109,6 +109,8 @@
           Object.keys(this.formData).forEach(key=>{
             //@ts-ignore
             if (this.formData[key]){
+              //@ts-ignore    如果手机号码没有修改，不需要穿给后台
+              if (key === 'phone' && this.$props.personInfo.phone === this.formData.phone) return;
               //@ts-ignore
               formData.append(key,this.formData[key]);
             }

@@ -17,7 +17,7 @@
       </div>
     </div>
 
-    <div class="project-tree">
+    <div class="project-tree hiddenScrollbar">
 
       <el-tree
           ref="tree"

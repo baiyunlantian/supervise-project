@@ -160,7 +160,23 @@
         if (type === 'cancel'){
           this.formData = JSON.parse(JSON.stringify(this.baseFormData));
         }else if (type === 'ok'){
-          updateSchedule({arrangeId:this.arrangeId, ...this.formData}).then(res=>{
+          let data: any = {
+            arrangeId:this.arrangeId,
+            ...this.formData
+          };
+
+          Object.keys(data).forEach(key=>{
+            if (!data[key]) return;
+            if (key === 'useStartTime' || key === 'useEndTime') {
+              data[key] = moment(data[key]).format('yyyy-MM-DD')+' 00:00:00';
+            }else if (key === 'time'){
+              data.dutyStartTime = moment(data[key][0]).format('yyyy-MM-DD')+' 00:00:00';
+              data.dutyEndTimeTime = moment(data[key][1]).format('yyyy-MM-DD')+' 00:00:00';
+              delete data.time;
+            }
+          })
+
+          updateSchedule(data).then(res=>{
             showMessageAfterRequest(res.data, '更新成功', '更新失败');
           })
         }
@@ -179,10 +195,16 @@
       },
       initialValueForm: function () {
         const {data} :any = this.$route.query;
+        let dutyPersonList: any = [];
 
-        let dutyPersonList = data.personList.filter((item:any)=>item.type === 0);
+        data.personList = data.personList.map((item:any)=>{
+          if (item.type === 1){
+            dutyPersonList.push(item)
+          }
+          return item.personId
+        });
+
         this.$set(this.formProps, 'items', insertOptionsToFormItems(this.formProps.items, 'dutyPersonId',dutyPersonList));
-
         dutyPersonList && dutyPersonList.length > 0 ? data.dutyPersonId = dutyPersonList[0].personId : '';
         this.arrangeId = data.arrangeId;
         this.formData = data;

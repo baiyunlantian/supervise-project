@@ -2,7 +2,7 @@ import * as API from '@/utils/axios';
 import { VIDEO, MOCK, BOX } from './type';
 
 export function getFlowCensus (params?:object)  {
-  return API.POST(`${VIDEO}/visflow/flowStatistics`, params)
+  return API.POST(`${BOX}/vis/flowStatistics`, params)
 }
 
 export function updateFlowAlert (params?:object)  {

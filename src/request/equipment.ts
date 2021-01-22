@@ -22,11 +22,11 @@ export function updateVoiceInfo (params?:object)  {
 }
 
 export function getCameraList (params?:object)  {
-  return API.POST(`${MOCK}/camera/cameraList`, params)
+  return API.POST(`${BOX}/camera/cameraList`, params)
 }
 
 export function getBoxList (params?:object)  {
-  return API.POST(`${MOCK}/edgebox/boxList`, params)
+  return API.POST(`${BOX}/edgebox/boxList`, params)
 }
 
 export function getDeviceRunningCensus (params?:object)  {
