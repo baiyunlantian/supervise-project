@@ -34,12 +34,13 @@
     <div class="form-content">
       <div class="title">
         <div class="fontBlackAndBold">施工监督报告</div>
-        <i class="el-icon-folder-add" @click="handleExportExcel"/>
+        <SvgIcon name="exportExcel" @click="handleExportExcel"/>
       </div>
 
       <Table
           ref="table"
           :table-props="tableProps"
+          @multipleSelectChange="multipleSelectChange"
       >
         <template v-slot:operate="{row}">
           <router-link
@@ -60,14 +61,15 @@
   import GoBackBtn from '@/components/goBackBtn.vue';
   import Form from '@/components/form/index.vue';
   import Table from '@/components/table/index.vue';
+  import SvgIcon from '@/components/svgIcon.vue';
   import moment from "moment";
   import {
     exportExcl,
     insertOptionsToFormItems,
     showMessageAfterRequest
   } from '@/utils/common';
-  import { updateSchedule, batchDeleteSchedule } from "@/request/schedule";
-  import { PERSON } from "@/request/type";
+  import { updateSchedule, batchDeleteSchedule, getArrangeReportExceptionCensus } from "@/request/schedule";
+  import { PERSON, MOCK } from "@/request/type";
   import {getPersonSelectList} from "@/request/common";
   import {getBoxList} from "@/request/equipment";
 
@@ -75,7 +77,8 @@
     components:{
       GoBackBtn,
       Form,
-      Table
+      Table,
+      SvgIcon
     },
     data() {
       return {
@@ -105,8 +108,12 @@
           hiddenFooter:true
         },
         tableProps:{
-          url:`${PERSON}/arrange/arrangeReportSelect`,
-          rowKey:'arrangeId',
+          url:`${MOCK}/arrange/arrangeReportSelect`,
+          rowKey:'reportId',
+          firstColumn:{
+            show:true,
+            type:'selection'
+          },
           pagination:{
             pageSize:12
           },
@@ -127,32 +134,89 @@
         baseFormData:{},
         disabledForm:true,
         arrangeId:'',
+        reportIds:[],
         personSelectList:[],
       }
     },
     methods: {
       handleExportExcel: function () {
+        // 如果有勾选表格行，则导出勾选的表格行所对应的报告详情信息，否则导出当前表格内容
+        this.reportIds.length === 0 ? this.exportTableList() : this.exportExceptionCensus();
+
+      },
+      exportExceptionCensus: function () {
+        this.handleExceptionData();
+      },
+      //获取每份报告里的预警详情
+      handleGetExceptionCensus: async function (reportId:string):Promise<Object> {
+        return await getArrangeReportExceptionCensus({reportId}).then(res=>{
+          return res.data;
+          /*
+          Object.keys(res.data).forEach((key:string)=>{
+            const value = res.data[key];
+
+            switch (key) {
+              case 'face':
+                censusList.push({key, value, label:'人脸识别预警'});
+                break;
+              case 'fire':
+                censusList.push({key, value, label:'火灾预警'});
+                break;
+              case 'helmet':
+                censusList.push({key, value, label:'人员入侵预警'});
+                break;
+              case 'motionless':
+                censusList.push({key, value, label:'静止预警'});
+                break;
+              case 'refectiveVest':
+                censusList.push({key, value, label:'反光衣预警'});
+                break;
+              case 'region':
+                censusList.push({key, value, label:'安全帽预警'});
+                break;
+              case 'tumble':
+                censusList.push({key, value, label:'跌倒预警'});
+                break;
+              case 'climbHeight':
+                censusList.push({key, value, label:'登高预警'});
+                break;
+            }
+          })
+          */
+        }).catch(e=>{
+          console.log(e);
+          return {};
+        })
+      },
+      //处理总的预警详情数据
+      handleExceptionData: function () {
+        this.reportIds.forEach((reportId:string)=>{
+          let res = this.handleGetExceptionCensus(reportId);
+        })
+      },
+      exportTableList: function () {
         //@ts-ignore
-        let dataList = this.$refs.table.tableList;
-        let sheetData: any = [];
+        this.$refs.table.exportExcelList.then(res=>{
+          let sheetData: any = [];
 
-        dataList.forEach((item:any,index:number)=>{
-          let obj = [
-            index+1,
-            moment(item.buildTime).format('YYYY.MM.DD'),
-            item.code,
-            item.startTime,
-            item.endTime,
-            item.num,
-          ];
-          sheetData.push(obj);
+          res.forEach((item:any,index:number)=>{
+            let obj = [
+              index+1,
+              moment(item.buildTime).format('YYYY.MM.DD'),
+              item.code,
+              item.startTime,
+              item.endTime,
+              item.num,
+            ];
+            sheetData.push(obj);
+          });
+
+          const exclHeader = ['序号','日期','工号','开始检测时间','结束检测时间','预警条数'];
+          const columnWidths = [5,10,5,10,5,5,5,5,10];
+          const fileName = '施工监督报告表格';
+
+          exportExcl(res, sheetData, exclHeader, columnWidths, fileName);
         });
-
-        const exclHeader = ['序号','日期','工号','开始检测时间','结束检测时间','预警条数'];
-        const columnWidths = [5,10,5,10,5,5,5,5,10];
-        const fileName = '施工监督报告表格';
-
-        exportExcl(dataList, sheetData, exclHeader, columnWidths, fileName);
       },
       handleSubmit: function (type:string) {
         this.disabledForm = true;
@@ -209,6 +273,9 @@
         this.arrangeId = data.arrangeId;
         this.formData = data;
         this.$set(this.formData, 'time', [data.dutyStartTime, data.dutyEndTime]);
+      },
+      multipleSelectChange: function (value:any) {
+        this.reportIds = value.map((item:any)=>item.reportId);
       },
     },
     mounted(): void {

@@ -1,0 +1,46 @@
+#cost-container{
+  padding: 2%;
+  .table-container{
+    .title{
+      background-color: rgb(204, 230, 255);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-right: 20px;
+      .left{
+        height: 40px;
+        line-height: 40px;
+        .table-item{
+          display: inline-block;
+          background-color: rgb(161, 205, 254);
+          color: rgb(3, 114, 248);
+          font-size: 18px;
+          text-align: center;
+          letter-spacing: 1px;
+          padding: 0 15px;
+          cursor: pointer;
+        }
+        .table-item:first-child{
+          border-radius: 5px 0 0 0;
+        }
+        .light{
+          color: #fff;
+          background-color: rgb(3, 114, 248);
+        }
+      }
+    }
+    a{
+      text-decoration: unset;
+      font-size: 24px;
+      font-weight: 600;
+      color: rgb(38, 125, 231);
+    }
+
+    /deep/
+    .custom-pagination-container{
+      position: fixed;
+      bottom: 5vh;
+      width: 93%;
+    }
+  }
+}

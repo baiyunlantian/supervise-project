@@ -124,7 +124,7 @@
 
         createBatchImportPersonExcel(formData).then(res=>{})
       },
-      initTable: function (data:object) {
+      loadTable: function (data:object) {
         //@ts-ignore
         this.$refs.table.initTable(data);
       }

@@ -339,19 +339,19 @@ Mock.mock('/mock/arrange/arrangeDetail',(res,req)=>{
 });
 
 //排班管理--任务详情--施工监督报告列表
-Mock.mock('/mock/schedule-detail/reportSelectList',(res,req)=>{
+Mock.mock('/mock/arrange/arrangeReportSelect',(res,req)=>{
   const body = JSON.parse(res.body);
 
   let list = [];
 
   for (let i = 0; i < body.pageSize; i++){
     list.push({
-      id:Random.integer(1,99999),
+      arrangeId:Random.integer(1,99999),
       code:Random.integer(10000,99999),
       startTime:Random.time('HH:mm:ss'),
       endTime:Random.time('HH:mm:ss'),
-      warningCount:Random.integer(10,50),
-      date:`${Random.date('yyyy.MM.dd')}`,
+      num:Random.integer(10,50),
+      buildTime:`${Random.date('yyyy.MM.dd')}`,
     });
 
   }
@@ -522,7 +522,7 @@ Mock.mock('/mock/schedule-management/reporter/infoCensus',(res,req)=>{
 
 //排班管理--监督报告--预警信息统计
 Mock.mock('/mock/arrange/arrangeReportExceptionCensus',(res,req)=>{
-  let data = new Map();
+  let data = {};
 
   ['face','fire','helmet','motionless','refectiveVest','region','tumble','climbHeight'].forEach((item,index)=>{
     let list = [];
@@ -534,7 +534,7 @@ Mock.mock('/mock/arrange/arrangeReportExceptionCensus',(res,req)=>{
         isDeal:Random.integer(0,1),
       });
     }
-    data.set(item, list);
+    data[item] = list;
   })
 
 
@@ -543,7 +543,7 @@ Mock.mock('/mock/arrange/arrangeReportExceptionCensus',(res,req)=>{
   }
 });
 
-//异常事件--最新异常浴巾信息列表
+//异常事件--最新异常信息列表
 Mock.mock('/mock/exception-event/latelyList',(res,req)=>{
   const body = JSON.parse(res.body);
   let list = [];
@@ -561,6 +561,64 @@ Mock.mock('/mock/exception-event/latelyList',(res,req)=>{
       status:Random.integer(0,1),
       personList:[
       ],
+    });
+  }
+
+  return {
+    data:{
+      list,
+      page:{
+        total:body.pageSize * 10,
+        pageNum:body.pageNum,
+        pageSize:body.pageSize,
+      },
+    }
+  }
+});
+
+//费用管理--流量列表
+Mock.mock('/mock/vis/flowDayRecordList',(res,req)=>{
+  const body = JSON.parse(res.body);
+  let list = [];
+
+  for (let i = 0; i < body.pageSize; i++){
+    list.push({
+      date:Random.datetime('yyyy-MM-dd'),
+      totalUseTime:Random.integer(3000,30000),
+      totalOutByte:Random.integer(1000000,99999999),
+      totalSettlementAccount:Random.integer(1000000,99999999),
+      startTime:Random.datetime('yyyy-MM-dd HH:mm:ss'),
+      endTime:Random.datetime('yyyy-MM-dd HH:mm:ss'),
+      useTime:Random.integer(3000,30000),
+      outByte:Random.integer(1000000,99999999),
+      settlementAccount:Random.integer(1000000,99999999),
+      id:Random.integer(3000,30000),
+    });
+  }
+
+  return {
+    data:{
+      list,
+      page:{
+        total:body.pageSize * 10,
+        pageNum:body.pageNum,
+        pageSize:body.pageSize,
+      },
+    }
+  }
+});
+
+//费用管理--充值记录列表
+Mock.mock('/mock/vis/visAccountPayRecord',(res,req)=>{
+  const body = JSON.parse(res.body);
+  let list = [];
+
+  for (let i = 0; i < body.pageSize; i++){
+    list.push({
+      id:Random.integer(3000,30000),
+      payTime:"2021-01-23 12:00:51",
+      payAccount:Random.integer(3000,30000),
+      surplusAccount:Random.integer(3000,30000),
     });
   }
 

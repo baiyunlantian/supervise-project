@@ -142,7 +142,7 @@
         getDepartmentTreeList(data).then(res=>{
           if (!res.data) return;
 
-          const { departList, personList } = res.data;
+          const { departList, personList, personNum } = res.data;
           let list : any = [];
 
           personList.forEach((item:any)=>{
@@ -162,7 +162,7 @@
               fatherId:item.fatherId,
               departId:item.departId,
               name:item.departName,
-              label:`${item.departName}(${item.num || 0}人)`,
+              label:`${item.departName}(${personNum[item.departId] || 0}人)`,
               leaf: false,
               type:0
             });
@@ -177,6 +177,7 @@
 
           resolve(list);
         }).catch(e=>{
+          console.log(e)
           resolve([]);
         })
       },

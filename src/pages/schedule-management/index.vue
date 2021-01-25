@@ -30,7 +30,7 @@
           </div>
 
           <div class="operate-btn">
-            <SvgIcon name="downloadTemplate" />
+            <SvgIcon name="exportExcel" @click="handleExportExcl"/>
             <SvgIcon name="batchDelete" @click="handleClickDelete(null)"/>
           </div>
         </div>
@@ -100,7 +100,7 @@
   import { batchDeleteSchedule } from "@/request/schedule";
   import { getBoxList } from "@/request/equipment";
   import { getPersonSelectList } from "@/request/common";
-  import {showMessageAfterRequest, insertOptionsToSearchFormItems} from "@/utils/common";
+  import {showMessageAfterRequest, insertOptionsToSearchFormItems, exportExcl} from "@/utils/common";
   import { PERSON, } from "@/request/type";
 
 
@@ -225,7 +225,37 @@
           this.personSelectList = list;
           this.formItemsProp.splice(targetIndex, 1, targetItem)
         })
-      }
+      },
+      handleExportExcl: function () {
+        //@ts-ignore
+        this.$refs.table.exportExcelList().then(res=>{
+          let sheetData: any = [];
+          let status = ['未领取','已领取','已归还'];
+          let arrange = ['未开始','进行中','已结束'];
+
+          res.forEach((item:any,index:number)=>{
+            let {dutyStartTime, dutyEndTime, arrangeName, personList, boxName, boxStatus, arrangeStatus} = item;
+            let personName = personList.map((item:any)=>item.personName);
+
+            let obj = [
+              index+1,
+              moment(dutyStartTime).format('yyyy.MM.DD')+'-'+moment(dutyEndTime).format('yyyy.MM.DD'),
+              arrangeName,
+              personName.join(),
+              boxName,
+              status[boxStatus],
+              arrange[arrangeStatus],
+            ];
+            sheetData.push(obj);
+          })
+
+          const exclHeader = ['序号','任务起止时间','任务名称','安排人员','绑定设备','设备状态','任务状态'];
+          const columnWidths = [5,15,10,20,15,8,8];
+          const fileName = '任务管理记录表';
+
+          exportExcl(res, sheetData, exclHeader, columnWidths, fileName);
+        });
+      },
     },
     mounted(): void {
       let formData = new FormData();

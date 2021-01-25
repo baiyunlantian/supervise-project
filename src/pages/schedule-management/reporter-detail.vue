@@ -6,7 +6,7 @@
     </div>
 
     <div class="form-content">
-      <SvgIcon name="exportReporterList"/>
+      <SvgIcon name="exportExcel"/>
       <Form
         :form-props="formProps"
         :form-data="formData"
@@ -94,7 +94,9 @@
         let censusData : any = {};
         let censusList : any = [];
 
-        res.data.forEach((value:any, key:string)=>{
+        Object.keys(res.data).forEach((key:string)=>{
+          const value = res.data[key];
+
           censusData[key] = value.length || 0;
           switch (key) {
             case 'face':

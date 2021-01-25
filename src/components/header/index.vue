@@ -4,11 +4,17 @@
       <img :src="require('@/assets/vtouch.png')" alt="logo" />
       <div class="text">工程监督智能服务平台</div>
     </div>
-    <SvgIcon
-      color="#fff"
-      name="logout"
-      @click="clickLogout"
-    />
+    <div class="left">
+      <div class="account-balance">
+        <div>账户余额：</div>
+        <router-link to="/cost-management">50000.00</router-link>
+      </div>
+      <SvgIcon
+          color="#fff"
+          name="logout"
+          @click="clickLogout"
+      />
+    </div>
   </div>
 </template>
 

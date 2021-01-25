@@ -122,7 +122,7 @@
       },
       searchTable: function (data?:object) {
         //@ts-ignore
-        this.$refs.childTable.initTable(data);
+        this.$refs.childTable.loadTable(data);
       },
       batchImportSuccess: function (res:any) {
         /*

@@ -209,7 +209,7 @@
       },
 
       changePageNum: function (pageNum: number) {
-        this.initTable();
+        this.initTable({pageNum});
       },
 
       filterChange: function (value: string | number | null, key:string) {
@@ -228,9 +228,24 @@
         this.$emit('multipleSelectChange',selection);
       },
 
-      expandChange: function (row:any, expand:any) {
+      expandChange: async function (row:any, expand:any) {
         //（展开行时，回调的第二个参数为 expandedRows；树形表格时第二参数为 expanded）
         this.$emit('expandChange',row, expand);
+      },
+
+      exportExcelList: async function () {
+        /*
+        * params---父组件传入的固定参数
+        * this.$props.searchParams---通过操作页面传入的查询参数
+        * */
+        const params = {
+          ...this.params,
+          ...this.$props.searchParams,
+          pageSize:9,
+          pageNum:1,
+        };
+        let {data} = await API.POST(`${this.url}`, params);
+        return data.list || [];
       }
     },
 

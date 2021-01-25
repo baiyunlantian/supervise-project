@@ -23,6 +23,7 @@ import {
   Progress,
   Tree,
   Switch,
+  Tabs,
   MessageBox,
   Message,
 } from 'element-ui';
@@ -53,6 +54,7 @@ const element = {
     Vue.use(Progress)
     Vue.use(Tree)
     Vue.use(Switch)
+    Vue.use(Tabs)
     Vue.prototype.$msgbox = MessageBox
     Vue.prototype.$alert = MessageBox.alert
     Vue.prototype.$confirm = MessageBox.confirm

@@ -54,6 +54,16 @@ export default new VueRouter({
       component: resolve => require(['@/pages/equipment-management/set-voice.vue'], resolve),
     },
     {
+      path: '/cost-management',
+      name: 'cost-management',
+      component: resolve => require(['@/pages/cost-management/index.vue'], resolve),
+    },
+    {
+      path: '/cost-management/detail',
+      name: 'cost-management/detail',
+      component: resolve => require(['@/pages/cost-management/detail.vue'], resolve),
+    },
+    {
       path: '*',
       name: 'Home',
       component: resolve => require(['@/pages/index/index.vue'], resolve)
