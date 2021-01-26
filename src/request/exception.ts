@@ -16,3 +16,7 @@ export function updateEvent (params?:object)  {
 export function deleteEvent (params?:object)  {
   return API.POST(`${BOX}/event/eventDelete`, params)
 }
+
+export function reloadEventVideo (params?:object)  {
+  return API.POST(`${BOX}/event/reloadEventVideo`, params)
+}

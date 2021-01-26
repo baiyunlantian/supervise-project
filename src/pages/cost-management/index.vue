@@ -52,7 +52,7 @@
         formData:{},
         tableType:'flow',
         flowTableProps:{
-          url:`${MOCK}/vis/flowDayRecordList`,
+          url:`${BOX}/vis/flowDayRecordList`,
           rowKey:'id',
           firstColumn:{
             show:true,
@@ -88,7 +88,7 @@
           ],
         },
         accountTableProps:{
-          url:`${MOCK}/vis/visAccountPayRecord`,
+          url:`${BOX}/vis/visAccountPayRecord`,
           rowKey:'id',
           firstColumn:{
             show:true,

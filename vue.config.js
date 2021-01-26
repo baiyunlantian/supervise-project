@@ -85,15 +85,15 @@ module.exports = {
         }
 
         //压缩图片
-        // config.module
-        //   .rule('images')
-        //   .test(/\.(png|jpe?g|gif|svg)(\?.*)?$/)
-        //   .use('image-webpack-loader')
-        //   .loader('image-webpack-loader')
-        //   .options({
-        //       bypassOnDebug: true
-        //   })
-        //   .end()
+        config.module
+          .rule('images')
+          .test(/\.(png|jpe?g|gif|svg)(\?.*)?$/)
+          .use('image-webpack-loader')
+          .loader('image-webpack-loader')
+          .options({
+              bypassOnDebug: true
+          })
+          .end()
     },
     configureWebpack: config => {
         config.entry.app = ["babel-polyfill", "./src/main.ts"];

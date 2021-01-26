@@ -17,7 +17,7 @@
       <div class="list">
         <div
           class="item"
-          v-for="(item, index) in data.personList"
+          v-for="(item, index) in detailData.personList"
           :key="index"
         >
           <div class="img">
@@ -37,7 +37,7 @@
       </div>
     </div>
 
-    <VideoDialog :visible="videoVisible" :videoUrl="data.videoUrl" @close="toggleVideo"/>
+    <VideoDialog :visible="videoVisible" :video-data="detailData" @close="toggleVideo"/>
   </el-dialog>
 </template>
 
@@ -107,6 +107,7 @@
     watch:{
       data:{
         handler: function (newVal, oldVal) {
+          console.log('detail-dialog',newVal)
           this.detailData = JSON.parse(JSON.stringify(newVal));
         },
         deep:true

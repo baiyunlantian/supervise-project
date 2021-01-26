@@ -36,7 +36,7 @@
       </div>
     </div>
 
-    <VideoDialog :visible="visible" @close="close"/>
+    <VideoDialog :visible="visible" :video-data="data" @close="close"/>
   </div>
 </template>
 

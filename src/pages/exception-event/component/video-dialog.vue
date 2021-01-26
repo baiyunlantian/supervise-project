@@ -10,62 +10,102 @@
       <i class="el-icon-close" @click="close"/>
     </template>
 
-    <video-player
-        class="video-player vjs-custom-skin"
-        ref="videoPlayer"
-        :playsinline="true"
-        :options="playerOptions"
-    />
+    <div class="video-container">
+      <video ref="videoPlayer" class="video-player" muted @error="playError"></video>
+      <SvgIcon name="play" width="3.125rem" height="3.125rem" color="rgb(3, 114, 248)" v-on:click="play()" v-if="!playStatus"/>
+      <SvgIcon name="pause" width="3.125rem" height="3.125rem" color="rgb(3, 114, 248)" @click="pause()" v-else />
+    </div>
+
   </el-dialog>
 </template>
 
 <script lang="ts">
   import Vue from 'vue';
+  import SvgIcon from '@/components/svgIcon.vue';
+  import flvjs from "flv.js/dist/flv.min.js";
+  import { reloadEventVideo } from "@/request/exception";
+  import {showMessageAfterRequest} from "@/utils/common";
 
   export default Vue.extend({
-    props:['visible','videoUrl'],
-    data() {
-      return {
-        playerOptions: {
-          playbackRates: [0.5, 1.0, 1.5, 2.0], // 可选的播放速度
-          autoplay: false, // 如果为true,浏览器准备好时开始回放。
-          muted: false, // 默认情况下将会消除任何音频。
-          loop: false, // 是否视频一结束就重新开始。
-          preload: 'auto', // 建议浏览器在<video>加载元素后是否应该开始下载视频数据。auto浏览器选择最佳行为,立即开始加载视频（如果浏览器支持）
-          language: 'zh-CN',
-          aspectRatio: '16:9', // 将播放器置于流畅模式，并在计算播放器的动态大小时使用该值。值应该代表一个比例 - 用冒号分隔的两个数字（例如"16:9"或"4:3"）
-          fluid: true, // 当true时，Video.js player将拥有流体大小。换句话说，它将按比例缩放以适应其容器。
-          sources: [
-            {
-              type: "video/mp4", // 类型
-              src:'https://www.w3cschool.cn/statics/demosource/mov_bbb.mp4',
-            },
-          ],
-          poster: '', // 封面地址
-          notSupportedMessage: '此视频暂无法播放，请稍后再试', // 允许覆盖Video.js无法播放媒体源时显示的默认信息。
-          controlBar: {
-            timeDivider: false, // 当前时间和持续时间的分隔符
-            durationDisplay: false, // 显示持续时间
-            remainingTimeDisplay: false, // 是否显示剩余时间功能
-            fullscreenToggle: true, // 是否显示全屏按钮
-            progressControl: false, // 进度条
+    components:{
+      SvgIcon,
+    },
+    props: {
+      videoData:{
+        type: Object,
+        default: function () {
+          return {
+            videoUrl:'',
           }
         }
+      },
+      visible:{
+        required:true,
+        type:Boolean,
+      },
+    },
+    data() {
+      return {
+        playerRef:'',
+        playStatus:false,
+        firstPlay:true,
       }
     },
     methods: {
       close: function () {
         //@ts-ignore
-        this.$refs.videoPlayer.player.src(this.$props.videoUrl)
+        this.playerRef.destroy();
+        //@ts-ignore
         this.$emit('close');
+        this.firstPlay = true;
+        this.playStatus = false;
+      },
+      play: function(){
+        this.playStatus = true;
+
+        if(flvjs.isSupported()){
+          if (this.firstPlay) {
+            this.playerRef = flvjs.createPlayer({
+              type: 'mp4',
+              url: 'https://www.runoob.com/try/demo_source/movie.mp4'
+            });
+
+            //@ts-ignore
+            this.playerRef.attachMediaElement(this.$refs.videoPlayer)
+            //@ts-ignore
+            this.playerRef.load()
+          }
+
+          //@ts-ignore
+          this.playerRef.play()
+          this.firstPlay = false;
+
+        }else{
+          this.$message.error('不支持的格式');
+          return;
+        }
+      },
+      pause: function () {
+        this.playStatus = false;
+        //@ts-ignore
+        this.playerRef.pause()
+      },
+      playError: function (e:any) {
+        this.$message({
+          type:'error',
+          message:'播放失败，重新加载中！'
+        });
+
+        const {exceptionId, type:exceptionType} = this.$props.videoData;
+        reloadEventVideo({exceptionId, exceptionType}).then((res:any)=>{
+          showMessageAfterRequest(res.data,'加载成功，请刷新页面！','加载失败，请稍后重试！')
+        })
+        console.log(e)
       }
     },
     watch:{
-      videoUrl: function(newVal, oldVal){
-        let sources = JSON.parse(JSON.stringify(this.playerOptions.sources));
-        sources[0].src = newVal || 'https://www.runoob.com/try/demo_source/movie.mp4';
-
-        this.$set(this.playerOptions, 'sources', sources);
+      visible: function(newVal, oldVal){
+        this.firstPlay = true;
       },
     },
   })

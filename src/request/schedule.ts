@@ -14,5 +14,5 @@ export function batchDeleteSchedule (params?:object)  {
 }
 
 export  function getArrangeReportExceptionCensus (params?:object)  {
-  return API.POST(`${MOCK}/arrange/arrangeReportExceptionCensus`, params)
+  return API.POST(`${PERSON}/arrange/arrangeReportExceptionCensus`, params)
 }

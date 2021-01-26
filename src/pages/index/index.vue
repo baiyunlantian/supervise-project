@@ -75,7 +75,7 @@
       },
     },
     mounted(): void {
-      // this.createWebsocket();
+      this.createWebsocket();
     },
     beforeRouteEnter (to, from, next) {
       const token = window.sessionStorage.getItem('token');

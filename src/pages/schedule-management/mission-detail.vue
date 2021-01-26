@@ -108,7 +108,7 @@
           hiddenFooter:true
         },
         tableProps:{
-          url:`${MOCK}/arrange/arrangeReportSelect`,
+          url:`${PERSON}/arrange/arrangeReportSelect`,
           rowKey:'reportId',
           firstColumn:{
             show:true,
