@@ -6,7 +6,7 @@
     </div>
 
     <div class="form-content">
-      <SvgIcon name="exportExcel"/>
+      <SvgIcon name="exportExcel" @click="handleExportExcel"/>
       <Form
         :form-props="formProps"
         :form-data="formData"
@@ -27,7 +27,7 @@
             v-for="(item, index) in censusList"
             :key="index"
         >
-          <div class="title">{{item.label || ''}}预警</div>
+          <div class="title">{{item.label || ''}}</div>
 
           <div class="list">
             <div
@@ -58,6 +58,8 @@
   import WarningCensus from "@/components/warning-census/index.vue";
   import SvgIcon from '@/components/svgIcon.vue';
   import { getArrangeReportExceptionCensus,} from '@/request/schedule';
+  import moment from "moment";
+  import {exportExcl} from "@/utils/common";
 
   export default Vue.extend({
     components:{
@@ -80,9 +82,85 @@
         formData:{},
         censusData:{},
         censusList:[],
+        exportExcelData:[],
+        exceptionEventCommon:{
+          face:'人脸识别预警',
+          climbHeight:'登高预警',
+          fire:'火灾预警',
+          helmet:'安全帽预警',
+          motionless:'静止预警',
+          refectiveVest:'反反光衣预警',
+          region:'区域预警',
+          tumble:'跌倒预警',
+        },
       }
     },
-    methods: {},
+    methods: {
+      handleExportExcel: function () {
+        let sheetData: any = [];
+        let face:any = [];
+        let climbHeight:any = [];
+        let fire:any = [];
+        let helmet:any = [];
+        let motionless:any = [];
+        let refectiveVest:any = [];
+        let region:any = [];
+        let tumble:any = [];
+
+        Object.keys(this.exportExcelData).forEach(key=>{
+          //@ts-ignore
+          this.exportExcelData[key] && this.exportExcelData[key].forEach((eventItem:any)=>{
+            switch (key) {
+              case 'face':
+                face.push({...eventItem, type:this.exceptionEventCommon[key]});
+                break;
+              case 'climbHeight':
+                climbHeight.push({...eventItem, type:this.exceptionEventCommon[key]});
+                break;
+              case 'fire':
+                fire.push({...eventItem, type:this.exceptionEventCommon[key]});
+                break;
+              case 'helmet':
+                helmet.push({...eventItem, type:this.exceptionEventCommon[key]});
+                break;
+              case 'motionless':
+                motionless.push({...eventItem, type:this.exceptionEventCommon[key]});
+                break;
+              case 'refectiveVest':
+                refectiveVest.push({...eventItem, type:this.exceptionEventCommon[key]});
+                break;
+              case 'region':
+                region.push({...eventItem, type:this.exceptionEventCommon[key]});
+                break;
+              case 'tumble':
+                tumble.push({...eventItem, type:this.exceptionEventCommon[key]});
+                break;
+            }
+          })
+        });
+
+        let list:any = face.concat(climbHeight, fire, helmet, motionless, refectiveVest, region, tumble);;
+        list.forEach((item:any,index:number)=>{
+
+          let obj = [
+            index+1,
+            item.type,
+            item.createTime,
+            item.arrangeName,
+            item.personName,
+            item.isDeal === 0 ? '未处理' :'已处理',
+          ];
+          sheetData.push(obj);
+        });
+
+        const exclHeader = ['序号','预警类型','发生时间','事件名称','关联人员','状态'];
+        const columnWidths = [5,10,15,10,10,5];
+        //@ts-ignore
+        const fileName = `${this.formData.buildTime||''}预警表格`;
+
+        exportExcl(list, sheetData, exclHeader, columnWidths, fileName);
+      },
+    },
     mounted(): void {
       this.formData = this.$route.query.data || {};
       //@ts-ignore
@@ -100,34 +178,35 @@
           censusData[key] = value.length || 0;
           switch (key) {
             case 'face':
-              censusList.push({key, value, label:'人脸识别'});
+              censusList.push({key, value, label:this.exceptionEventCommon[key]});
               break;
             case 'fire':
-              censusList.push({key, value, label:'火灾'});
+              censusList.push({key, value, label:this.exceptionEventCommon[key]});
               break;
             case 'helmet':
-              censusList.push({key, value, label:'人员入侵'});
+              censusList.push({key, value, label:this.exceptionEventCommon[key]});
               break;
             case 'motionless':
-              censusList.push({key, value, label:'静止'});
+              censusList.push({key, value, label:this.exceptionEventCommon[key]});
               break;
             case 'refectiveVest':
-              censusList.push({key, value, label:'反光衣'});
+              censusList.push({key, value, label:this.exceptionEventCommon[key]});
               break;
             case 'region':
-              censusList.push({key, value, label:'安全帽'});
+              censusList.push({key, value, label:this.exceptionEventCommon[key]});
               break;
             case 'tumble':
-              censusList.push({key, value, label:'跌倒'});
+              censusList.push({key, value, label:this.exceptionEventCommon[key]});
               break;
             case 'climbHeight':
-              censusList.push({key, value, label:'登高'});
+              censusList.push({key, value, label:this.exceptionEventCommon[key]});
               break;
           }
         })
 
         this.censusData = censusData;
         this.censusList = censusList;
+        this.exportExcelData = res.data;
       })
 
     },

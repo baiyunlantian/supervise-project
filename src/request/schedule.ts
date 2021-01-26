@@ -13,6 +13,6 @@ export function batchDeleteSchedule (params?:object)  {
   return API.POST(`${PERSON}/arrange/arrangeDelete`, params)
 }
 
-export function getArrangeReportExceptionCensus (params?:object)  {
+export  function getArrangeReportExceptionCensus (params?:object)  {
   return API.POST(`${MOCK}/arrange/arrangeReportExceptionCensus`, params)
 }

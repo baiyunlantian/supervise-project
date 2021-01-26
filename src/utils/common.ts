@@ -2,7 +2,7 @@ import Vue from 'vue';
 import ExportJsonExcel from 'js-export-excel';
 
 export const exportExcl = async (
-  datList:[],
+  datList:object[],
   sheetData:[],
   sheetHeader:string[],
   columnWidths:number[],

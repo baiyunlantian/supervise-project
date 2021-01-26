@@ -136,6 +136,16 @@
         arrangeId:'',
         reportIds:[],
         personSelectList:[],
+        exceptionEventCommon:{
+          face:'人脸识别预警',
+          climbHeight:'登高预警',
+          fire:'火灾预警',
+          helmet:'安全帽预警',
+          motionless:'静止预警',
+          refectiveVest:'反反光衣预警',
+          region:'区域预警',
+          tumble:'跌倒预警',
+        },
       }
     },
     methods: {
@@ -145,54 +155,95 @@
 
       },
       exportExceptionCensus: function () {
-        this.handleExceptionData();
+        let fnArray = this.reportIds.map((reportId:string)=>{
+          return this.handleGetExceptionCensus(reportId)
+        })
+
+        Promise.all(fnArray).then((res:any)=>{
+          //res--数组
+          const list = this.handleFormatAllExceptionData(res);    //获取全所勾选的行的预警详情数据
+
+          let sheetData: any = [];
+
+          list.forEach((item:any,index:number)=>{
+            let obj = [
+              index+1,
+              item.type,
+              item.createTime,
+              item.arrangeName,
+              item.personName,
+              item.isDeal === 0 ? '未处理' :'已处理',
+            ];
+            sheetData.push(obj);
+          });
+
+          const exclHeader = ['序号','预警类型','发生时间','事件名称','关联人员','状态'];
+          const columnWidths = [5,10,15,10,10,5];
+          const fileName = '预警表格';
+
+          exportExcl(res, sheetData, exclHeader, columnWidths, fileName);
+        }).catch(e=>{
+          console.log(e)
+        })
+
       },
       //获取每份报告里的预警详情
-      handleGetExceptionCensus: async function (reportId:string):Promise<Object> {
-        return await getArrangeReportExceptionCensus({reportId}).then(res=>{
-          return res.data;
-          /*
-          Object.keys(res.data).forEach((key:string)=>{
-            const value = res.data[key];
-
-            switch (key) {
-              case 'face':
-                censusList.push({key, value, label:'人脸识别预警'});
-                break;
-              case 'fire':
-                censusList.push({key, value, label:'火灾预警'});
-                break;
-              case 'helmet':
-                censusList.push({key, value, label:'人员入侵预警'});
-                break;
-              case 'motionless':
-                censusList.push({key, value, label:'静止预警'});
-                break;
-              case 'refectiveVest':
-                censusList.push({key, value, label:'反光衣预警'});
-                break;
-              case 'region':
-                censusList.push({key, value, label:'安全帽预警'});
-                break;
-              case 'tumble':
-                censusList.push({key, value, label:'跌倒预警'});
-                break;
-              case 'climbHeight':
-                censusList.push({key, value, label:'登高预警'});
-                break;
-            }
-          })
-          */
-        }).catch(e=>{
-          console.log(e);
-          return {};
-        })
+      handleGetExceptionCensus: async function (reportId:string): Promise<object> {
+          let {data} = await getArrangeReportExceptionCensus({reportId})
+          return data;
       },
-      //处理总的预警详情数据
-      handleExceptionData: function () {
-        this.reportIds.forEach((reportId:string)=>{
-          let res = this.handleGetExceptionCensus(reportId);
-        })
+      //格式化所勾选的行的预警详情数据
+      handleFormatAllExceptionData: function (list = []) :[] {
+
+        let face:any = [];
+        let climbHeight:any = [];
+        let fire:any = [];
+        let helmet:any = [];
+        let motionless:any = [];
+        let refectiveVest:any = [];
+        let region:any = [];
+        let tumble:any = [];
+
+        try{
+          list && list.forEach((censusItem:any)=>{
+            //censusItem--每行预警详情数据
+            Object.keys(censusItem).forEach(key=>{
+              censusItem[key] && censusItem[key].forEach((eventItem:any)=>{
+                //eventItem--预警类型
+                switch (key) {
+                  case 'face':
+                    face.push({...eventItem, type:this.exceptionEventCommon[key]});
+                    break;
+                  case 'climbHeight':
+                    climbHeight.push({...eventItem, type:this.exceptionEventCommon[key]});
+                    break;
+                  case 'fire':
+                    fire.push({...eventItem, type:this.exceptionEventCommon[key]});
+                    break;
+                  case 'helmet':
+                    helmet.push({...eventItem, type:this.exceptionEventCommon[key]});
+                    break;
+                  case 'motionless':
+                    motionless.push({...eventItem, type:this.exceptionEventCommon[key]});
+                    break;
+                  case 'refectiveVest':
+                    refectiveVest.push({...eventItem, type:this.exceptionEventCommon[key]});
+                    break;
+                  case 'region':
+                    region.push({...eventItem, type:this.exceptionEventCommon[key]});
+                    break;
+                  case 'tumble':
+                    tumble.push({...eventItem, type:this.exceptionEventCommon[key]});
+                    break;
+                }
+              })
+            })
+          })
+          return face.concat(climbHeight, fire, helmet, motionless, refectiveVest, region, tumble);
+        }catch (e) {
+          console.log(e)
+          return []
+        }
       },
       exportTableList: function () {
         //@ts-ignore

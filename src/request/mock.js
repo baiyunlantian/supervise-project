@@ -526,7 +526,7 @@ Mock.mock('/mock/arrange/arrangeReportExceptionCensus',(res,req)=>{
 
   ['face','fire','helmet','motionless','refectiveVest','region','tumble','climbHeight'].forEach((item,index)=>{
     let list = [];
-    for (let i = 0; i < Random.integer(1,8); i++){
+    for (let i = 0; i < Random.integer(1,2); i++){
       list.push({
         createTime:Random.datetime('yyyy.MM.dd HH.mm.ss'),
         personName:Random.csentence(3,6),

@@ -67,15 +67,15 @@ axios.interceptors.response.use(function (response) {
 })
 
 //通用方法
-export const POST = async (url:string, params?:object) => {
-    return await axios.post(`${url}`, params).then(res => {
+export const POST = (url:string, params?:object) => {
+    return axios.post(`${url}`, params).then(res => {
         return res.data;
     })
 }
 
 //接受FormData格式参数
-export const fetchCommon = async (url:string, params?:object) => {
-    return await fetch(url,
+export const fetchCommon = (url:string, params?:object) => {
+    return fetch(url,
       {
           method: 'post',
           //@ts-ignore
