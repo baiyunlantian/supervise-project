@@ -65,9 +65,11 @@
 
         if(flvjs.isSupported()){
           if (this.firstPlay) {
+            console.log(this.$props.videoData)
+
             this.playerRef = flvjs.createPlayer({
               type: 'mp4',
-              url: 'https://www.runoob.com/try/demo_source/movie.mp4'
+              url: this.$props.videoData.videoUrl
             });
 
             //@ts-ignore

@@ -107,7 +107,6 @@
     watch:{
       data:{
         handler: function (newVal, oldVal) {
-          console.log('detail-dialog',newVal)
           this.detailData = JSON.parse(JSON.stringify(newVal));
         },
         deep:true
