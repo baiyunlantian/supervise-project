@@ -47,7 +47,7 @@
         >
           <video :ref="index" class="video-player" muted></video>
 
-          <div class="operate-content" :class="{exception:item.enable === 0}">
+          <div class="operate-content" :class="{exception:handleJudgeException(item.cameraId)}">
             <div class="text">{{item.name}}</div>
             <SvgIcon
                 name="fullScreen"
@@ -79,7 +79,7 @@
   import flvjs from 'flv.js/dist/flv.min.js'
 
   export default Vue.extend({
-    props:['cameraList'],
+    props:['cameraList','exceptionList'],
     components:{
       WarningCensus,
       SvgIcon,
@@ -244,6 +244,12 @@
           })
           this.reportStatus = !value;
         })
+      },
+      //判断摄像头是否检测出异常行为，异常的话显示红点
+      handleJudgeException: function (cameraId:string) {
+
+        let list = this.$props.exceptionList && this.$props.exceptionList.filter((item:any)=>item.cameraId === cameraId)
+        return list && list.length > 0 ? true : false;
       },
     },
     watch:{

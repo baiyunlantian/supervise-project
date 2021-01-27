@@ -24,15 +24,10 @@
 
     <div class="right">
       <div class="main-video">
-        <img :src="require('@/assets/mission-person.jpg')" alt="***"/>
+        <img :src="data.picUrl || require('@/assets/mission-person.jpg')" alt="***"/>
         <i class="el-icon-video-play play-icon" @click="toggleVideo(true)"/>
       </div>
 
-      <div class="sub-img hiddenScrollbar">
-        <img :src="require('@/assets/mission-person.jpg')" alt="***"/>
-        <img :src="require('@/assets/mission-person.jpg')" alt="***"/>
-        <img :src="require('@/assets/mission-person.jpg')" alt="***"/>
-      </div>
     </div>
   </div>
 </template>

@@ -1,7 +1,14 @@
 <template>
   <div id="home-container">
-    <Left @updateCameraList="updateCameraList"/>
-    <Right :camera-list="cameraList"/>
+    <Left
+        :exception-list="websocketReturnExceptionList"
+        @updateCameraList="updateCameraList"
+        @updateReadiedExceptionBoxList="updateReadiedExceptionBoxList"
+    />
+    <Right
+        :camera-list="cameraList"
+        :exception-list="websocketReturnExceptionList"
+    />
   </div>
 </template>
 
@@ -16,22 +23,34 @@
       Right,
     },
     data(){
+      //@ts-ignore
+      const $global = this.$global;
       return {
         cameraList:[],
+        websocketReturnExceptionList: $global.readiedExceptionBoxList,
+        readiedExceptionBoxList:[],
       }
     },
     methods:{
+      updateReadiedExceptionBoxList: function (list = []) {
+        if (list.length === 0) return;
+
+        let readiedList = JSON.parse(JSON.stringify(this.readiedExceptionBoxList));
+
+        list.forEach((item:string)=>{
+          if (readiedList.includes(item) === true){
+            readiedList.push(item)
+          }
+        })
+
+        this.readiedExceptionBoxList = readiedList;
+      },
       updateCameraList: function (list = []) {
         this.cameraList = list;
       },
-      createWebsocket: () => {
+      createWebsocket: function () {
+        const _this = this;
         let socket: any = null;
-        const chars = 'ABCDEFGHIJKMNPQRSTWXYZabcdefhijkmnprstwxyz123456789';
-        let maxPos = chars.length;
-        let pwd = '';
-        for (let i = 0; i < 32; i++) {
-          pwd += chars.charAt(Math.floor(Math.random() * maxPos));
-        }
         (function  () {
           if(typeof(WebSocket) == "undefined") {
             console.log("您的浏览器不支持WebSocket");
@@ -40,7 +59,7 @@
             //实现化WebSocket对象，指定要连接的服务器地址与端口  建立连接
             //等同于socket = new WebSocket("ws://localhost:8888/xxxx/im/25");
             //var socketUrl="${request.contextPath}/im/"+$("#userId").val();
-            let socketUrl=`wss://192.168.1.105:8951/ws/asset/${sessionStorage.getItem('token')}`;
+            let socketUrl=`ws://192.168.1.105:8951/ws/asset/${sessionStorage.getItem('token')}`;
             socket = new WebSocket(socketUrl);
             if(socket == null){
               socket.close();
@@ -50,14 +69,24 @@
             //打开事件
             socket.onopen = function() {
               console.log("websocket已打开");
-              this.sendMessage();
               //socket.send("这是来自客户端的消息" + location.href + new Date());
             };
             //获得消息事件
             socket.onmessage = function(msg:any) {
               //发现消息进入    开始处理前端触发逻辑
               try {
-                console.log(msg.data);
+                console.log(JSON.parse(msg.data));
+                const {data,type} = JSON.parse(msg.data);
+
+                if (type === 301){
+                  this.$message({
+                    type:'warning',
+                    message:'流量使用警报'
+                  })
+                }else {
+                  //@ts-ignore
+                  _this.$global.readiedExceptionBoxList.push(data)
+                }
               }catch (e) {
                 console.log(e);
               }
@@ -84,6 +113,19 @@
       } else {
         next();
       }
+    },
+    //离开页面时，移除当前已读状态的异常摄像头
+    beforeDestroy (){
+      //@ts-ignore
+      let list = this.$global.readiedExceptionBoxList.map((item:any)=>{
+        //@ts-ignore
+        if (!this.readiedExceptionBoxList.includes(item.boxId)){
+          return item;
+        }
+      })
+
+      //@ts-ignore
+      this.$global.readiedExceptionBoxList = list;
     },
   })
 </script>

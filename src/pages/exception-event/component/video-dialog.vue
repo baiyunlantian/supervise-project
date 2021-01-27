@@ -11,7 +11,13 @@
     </template>
 
     <div class="video-container">
-      <video ref="videoPlayer" class="video-player" muted @error="playError"></video>
+      <video
+          ref="videoPlayer"
+          class="video-player"
+          @error="playError"
+          muted
+          :style="{backgroundImage:videoData.picUrl || `url(${require('@/assets/mission-person.jpg')})`}"
+      />
       <SvgIcon name="play" width="3.125rem" height="3.125rem" color="rgb(3, 114, 248)" v-on:click="play()" v-if="!playStatus"/>
       <SvgIcon name="pause" width="3.125rem" height="3.125rem" color="rgb(3, 114, 248)" @click="pause()" v-else />
     </div>
@@ -36,6 +42,7 @@
         default: function () {
           return {
             videoUrl:'',
+            picUrl:''
           }
         }
       },
@@ -54,7 +61,7 @@
     methods: {
       close: function () {
         //@ts-ignore
-        this.playerRef.destroy();
+        this.playerRef && this.playerRef.destroy();
         //@ts-ignore
         this.$emit('close');
         this.firstPlay = true;
@@ -65,7 +72,6 @@
 
         if(flvjs.isSupported()){
           if (this.firstPlay) {
-            console.log(this.$props.videoData)
 
             this.playerRef = flvjs.createPlayer({
               type: 'mp4',

@@ -31,12 +31,14 @@
       <el-tree
           ref="tree"
           :props="defaultProps"
+          :data="treeBoxList"
           :load="loadTree"
           :expand-on-click-node="false"
           :filter-node-method="filterNode"
           lazy
           accordion
           node-key="boxId"
+          @node-expand="expandBoxTree"
       >
         <template v-slot="{ node, data }" class="group">
           <div class="custom-tree-node" @click="handleClickTreeNode(node, data)" :class="currentCameraId === data.id ? 'currentCamera' : ''">
@@ -44,9 +46,9 @@
               <span v-if="node.expanded === true || data.hasOwnProperty('parentId')">-</span>
               <span v-else-if="node.expanded === false">+</span>
             </div>
-            <div class="label" :class="{active:node.expanded === true, exception:data.exception === 0}">
+            <div class="label" :class="{active:node.expanded === true, exception:handleJudgeException(node.level, data.id)}">
               <span>{{data.label}}</span>
-              <span class="point" v-if="data.exception === 0"></span>
+              <span class="point" v-if="handleJudgeException(node.level, data.id)"></span>
             </div>
           </div>
         </template>
@@ -70,7 +72,7 @@
       </div>
 
       <template slot="footer">
-        <el-button type="primary" @click="save">保存</el-button>
+        <el-button type="primary" @click="updateFlow">保存</el-button>
         <el-button @click="flowDialog = false">取消</el-button>
       </template>
     </el-dialog>
@@ -86,6 +88,7 @@
   import {showMessageAfterRequest} from "@/utils/common";
 
   export default Vue.extend({
+    props:['exceptionList'],
     components:{
       SearchInput,
       SvgIcon,
@@ -99,6 +102,7 @@
           id:'id',
           parentId:'parentId',
         },
+        treeBoxList:[],
         boxCensus:{
           boxRunningCount:0,
           arrangeRunningCount:0,
@@ -114,11 +118,23 @@
         resolveFn:new Function(),
         cameraList:[],
         currentCameraId:'',
+        cameraListCommon:new Map(),
       }
     },
+    watch:{
+      exceptionList:{
+        handler: function (newVal, oldVal) {
+          //检测到websocket有异常信息返回，手动刷新tree
+          this.loadTree(this.firstNode, this.resolveFn, 'custom');
+        },
+        deep:true
+      },
+    },
     methods:{
-      handleGetChildTree: function (boxId:string | number, resolve:Function) {
+      handleGetChildTree: function (boxId:string, resolve:Function) {
         if (!boxId) return;
+
+        this.handleJudgeBoxException(boxId);
         getCameraList({boxId}).then(res=>{
           let list = res.data.map((item:any)=>{
             return{
@@ -126,9 +142,9 @@
               id:item.cameraId,
               label:item.name,
               leaf: true,
-              exception:item.enable
             }
           });
+          this.cameraListCommon.set(boxId, res.data);
           this.$emit('updateCameraList',res.data);
           this.cameraList = res.data;
           resolve(list);
@@ -138,7 +154,7 @@
           resolve([]);
         });
       },
-      handleGetFirstTree: function (resolve:Function) {
+      handleGetFirstTree: function (resolve:Function, custom?:string) {
         getBoxList({pageSize:40, pageNum:1}).then(res=>{
           let list = res.data.list.map((item:any)=>{
             return {
@@ -149,17 +165,21 @@
               type:0
             };
           });
+          if (custom){
+            this.treeBoxList = list;
+            return;
+          }
           resolve(list);
         }).catch(e=>{
           resolve([]);
         })
       },
-      loadTree: function (node:any, resolve:Function) {
+      loadTree: function (node:any, resolve:Function, custom?:string) {
         // console.log('loadTree',node);
         if (node.level === 0) {
           this.firstNode = node;
           this.resolveFn = resolve;
-          this.handleGetFirstTree(resolve);
+          this.handleGetFirstTree(resolve, custom);
         }else {
           this.handleGetChildTree(node.data.id, resolve);
         }
@@ -172,7 +192,7 @@
         if (!value) return true;
         return data.label.indexOf(value) !== -1;
       },
-      save: function () {
+      updateFlow: function () {
         if (!this.flowValid) return;
 
         let data :any = {};
@@ -182,7 +202,7 @@
           handleFn = deleteFlowAlert;
         }else {
           handleFn = updateFlowAlert;
-          data.flowByte = Number(this.flowMax) * 1024;    //转成字节传后端
+          data.flowByte = Number(this.flowMax) * 1024 * 1024;    //转成字节传后端
         }
 
         handleFn(data).then((res:any)=>{
@@ -208,7 +228,7 @@
       },
       handleClickTreeNode: function (node:any, data:any) {
         if (node.level === 1) return;
-
+        //点击摄像头时
         let currentIndex = 0;
         this.cameraList.forEach((item:any,index:number)=>{
           if (item.cameraId === data.id) {
@@ -222,11 +242,33 @@
         let currentCamera = this.cameraList.splice(currentIndex,1);
         this.$emit('updateCameraList', currentCamera.concat(this.cameraList));
         this.cameraList = currentCamera.concat(this.cameraList);
-      }
+      },
+      //判断摄像头是否检测出异常行为，异常的话显示红点
+      handleJudgeException: function (nodeLevel:number, id:string) {
+
+        let list = this.$props.exceptionList && this.$props.exceptionList.filter((item:any)=>{
+          return nodeLevel === 1 ? item.boxId === id : item.cameraId === id
+        })
+
+        return list.length > 0 ? true : false;
+      },
+      //判断获取摄像头tree时盒子是否为异常状态，异常的话记录boxId
+      handleJudgeBoxException: function (boxId:string) {
+        let list : string[] = [];
+        this.$props.exceptionList.map((item:any)=>{
+          item.boxId === boxId ? list.push(boxId) : '';
+        })
+
+        this.$emit('updateReadiedExceptionBoxList', list);
+      },
+      expandBoxTree: function (data:any, node:any, tree:any) {
+        if (this.cameraListCommon.get(data.id)){
+          this.$emit('updateCameraList',this.cameraListCommon.get(data.id));
+        }
+      },
     },
     mounted(): void {
 
-      /*
       getDeviceRunningCensus().then(res=>{
         if (!res.data) return
         this.boxCensus = res.data;
@@ -237,7 +279,7 @@
 
         Object.keys(res.data).forEach(key=>{
           if (res.data[key]){
-            res.data[key] = (res.data[key]/1024).toFixed(0);
+            res.data[key] = (res.data[key]/1024/1024).toFixed(0);
           }else {
             res.data[key] = 0;
           }
@@ -247,9 +289,8 @@
 
       getFlowAlert().then(res=>{
         if (!res.data) return
-        this.flowMax = res.data.preSettingFlowByte ? (res.data.preSettingFlowByte/1024).toFixed(0) : '0';
+        this.flowMax = res.data.preSettingFlowByte ? (res.data.preSettingFlowByte/1024/1024).toFixed(0) : '0';
       })
-      */
     },
   });
 </script>

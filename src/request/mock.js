@@ -425,14 +425,14 @@ Mock.mock('/mock/equipment/selectList',(res,req)=>{
   }
 });
 
-//设备管理--摄像头
+//设备管理--盒子列表
 Mock.mock('/mock/edgebox/boxList',(res,req)=>{
 
   let list = [];
 
-  for (let i = 0; i < 1; i++){
+  for (let i = 0; i < 3; i++){
     list.push({
-      boxId:Random.integer(1,99999),
+      boxId:Random.integer(1,3),
       name:'盒子'+Random.integer(1,1000),
       ip:'127.0.0.1',
       port:Random.integer(50,200),
@@ -475,9 +475,9 @@ Mock.mock('/mock/edgebox/reportVideoConfig',(res,req)=>{
 Mock.mock('/mock/camera/cameraList',(res,req)=>{
   let list = [];
 
-  for (let i = 0; i < 5; i++){
+  for (let i = 0; i < 3; i++){
     list.push({
-      cameraId:Random.integer(1,99999),
+      cameraId:Random.integer(1,3),
       name:'摄像头'+Random.integer(1,1000),
       ip:'127.0.0.1',
       port:Random.integer(50,200),
