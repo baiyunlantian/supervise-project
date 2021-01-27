@@ -427,12 +427,13 @@ Mock.mock('/mock/equipment/selectList',(res,req)=>{
 
 //设备管理--盒子列表
 Mock.mock('/mock/edgebox/boxList',(res,req)=>{
+  const body = JSON.parse(res.body)
 
   let list = [];
 
-  for (let i = 0; i < 3; i++){
+  for (let i = 0; i < body.pageSize; i++){
     list.push({
-      boxId:Random.integer(1,3),
+      boxId:Random.integer(1,9999999999),
       name:'盒子'+Random.integer(1,1000),
       ip:'127.0.0.1',
       port:Random.integer(50,200),
@@ -446,6 +447,11 @@ Mock.mock('/mock/edgebox/boxList',(res,req)=>{
   return {
     data:{
       list,
+      page:{
+        total:list.length * 10,
+        pageSize:body.pageSize,
+        pageNum:body.pageNum
+      },
     }
   }
 

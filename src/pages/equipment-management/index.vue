@@ -95,7 +95,7 @@
   import { getEquipmentCensus, deleteEquipment } from "@/request/equipment";
   import { getCameraList } from "@/request/equipment";
   import {showMessageAfterRequest} from "@/utils/common";
-  import {BOX} from "@/request/type";
+  import {BOX, MOCK} from "@/request/type";
 
   /*
   * 设备状态优先级：free(闲置) > trouble(故障) > running(运行中)
@@ -135,11 +135,11 @@
           },
         ],
         tableProps:{
-          url:`${BOX}/edgebox/boxList`,
+          url:`${MOCK}/edgebox/boxList`,
           rowKey:'boxId',
           highlight:true,
           pagination:{
-            pageSize:12
+            pageSize:10
           },
           firstColumn:{
             show:true,

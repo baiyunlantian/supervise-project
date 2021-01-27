@@ -43,7 +43,7 @@
       >
         <template v-slot:personList="{row}">
           <div class="custom-img-list">
-            <template v-for="(item,index) in row.personList">
+            <template v-for="(item,index) in handleFormatTablePersonList(row.personList)">
               <div class="img-item" v-if="index <= 5" :key="index">
                 <img v-if="index < 5" :src="item.url || require('@/assets/mission-person.jpg')" :alt="item.personName"/>
                 <span v-else-if="index === 5">····</span>
@@ -256,6 +256,19 @@
           exportExcl(res, sheetData, exclHeader, columnWidths, fileName);
         });
       },
+      handleFormatTablePersonList: function (list = []) :object {
+        let personList = JSON.parse(JSON.stringify(list));
+        let targetIndex = 0;
+        let headerPerson = personList.map((item:any, index:number)=>{
+          if (item.type === 1){
+            targetIndex = index;
+            return item;
+          }
+        })
+
+        personList.splice(targetIndex,1);
+        return headerPerson.concat(personList);
+      }
     },
     mounted(): void {
       let formData = new FormData();

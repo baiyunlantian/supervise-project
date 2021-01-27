@@ -193,6 +193,7 @@
           ...param,
         };
 
+        // console.log(data);
         API.POST(`${this.url}`, data)
           .then(res => {
             const {list, page} = res.data;

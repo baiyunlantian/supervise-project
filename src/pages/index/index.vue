@@ -83,7 +83,7 @@
                     type:'warning',
                     message:'流量使用警报'
                   })
-                }else {
+                }else if (type > 100){
                   //@ts-ignore
                   _this.$global.readiedExceptionBoxList.push(data)
                 }

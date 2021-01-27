@@ -24,7 +24,7 @@
       <SvgIcon name="setFlow" @click="flowDialog = true"/>
     </div>
 
-    <div class="terminal-container bgcAndShadow">
+    <div class="terminal-container bgcAndShadow hiddenScrollbar">
 
       <SearchInput placeholder="" @search="filterBoxTree"/>
 
@@ -35,6 +35,7 @@
           :load="loadTree"
           :expand-on-click-node="false"
           :filter-node-method="filterNode"
+          class="hiddenScrollbar"
           lazy
           accordion
           node-key="boxId"
