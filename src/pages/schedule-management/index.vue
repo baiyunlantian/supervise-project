@@ -194,7 +194,7 @@
         //@ts-ignore
         this.$refs.table.initTable(data);
       },
-      handleClickDelete: function (id?:string) {
+      handleClickDelete: function (id:string|null) {
         let data = {
           arrangeIds: id ? [id] : this.arrangeIds
         };

@@ -62,7 +62,7 @@
             {key:'sex',label:'性别',type:'radio',
               options:[
                 {value:1,label:'男'},
-                {value:2,label:'女'},
+                {value:0,label:'女'},
               ]
             },
             {key:'ipNum',label:'身份证号',type:'input'},

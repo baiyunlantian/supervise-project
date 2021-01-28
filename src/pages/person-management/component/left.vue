@@ -190,7 +190,7 @@
           this.handleGetTreeSelectList(resolve, node.data.departId);
         }
       },
-      addOrUpdateDepart: function (name:string, id:string, fatherId:string) {
+      addOrUpdateDepart: function (name:string, id:string, refreshTreeById:string) {
         let data: any = {
           departName:name
         };
@@ -210,7 +210,7 @@
         handleFn(data).then((res:any)=>{
           showMessageAfterRequest(res.data, text+'部门成功', text+'部门失败');
           if (res.data === true){
-            this.customRefreshTree(fatherId);
+            this.customRefreshTree(refreshTreeById);
             this.$emit('initTableAndSelectList');
           }
         })

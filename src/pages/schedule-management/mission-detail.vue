@@ -21,6 +21,7 @@
         :form-props="formProps"
         :form-data="formData"
         :disabled="disabledForm"
+        @selectChange="selectChange"
       >
         <el-form-item label="使用时间" prop="useTime">
           <el-date-picker v-model="formData.useStartTime" type="date" placeholder="使用时间"></el-date-picker>
@@ -314,19 +315,41 @@
 
         data.personList = data.personList.map((item:any)=>{
           if (item.type === 1){
-            dutyPersonList.push(item)
+            dutyPersonList.push({value:item.personId, label:item.personName})
+            data.dutyPersonId = item.personId;
           }
           return item.personId
         });
 
         this.$set(this.formProps, 'items', insertOptionsToFormItems(this.formProps.items, 'dutyPersonId',dutyPersonList));
-        dutyPersonList && dutyPersonList.length > 0 ? data.dutyPersonId = dutyPersonList[0].personId : '';
         this.arrangeId = data.arrangeId;
         this.formData = data;
         this.$set(this.formData, 'time', [data.dutyStartTime, data.dutyEndTime]);
       },
       multipleSelectChange: function (value:any) {
         this.reportIds = value.map((item:any)=>item.reportId);
+      },
+      selectChange: function (options:any, key:string) {
+        if (key !== 'personList') return;
+
+        //@ts-ignore
+        if (options.includes(this.formData.dutyPersonId) === false){
+          this.$set(this.formData, 'dutyPersonId', '');
+        }
+
+        let list = this.filterDutyPersonList(options);
+        this.$set(this.formProps, 'items', insertOptionsToFormItems(this.formProps.items, 'dutyPersonId',list));
+      },
+      filterDutyPersonList: function (options:any):object {
+        let dutyPersonList : any = [];
+
+        (options || []).forEach((option:string)=>{
+          let filterArray = this.personSelectList.filter((item:any)=>item.value === option);
+
+          filterArray && filterArray.length > 0 ? dutyPersonList.push(filterArray[0]) : '';
+        })
+
+        return dutyPersonList;
       },
     },
     mounted(): void {
@@ -343,8 +366,8 @@
           return {value:item.personId, label:item.personName}
         })
 
+        this.personSelectList = list;
         this.$set(this.formProps, 'items', insertOptionsToFormItems(this.formProps.items, 'personList',list));
-        this.$set(this.formProps, 'items', insertOptionsToFormItems(this.formProps.items, 'dutyPersonId',list));
       })
 
       getBoxList({pageSize:40, pageNum:1}).then(res=>{

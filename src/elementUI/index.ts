@@ -60,7 +60,8 @@ const element = {
     Vue.prototype.$confirm = MessageBox.confirm
     Vue.prototype.$message = Message
     Vue.prototype["$global"] = {
-      readiedExceptionBoxList:[]  //首页左侧异常盒子列表，展开即代表已读状态，移除展开项
+      readiedExceptionBoxList:[],  //首页左侧异常盒子列表，展开即代表已读状态，移除展开项
+      missionDetailFormData:{},     //任务详情form表单数据
     }
   }
 }

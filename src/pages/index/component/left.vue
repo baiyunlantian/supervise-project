@@ -290,7 +290,7 @@
 
       getFlowAlert().then(res=>{
         if (!res.data) return
-        this.flowMax = res.data.preSettingFlowByte ? (res.data.preSettingFlowByte/1024/1024).toFixed(0) : '0';
+        this.flowMax = res.data.preSettingFlowByte && res.data.preSettingFlowByte > 0 ? (res.data.preSettingFlowByte/1024/1024).toFixed(0) : '0';
       })
     },
   });

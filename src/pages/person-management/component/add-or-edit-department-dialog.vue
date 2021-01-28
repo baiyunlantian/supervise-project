@@ -41,17 +41,17 @@
         this.$emit('close','addOrEditDialogVisible',false);
       },
       onOk: function () {
-        let id = '';
-        let fatherId = this.$props.department.departId || sessionStorage.getItem('companyCode');
+        let departId = this.$props.department.departId;
+        let refreshTreeById = '';
         if (this.$props.okText === '修改'){
-          id = this.$props.department.departId;
+          refreshTreeById = this.$props.department.fatherId || sessionStorage.getItem('companyCode');   //修改自身名称，刷新父级tree
         }else {
-          id = fatherId;
+          refreshTreeById = this.$props.department.departId;    //新增子级tree，刷新自身
         }
 
         if (!this.valid) return;
 
-        this.$emit('submit', this.name, id, fatherId);
+        this.$emit('submit', this.name, departId, refreshTreeById);
         this.close();
       },
       checkValid: function () {

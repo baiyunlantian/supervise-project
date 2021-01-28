@@ -67,7 +67,15 @@
             {prop:'name',label:'姓名',},
             { prop:'sex',label:'性别',
               format: (value:number) => {
-                return value === 1 ? '男' : '女'
+              let sex = '';
+              if (value === 1){
+                sex = '男'
+              }else if (value === 0){
+                sex = '女'
+              }else {
+                sex = '未填写'
+              }
+                return sex
               }
             },
             {prop:'ipNum',label:'身份证号',width: 200},
