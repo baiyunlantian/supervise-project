@@ -259,7 +259,7 @@
       handleFormatTablePersonList: function (list = []) :object {
         let personList = JSON.parse(JSON.stringify(list));
         let targetIndex = 0;
-        let headerPerson = personList.map((item:any, index:number)=>{
+        let headerPerson = personList.filter((item:any, index:number)=>{
           if (item.type === 1){
             targetIndex = index;
             return item;
