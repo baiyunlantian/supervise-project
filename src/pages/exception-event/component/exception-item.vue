@@ -10,7 +10,7 @@
 
     <div class="content">
       <div class="left">
-        <img :src="data.picUrl || require('@/assets/mission-person.jpg')" alt="***"/>
+        <img :src="data.picUrl || require('@/assets/supervise-public.jpeg')" alt="***"/>
         <i class="el-icon-video-play play-icon" @click="visible = true"/>
       </div>
 

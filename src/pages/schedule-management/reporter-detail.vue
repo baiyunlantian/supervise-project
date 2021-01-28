@@ -37,7 +37,7 @@
             >
               <div class="borderBottom">发生时间：{{valueItem.createTime}}</div>
               <div class="img">
-                <img :src="require('@/assets/mission-person.jpg')" alt="***"/>
+                <img :src="valueItem.picUrl || require('@/assets/supervise-public.jpeg')" alt="***"/>
               </div>
               <div>事件名称：{{valueItem.person || ''}}</div>
               <div>关联人员：{{valueItem.personName || ''}}</div>

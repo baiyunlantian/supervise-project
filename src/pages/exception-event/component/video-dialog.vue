@@ -16,10 +16,10 @@
           class="video-player"
           @error="playError"
           muted
-          :style="{backgroundImage:videoData.picUrl || `url(${require('@/assets/mission-person.jpg')})`}"
+          :style="{backgroundImage:videoData.picUrl || `url(${require('@/assets/supervise-public.jpeg')})`}"
       />
-      <SvgIcon name="play" width="3.125rem" height="3.125rem" color="rgb(3, 114, 248)" v-on:click="play()" v-if="!playStatus"/>
-      <SvgIcon name="pause" width="3.125rem" height="3.125rem" color="rgb(3, 114, 248)" @click="pause()" v-else />
+      <SvgIcon name="play" width="3.125rem" height="3.125rem" color="rgb(255,255,255)" v-on:click="play()" v-if="!playStatus"/>
+      <SvgIcon name="pause" width="3.125rem" height="3.125rem" color="rgb(255,255,255)" @click="pause()" v-else />
     </div>
 
   </el-dialog>
