@@ -37,7 +37,7 @@
   import DeleteDialog from './delete-dialog.vue';
   import SvgIcon from '@/components/svgIcon.vue';
   import { deletePerson, createBatchImportPersonExcel } from '@/request/person';
-  import {showMessageAfterRequest} from "@/utils/common";
+  import {showMessageAfterRequest, downloadFileByBlob} from "@/utils/common";
   import { PERSON } from "@/request/type";
 
 
@@ -128,9 +128,12 @@
       },
       exportPersonExcel: function () {
         let formData = new FormData();
-        formData.append('companyCode','1');
+        formData.append('companyCode',sessionStorage.getItem('companyCode') || '');
 
-        createBatchImportPersonExcel(formData).then(res=>{})
+        createBatchImportPersonExcel(formData).then(res=>{
+          console.log(res)
+          downloadFileByBlob(res,'人员导入模板');
+        })
       },
       loadTable: function (data:object) {
         //@ts-ignore

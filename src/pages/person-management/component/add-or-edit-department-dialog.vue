@@ -41,7 +41,7 @@
         this.$emit('close','addOrEditDialogVisible',false);
       },
       onOk: function () {
-        let departId = this.$props.department.departId;
+        let departId = this.$props.department.departId || sessionStorage.getItem('companyCode');
         let refreshTreeById = '';
         if (this.$props.okText === '修改'){
           refreshTreeById = this.$props.department.fatherId || sessionStorage.getItem('companyCode');   //修改自身名称，刷新父级tree

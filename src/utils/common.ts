@@ -90,3 +90,18 @@ export const insertOptionsToSearchFormItems = function (searchFormItems:any, key
 
   return {targetIndex, targetItem};
 }
+
+// 前端保存文件
+export const downloadFileByBlob = (blobContent:any, filename:string) => {
+  console.log(blobContent)
+  const blobUrl = window.URL.createObjectURL(blobContent);
+  const eleLink = document.createElement('a')
+  eleLink.download = filename
+  eleLink.style.display = 'none'
+  eleLink.href = blobUrl
+  // 触发点击
+  document.body.appendChild(eleLink)
+  eleLink.click()
+  // 然后移除
+  document.body.removeChild(eleLink)
+};

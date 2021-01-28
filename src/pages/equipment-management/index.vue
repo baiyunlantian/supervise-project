@@ -57,7 +57,7 @@
               <td>{{item.httpPort}}</td>
               <td>{{item.username}}</td>
               <td>{{item.password}}</td>
-              <td v-if="row.enable === 1" :style="{color: 'rgb(0, 161, 76)'}">在线</td>
+              <td v-if="item.enable === 1" :style="{color: 'rgb(0, 161, 76)'}">在线</td>
               <td v-else :style="{color: '#565656'}">离线</td>
               <td>{{item.remark}}</td>
             </tr>
@@ -166,7 +166,7 @@
     methods: {
       search: function (data?:object) {
         //@ts-ignore
-        this.initTable(data);
+        this.initTable({pageNum:1,...data});
       },
       close: function (operate:string) {
         this.visible = false;

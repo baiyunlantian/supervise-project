@@ -14,8 +14,19 @@ export function deletePerson (params?:object)  {
   return API.POST(`${PERSON}/person/personDelete`, params)
 }
 
-export function createBatchImportPersonExcel (params?:object)  {
-  return API.POST(`${PERSON}/person/personExcelBuild`, params)
+export function createBatchImportPersonExcel (params:FormData)  {
+  return fetch(`${PERSON}/person/white/personExcelBuild`,
+    {
+      method: 'post',
+      //@ts-ignore
+      headers:{
+        token: sessionStorage.getItem('token')
+      },
+      //@ts-ignore
+      body: params,
+    })
+    .then(res => res)
+  // return API.fetchCommon(`${PERSON}/person/white/personExcelBuild`, params)
 }
 
 export function batchImportPerson (params?:object)  {
