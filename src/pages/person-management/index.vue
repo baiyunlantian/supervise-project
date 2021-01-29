@@ -14,22 +14,7 @@
             @search="searchTable"
         />
         <div class="operate-btn">
-          <div>
-            <el-upload
-                class="upload-demo"
-                accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-                :show-file-list="false"
-                @on-success="batchImportSuccess"
-                @on-error="batchImportError"
-                :limit="1"
-                :name="batchImportOptions.name"
-                :action="batchImportOptions.action"
-                :data="batchImportOptions.data"
-                :headers="batchImportOptions.headers"
-            >
-              <SvgIcon name="batchImport" color="#fff"/>
-            </el-upload>
-          </div>
+          <div><SvgIcon name="batchImport" color="#fff" @click="toggleBatchImportPersonVisible(true)"/></div>
           <div>
             <SvgIcon
                 name="addPerson"
@@ -61,6 +46,28 @@
         @initTableAndSelectListAndTree="initTableAndSelectListAndTree"
     />
 
+    <BatchImportDialog
+      :depart-select-list="departSelectList"
+      :batch-import-person-visible="batchImportPersonVisible"
+      @close="toggleBatchImportPersonVisible"
+      @initTableAndSelectListAndTree="initTableAndSelectListAndTree"
+      @toggleFailVisible="toggleFailVisible"
+    />
+
+    <el-dialog
+        title="导入失败人员提示"
+        :visible.sync="failVisible"
+        custom-class="fail-dialog-container"
+        width="500px"
+    >
+      <div
+          v-for="(item, index) in failList"
+          :key="index"
+          class="error-text"
+      >
+        {{index+1}}：{{item}}
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -72,11 +79,9 @@
   import NormalPersonList from './component/tableList.vue';
   import AddOrUpdatePersonDialog from './component/add-or-update-person-dialog.vue';
   import SetStationDialog from './component/set-station-dialog.vue';
+  import BatchImportDialog from './component/batch-import-dialog.vue';
   import Left from './component/left.vue';
-  import { PERSON } from "@/request/type";
   import { getDepartSelectList } from '@/request/common';
-
-  import { batchImportPerson,} from '@/request/person';
 
   export default Vue.extend({
     components:{
@@ -87,6 +92,7 @@
       SetStationDialog,
       Left,
       SvgIcon,
+      BatchImportDialog,
     },
     data() {
       return {
@@ -99,20 +105,13 @@
         searchParams:{},
         personDialogVisible:false,
         personInfo:{},
-        batchImportOptions:{
-          action:`${PERSON}/person/personBatchInsert`,
-          name:'file',
-          data:{
-            companyCode:sessionStorage.getItem('companyCode'),
-          },
-          headers: {
-            token: sessionStorage.getItem('token'),
-          },
-        },
         departSelectList:[],
         departCommonMap:new Map(),
         stationSelectList:[],
         stationCommonMap:new Map(),
+        batchImportPersonVisible:false,
+        failList:[],
+        failVisible:false,
       }
     },
     methods: {
@@ -123,26 +122,6 @@
       searchTable: function (data?:object) {
         //@ts-ignore
         this.$refs.childTable.loadTable(data);
-      },
-      batchImportSuccess: function (res:any) {
-        /*
-         * failList: list[String]  失败列表
-         * successNum: Number  成功数量
-         * **/
-        let data = res.data;
-        if(data.code == 200) {
-          this.$message({
-            type: 'success',
-            message: '导入成功!'
-          });
-          this.searchTable();
-        }
-      },
-      batchImportError: function () {
-        this.$message({
-          type: 'error',
-          message: '导入失败!'
-        });
       },
       initTableAndSelectList: function () {
         this.searchTable();
@@ -175,6 +154,13 @@
           this.departCommonMap = map;
         })
 
+      },
+      toggleBatchImportPersonVisible: function (visible = false) {
+        this.batchImportPersonVisible = visible;
+      },
+      toggleFailVisible: function (visible:boolean, list = []) {
+        this.failVisible = visible;
+        this.failList = list;
       }
     },
     mounted(): void {

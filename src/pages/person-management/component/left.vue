@@ -38,9 +38,9 @@
             <div class="label" :class="{active:node.expanded === true}">
               <span>{{data.label}}</span>
               <div class="operate-btn" v-if="node.expanded === true">
-                <SvgIcon name="edit" @click="handleClickAddOrUpdateDepart('edit', data)"/>
-                <SvgIcon name="addChildDepart" @click="handleClickAddOrUpdateDepart('add', data)"/>
-                <SvgIcon name="delete" @click="setData('department',data, 'deleteDialogVisible', true)"/>
+                <SvgIcon width="0.625rem" height="0.625rem" name="edit" @click="handleClickAddOrUpdateDepart('edit', data)"/>
+                <SvgIcon width="0.625rem" height="0.625rem" name="addChildDepart" @click="handleClickAddOrUpdateDepart('add', data)"/>
+                <SvgIcon width="0.625rem" height="0.625rem" name="delete" @click="setData('department',data, 'deleteDialogVisible', true)"/>
               </div>
             </div>
           </div>

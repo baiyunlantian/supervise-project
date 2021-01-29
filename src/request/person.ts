@@ -29,5 +29,15 @@ export function createBatchImportPersonExcel (params:FormData)  {
 }
 
 export function batchImportPerson (params?:object)  {
-  return API.POST(`${PERSON}/person/personBatchInsert`, params)
+  return fetch(`${PERSON}/person/personBatchInsert`,
+    {
+      method: 'post',
+      //@ts-ignore
+      headers:{
+        token: sessionStorage.getItem('token')
+      },
+      //@ts-ignore
+      body: params,
+    })
+    .then(res => res)
 }

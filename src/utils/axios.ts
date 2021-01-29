@@ -59,9 +59,11 @@ axios.interceptors.response.use(function (response) {
         router.push({path: '/login'}).then(r => r);
     }else if (error.response.data.code === 401){
         Vue.prototype.$message({
-            message: error.response.data.msg || '',
+            message: error.response.data.msg || '登录凭证已失效，请重新登录',
             type: 'error'
         });
+        sessionStorage.clear();
+        router.push({path: '/login'}).then(r => r);
     }
     return Promise.reject(error);
 })

@@ -76,7 +76,7 @@
               delete data[key];
             }else if (key === 'time'){
               data.dutyStartTime = moment(data.time[0]).format('yyyy-MM-DD')+' 00:00:00';
-              data.dutyEndTime = moment(data.time[1]).format('yyyy-MM-DD')+' 00:00:00';
+              data.dutyEndTime = moment(data.time[1]).format('yyyy-MM-DD')+' 23:59:59';
               delete data.time;
             }
           })

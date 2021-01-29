@@ -287,7 +287,7 @@
               data[key] = moment(data[key]).format('yyyy-MM-DD')+' 00:00:00';
             }else if (key === 'time'){
               data.dutyStartTime = moment(data[key][0]).format('yyyy-MM-DD')+' 00:00:00';
-              data.dutyEndTimeTime = moment(data[key][1]).format('yyyy-MM-DD')+' 00:00:00';
+              data.dutyEndTimeTime = moment(data[key][1]).format('yyyy-MM-DD')+' 23:59:59';
               delete data.time;
             }
           })
