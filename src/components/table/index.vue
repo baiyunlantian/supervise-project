@@ -185,13 +185,17 @@
         * params---父组件传入的固定参数
         * this.$props.searchParams---通过操作页面传入的查询参数
         * */
-        const data = {
+        let data = {
           pageSize,
           pageNum,
           ...this.params,
           ...this.$props.searchParams,
           ...param,
         };
+
+        if (!(typeof this.$props.searchParams === 'object' && this.$props.searchParams.hasOwnProperty('pageNum') || param.hasOwnProperty('pageNum'))){
+          data.pageNum = 1;
+        }
 
         // console.log(data);
         API.POST(`${this.url}`, data)
@@ -242,7 +246,7 @@
         const params = {
           ...this.params,
           ...this.$props.searchParams,
-          pageSize:9,
+          pageSize:999,
           pageNum:1,
         };
         let {data} = await API.POST(`${this.url}`, params);

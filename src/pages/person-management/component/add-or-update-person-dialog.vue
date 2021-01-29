@@ -10,6 +10,7 @@
       <div class="upload-container">
         <div class="img-container">
           <img v-if="personInfo.url || imgUrl" :src="personInfo.url || imgUrl" alt=""/>
+          <img class="master" v-else :src="require('@/assets/personMaster.png')" alt=""/>
         </div>
         <el-upload
             action="#"

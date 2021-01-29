@@ -98,7 +98,7 @@
         const {pageSize, pageNum} = this.pagination;
         let data : any = {
           pageSize,
-          pageNum,
+          pageNum:param.hasOwnProperty('pageNum') ? pageNum : 1,
           ...param
         };
 

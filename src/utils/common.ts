@@ -92,8 +92,7 @@ export const insertOptionsToSearchFormItems = function (searchFormItems:any, key
 }
 
 // 前端保存文件
-export const downloadFileByBlob = (blobContent:any, filename:string) => {
-  console.log(blobContent)
+export const downloadFileByBlob = (blobContent:Blob, filename:string) => {
   const blobUrl = window.URL.createObjectURL(blobContent);
   const eleLink = document.createElement('a')
   eleLink.download = filename

@@ -313,17 +313,17 @@
         const {data} :any = this.$route.query;
         let dutyPersonList: any = [];
 
-        data.personList = data.personList.map((item:any)=>{
+        let personList = data.personList.map((item:any)=>{
           if (item.type === 1){
-            dutyPersonList.push({value:item.personId, label:item.personName})
             data.dutyPersonId = item.personId;
           }
+          dutyPersonList.push({value:item.personId, label:item.personName});
           return item.personId
         });
 
         this.$set(this.formProps, 'items', insertOptionsToFormItems(this.formProps.items, 'dutyPersonId',dutyPersonList));
         this.arrangeId = data.arrangeId;
-        this.formData = data;
+        this.formData = {...data, personList};
         this.$set(this.formData, 'time', [data.dutyStartTime, data.dutyEndTime]);
       },
       multipleSelectChange: function (value:any) {

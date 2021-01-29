@@ -130,9 +130,8 @@
         let formData = new FormData();
         formData.append('companyCode',sessionStorage.getItem('companyCode') || '');
 
-        createBatchImportPersonExcel(formData).then(res=>{
-          console.log(res)
-          downloadFileByBlob(res,'人员导入模板');
+        createBatchImportPersonExcel(formData).then(blob=>{
+          downloadFileByBlob(blob,'人员批量导入模板.xls');
         })
       },
       loadTable: function (data:object) {

@@ -15,7 +15,7 @@
     <div class="person-list">
       <div class="title">关联人员信息</div>
       <div class="list">
-        <div class="item">
+        <div class="item" v-if="detailData.personName && detailData.station">
           <div class="img">
             <img :src="detailData.personUrl" :alt="detailData.personName"/>
           </div>

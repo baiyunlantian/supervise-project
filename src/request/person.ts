@@ -25,8 +25,7 @@ export function createBatchImportPersonExcel (params:FormData)  {
       //@ts-ignore
       body: params,
     })
-    .then(res => res)
-  // return API.fetchCommon(`${PERSON}/person/white/personExcelBuild`, params)
+    .then(res => res.blob())
 }
 
 export function batchImportPerson (params?:object)  {

@@ -166,7 +166,7 @@
     methods: {
       search: function (data?:object) {
         //@ts-ignore
-        this.initTable({pageNum:1,...data});
+        this.initTable(data);
       },
       close: function (operate:string) {
         this.visible = false;
