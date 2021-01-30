@@ -40,11 +40,11 @@
   import Pagination from '@/components/pagination/index.vue';
   import SearchForm from '@/components/search-form/index.vue';
   import GoBackBtn from '@/components/goBackBtn.vue';
-  import {deleteEvent, getExceptionList, updateEvent} from '@/request/exception';
   import moment from "moment";
+  import {deleteEvent, getExceptionList, updateEvent} from '@/request/exception';
   import {insertOptionsToSearchFormItems, showMessageAfterRequest} from "@/utils/common";
   import {getBoxList} from "@/request/equipment";
-  import {getPersonSelectList} from "@/request/common";
+  import {getPersonSelectList, getArrangeList} from "@/request/common";
 
   export default Vue.extend({
     components:{

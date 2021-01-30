@@ -12,3 +12,11 @@ export function getStationList (param:object)  {
 export function getDepartSelectList(param:object) {
   return API.fetchCommon(`${ACCOUNT}/assist/departList`, param);
 }
+
+export function getDepartPersonNum(param:object) {
+  return API.fetchCommon(`${ACCOUNT}/assist/departPersonNum`, param);
+}
+
+export function getArrangeList(param:object) {
+  return API.fetchCommon(`${ACCOUNT}/assist/arrangeList`, param);
+}

@@ -3,7 +3,8 @@ module.exports = {
     ['@vue/app', {
       polyfills: [
         'es.promise',
-        'es.symbol'
+        'es.symbol',
+        'es.map'
       ],
       useBuiltIns: "entry"
     }]

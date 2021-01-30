@@ -22,6 +22,7 @@
         :form-data="formData"
         :disabled="disabledForm"
         @selectChange="selectChange"
+        @selectRemoveTag="selectRemoveTag"
       >
         <el-form-item label="使用时间" prop="useTime">
           <el-date-picker v-model="formData.useStartTime" type="date" placeholder="使用时间"></el-date-picker>
@@ -137,6 +138,7 @@
         arrangeId:'',
         reportIds:[],
         personSelectList:[],
+        delFlagList:[],
         exceptionEventCommon:{
           face:'人脸识别预警',
           climbHeight:'登高预警',
@@ -312,15 +314,23 @@
       initialValueForm: function () {
         const {data} :any = this.$route.query;
         let dutyPersonList: any = [];
+        let delFlagList: any = [];
 
         let personList = data.personList.map((item:any)=>{
+          //负责人
           if (item.type === 1){
             data.dutyPersonId = item.personId;
           }
-          dutyPersonList.push({value:item.personId, label:item.personName});
+
+          //delFlag: 1--已删除  0--未删除
+          if(item.delFlag === 1){
+            delFlagList.push(item.personId);
+          }
+          dutyPersonList.push({value:item.personId, label:item.personName, disabled:item.delFlag === 1 ? true : false});
           return item.personId
         });
 
+        this.delFlagList = delFlagList;
         this.$set(this.formProps, 'items', insertOptionsToFormItems(this.formProps.items, 'dutyPersonId',dutyPersonList));
         this.arrangeId = data.arrangeId;
         this.formData = {...data, personList};
@@ -351,13 +361,33 @@
 
         return dutyPersonList;
       },
+      handleRenderPersonSelectList: function () {
+        this.delFlagList.forEach((item:string)=>{
+          this.personSelectList.forEach((option:any, index)=>{
+            if (item === option.value){
+              option.disabled = true;
+              this.$set(this.personSelectList, index, option)
+            }
+          })
+        })
+
+        this.$set(this.formProps, 'items', insertOptionsToFormItems(this.formProps.items, 'personList',this.personSelectList));
+      },
+      selectRemoveTag: function (option:never, key:string) {
+        if (this.delFlagList.includes(option)){
+          this.$message({
+            type:'warning',
+            message:'该人员已被系统删除，移除失败'
+          });
+          //@ts-ignore
+          this.$set(this.formData, 'personList', [...this.formData.personList, option]);
+        }
+      }
     },
     mounted(): void {
-      this.initialValueForm();
 
       let formData = new FormData();
       formData.append('companyCode', sessionStorage.getItem('companyCode') || '');
-
 
       getPersonSelectList(formData).then((res:any)=>{
         if (!res.data) return;
@@ -367,7 +397,7 @@
         })
 
         this.personSelectList = list;
-        this.$set(this.formProps, 'items', insertOptionsToFormItems(this.formProps.items, 'personList',list));
+        this.handleRenderPersonSelectList();
       })
 
       getBoxList({pageSize:40, pageNum:1}).then(res=>{
@@ -379,6 +409,9 @@
 
         this.$set(this.formProps, 'items',insertOptionsToFormItems(this.formProps.items, 'boxId', list));
       })
+
+      this.initialValueForm();
+
     }
   })
 </script>

@@ -55,6 +55,7 @@
       close: function () {
         this.$emit('close');
         this.importDepartId = '';
+        this.validDepartId = true;
       },
       customUpload: function (file:any) {
         let formData = new FormData();
@@ -100,6 +101,9 @@
           }
           this.close();
         })
+
+        //@ts-ignore
+        this.$refs.upload.clearFiles();
       },
       submit: function () {
         if (this.importDepartId){

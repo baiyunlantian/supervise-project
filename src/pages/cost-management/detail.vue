@@ -33,7 +33,7 @@
     data() {
       return {
         tableProps:{
-          url:`${MOCK}/vis/flowDayRecordList`,
+          url:`${BOX}/vis/flowDayRecordList`,
           rowKey:'id',
           firstColumn:{
             show:true,

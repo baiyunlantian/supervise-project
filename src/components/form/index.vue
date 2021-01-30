@@ -25,6 +25,7 @@
           :formData="formData"
           :item="item"
           @selectChange="selectChange"
+          @selectRemoveTag="selectRemoveTag"
       />
     </el-form-item>
 
@@ -100,7 +101,10 @@
       },
       selectChange: function (option:any, key:string) {
         this.$emit('selectChange', option, key);
-      }
+      },
+      selectRemoveTag: function (option:any, key:string) {
+        this.$emit('selectRemoveTag', option, key);
+      },
     },
   })
 </script>

@@ -10,16 +10,18 @@
   <el-select
       v-else-if="item.type === 'select'"
       v-model="formData[item.key]"
-      clearable
+      :clearable="!item.multiple"
       :class="item.className"
       :multiple="item.multiple"
       @change="options=>selectChange(options, item.key)"
+      @remove-tag="option=>selectRemoveTag(option, item.key)"
   >
     <el-option
         v-for="(option, index) in item.options"
         :key="index"
         :label="option.label"
         :value="option.value"
+        :disabled="option.disabled"
     />
   </el-select>
   <el-date-picker
@@ -63,6 +65,9 @@
       selectChange: function (option:any, key:string) {
         this.$emit('selectChange', option, key);
       },
+      selectRemoveTag: function (option:any, key:string) {
+        this.$emit('selectRemoveTag', option, key);
+      }
     },
   })
 </script>

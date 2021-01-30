@@ -123,6 +123,6 @@
   })
 </script>
 
-<style lang="less">
+<style scoped lang="less">
   @import "exception-item.less";
 </style>

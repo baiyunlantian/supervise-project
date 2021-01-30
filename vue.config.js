@@ -24,7 +24,7 @@ module.exports = {
                 lessOptions: {
                     strictMath: true,
                     globalVars:{
-                        divShadow: '0px 0px 10px 0px #004dc15e',
+                        divShadow: '0px 0px 10px 0px #a2bce4',
                         inputShadow: '1px 2px 3px 0px #a7d4ff',
                     },
                 },
@@ -105,10 +105,11 @@ module.exports = {
               gifsicle: {
                   interlaced: false,
               },
+              // webp不兼容IOS和edge
               // the webp option will enable WEBP
-              webp: {
-                  quality: 75
-              }
+              // webp: {
+              //     quality: 75
+              // }
           })
           .end()
     },

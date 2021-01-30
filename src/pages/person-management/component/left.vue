@@ -89,6 +89,7 @@
     getDepartmentTreeList,
   } from "@/request/department";
   import {showMessageAfterRequest} from "@/utils/common";
+  import { getDepartPersonNum } from "@/request/common";
 
   export default Vue.extend({
     components:{
@@ -114,6 +115,7 @@
         firstNode:'',
         resolveFn:new Function(),
         customTreeList:[],
+        personNumObject: {},
       }
     },
     methods: {
@@ -142,7 +144,7 @@
         getDepartmentTreeList(data).then(res=>{
           if (!res.data) return;
 
-          const { departList, personList, personNum } = res.data;
+          const { departList, personList } = res.data;
           let list : any = [];
 
           personList.forEach((item:any)=>{
@@ -157,12 +159,12 @@
           });
 
           departList.forEach((item:any)=>{
-
             list.push({
               fatherId:item.fatherId,
               departId:item.departId,
               name:item.departName,
-              label:`${item.departName}(${personNum[item.departId] || 0}人)`,
+              //@ts-ignore
+              label:`${item.departName}(${this.personNumObject[item.departId] || 0}人)`,
               leaf: false,
               type:0
             });
@@ -222,6 +224,7 @@
       },
       //手动刷新节点树
       customRefreshTree: function (fatherId = sessionStorage.getItem('companyCode')) {
+        this.handleGetPersonNum();
         if (fatherId === sessionStorage.getItem('companyCode')) {
           //操作一级部门
           this.loadTree(this.firstNode, this.resolveFn, 'custom')
@@ -235,8 +238,19 @@
       },
       updateStation: function (list:any, map:any) {
         this.$emit('updateStation', 'stationSelectList', list, 'stationCommonMap', map);
+      },
+      handleGetPersonNum: function () {
+        let formData = new FormData();
+
+        formData.append('companyCode', sessionStorage.getItem('companyCode') || '');
+        getDepartPersonNum(formData).then(res=>{
+          this.personNumObject = res.data;
+        })
       }
     },
+    mounted(): void {
+      this.handleGetPersonNum();;
+    }
   })
 </script>
 
