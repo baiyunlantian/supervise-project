@@ -12,8 +12,10 @@
           :color="data[item.key] === 0 ? colors[1] : colors[0]"
         />
       </div>
-      <div class="label">{{item.label}}</div>
-      <div class="count">{{data[item.key]}}</div>
+      <div class="text">
+        <div class="label">{{item.label}}</div>
+        <div class="count">{{data[item.key]}}</div>
+      </div>
 
     </div>
   </div>

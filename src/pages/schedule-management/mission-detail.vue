@@ -324,16 +324,17 @@
 
           //delFlag: 1--已删除  0--未删除
           if(item.delFlag === 1){
-            delFlagList.push(item.personId);
+            delFlagList.push(item.personName);
           }
           dutyPersonList.push({value:item.personId, label:item.personName, disabled:item.delFlag === 1 ? true : false});
-          return item.personId
+          return item.delFlag === 1 ? item.personName : item.personId
         });
 
         this.delFlagList = delFlagList;
         this.$set(this.formProps, 'items', insertOptionsToFormItems(this.formProps.items, 'dutyPersonId',dutyPersonList));
         this.arrangeId = data.arrangeId;
         this.formData = {...data, personList};
+        this.baseFormData = {...data, personList};
         this.$set(this.formData, 'time', [data.dutyStartTime, data.dutyEndTime]);
       },
       multipleSelectChange: function (value:any) {
@@ -385,11 +386,7 @@
       }
     },
     mounted(): void {
-
-      let formData = new FormData();
-      formData.append('companyCode', sessionStorage.getItem('companyCode') || '');
-
-      getPersonSelectList(formData).then((res:any)=>{
+      getPersonSelectList().then((res:any)=>{
         if (!res.data) return;
 
         let list = res.data.list.map((item:any)=>{

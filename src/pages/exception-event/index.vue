@@ -40,7 +40,7 @@
 
             <DetailMainContent
                 :data="latelyList[0]"
-                @toggleVideo="(res)=>showDetailDialog(res, latelyList[0])"
+                @showDetailDialog="(res)=>showDetailDialog(res, latelyList[0])"
                 @updateItem="updateItem"
             />
           </div>
@@ -98,9 +98,9 @@
   import ExceptionItem from './component/exception-item.vue';
   import DetailDialog from './component/detail-dialog.vue';
   import SvgIcon from '@/components/svgIcon.vue';
-  import { getExceptionCensus, deleteEvent, updateEvent } from '@/request/exception';
-  import { BOX } from "@/request/type";
   import moment from "moment";
+  import { BOX } from "@/request/type";
+  import { getExceptionCensus, deleteEvent, updateEvent } from '@/request/exception';
   import {showMessageAfterRequest} from "@/utils/common";
 
 
@@ -131,8 +131,8 @@
         },
         latelyList:[],
         tableProps:{
-          url:`${BOX}/event/eventSelect`,
-          rowKey:'exceptionId',
+          url:`${BOX}/exception/exceptionPageList`,
+          rowKey:'groupId',
           hiddenPagination:true,
           params:{
             pageSize:17,
@@ -143,7 +143,7 @@
                 return moment(value).format('MM-DD HH:mm:ss')
               }
             },
-            {prop:'type',label:'事件类型',
+            {prop:'exceptionType',label:'事件类型',
               format:(key:number)=>{
                 let text = '人脸异常';
                 switch (key) {
@@ -172,14 +172,17 @@
                 return text;
               }
             },
-            {prop:'project',label:'所属项目'},
-            {prop:'arrangeName',label:'事件名称'},
-            {prop:'boxName',label:'异常来源',
-              format: function (value:string, row:any) {
-                return `${value}-${row.cameraName}`;
-              }
+            {prop:'projectName',label:'所属任务'},
+            {prop:'eventName',label:'事件名称'},
+            {prop:'boxName',label:'异常来源'},
+            {prop:'persons',label:'关联人员',
+              format:(list:any)=>{
+                let personList = list.map((person:any)=>{
+                  return person.personName;
+                })
+                return personList.join('、')
+              },
             },
-            {prop:'personName',label:'关联人员'},
             {prop:'isDeal',label:'异常状态',insertHtml:true},
             {prop:'operate',label:'',insertHtml:true},
           ],
@@ -197,9 +200,9 @@
       deleteItem: function (item:any) {
         this.$confirm('确定删除该条信息吗？')
           .then(res=>{
-            let {exceptionId, type} = item;
+            let {groupAutoId} = item;
 
-            deleteEvent({exceptionId, type}).then(res=>{
+            deleteEvent({groupAutoId}).then(res=>{
               showMessageAfterRequest(res.data, '删除成功','删除失败');
               //@ts-ignore
               res.data === true ? this.$refs.exceptionTable.initTable({pageSize:17}) : '';
@@ -242,12 +245,11 @@
       getExceptionCensus().then(res=>{
         if (!res.data) return
 
-        let total = 0, today = 0, census : any= {};
+        let total = res.data.totalCount, today = 0, census : any= {};
 
-        res.data.list.forEach((item:any)=>{
-          total += item.totalNum;
-          today += item.todayNum;
-          census[map.get(item.type)] = item.todayNum;
+        res.data.todayCounts.forEach((item:any)=>{
+          today += item.count;
+          census[map.get(item.exceptionType)] = item.count;
         })
 
         this.warningCensus = {...this.warningCensus, ...census};

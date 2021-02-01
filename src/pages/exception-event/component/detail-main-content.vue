@@ -2,11 +2,11 @@
   <div class="detail-main-content-container">
     <div class="left">
       <div>发布时间:<span>{{data.createTime}}</span></div>
-      <div>所属项目:<span>{{data.arrangeName}}</span></div>
-      <div>事件类型:<span>{{handleEventTypeCommon(data.type)}}</span></div>
-      <div>事件名称:<span>{{data.name}}</span></div>
-      <div>异常来源:<span>{{data.boxName}}-{{data.cameraName}}</span></div>
-      <div>关联人员:<span>{{data.personName}}</span></div>
+      <div>所属任务:<span>{{data.projectName}}</span></div>
+      <div>事件类型:<span>{{handleEventTypeCommon(data.exceptionType)}}</span></div>
+      <div>事件名称:<span>{{data.eventName}}</span></div>
+      <div>异常来源:<span>{{data.boxName}}</span></div>
+      <div>关联人员:<span>{{formatPersons(data.persons)}}</span></div>
       <div>异常情况:<span>{{data.info}}</span></div>
       <div>
         异常状态:
@@ -24,19 +24,44 @@
 
     <div class="right">
       <div class="main-video">
-        <img :src="data.picUrl || require('@/assets/supervise-public.jpeg')" alt="***"/>
-        <i class="el-icon-video-play play-icon" @click="toggleVideo(true)"/>
+        <video
+            ref="videoPlayer"
+            class="video-player"
+            @error="playError"
+            muted
+            :style="{backgroundImage:renderVideoBcgImg}"
+        />
+        <SvgIcon name="play" width="1.09375rem" height="1.09375rem" color="rgb(255,255,255)" v-on:click="play()" v-if="!playStatus"/>
+        <SvgIcon name="pause" width="1.09375rem" height="1.09375rem" color="rgb(255,255,255)" @click="pause()" v-else />
       </div>
 
+      <template v-if="imageList">
+        <div class="sub-img">
+          <img
+              v-for="(item, index) in imageList"
+              :key="index"
+              :src="item.imageUrl"
+              class="sub-img"
+              :class="{active:imageIndex === index}"
+              @click="changeMainImage(index)"
+          />
+        </div>
+      </template>
     </div>
   </div>
 </template>
 
 <script lang="ts">
   import Vue from 'vue';
-  import moment from "moment";
+  import SvgIcon from '@/components/svgIcon.vue';
+  import flvjs from "flv.js/dist/flv.min.js";
+  import {reloadEventVideo} from "@/request/exception";
+  import {showMessageAfterRequest} from "@/utils/common";
 
   export default Vue.extend({
+    components:{
+      SvgIcon
+    },
     props:{
       data:{
         type: Object,
@@ -44,11 +69,11 @@
         default: function () {
           return {
             createTime: '',
-            project:'',
-            type:'',
-            arrangeName:'',
-            personName:'',
-            info:'',
+            projectName:'',
+            exceptionType:'',
+            eventName:'',
+            persons:[],
+            isDeal:0,
             exceptionId:'',
             picUrl:'',
             videoUrl:'',
@@ -56,17 +81,42 @@
             boxName:'',
           }
         }
+      },
+      imageList: {
+        type: Array,
+        required: false,
+      },
+    },
+    data(){
+      return{
+        imageIndex:0,
+        playerRef:'',
+        playStatus:false,
+        firstPlay:true,
       }
     },
+    computed:{
+      renderVideoBcgImg:function () {
+        const {imageList, data} = this.$props;
+        //@ts-ignore
+        return imageList && imageList[this.imageIndex]
+          //@ts-ignore
+          ? `url(${imageList[this.imageIndex].imageUrl})`
+          : `url(${data.imageUrl})`
+      },
+    },
     methods: {
-      toggleVideo: function (res:boolean) {
-        this.$emit('toggleVideo',res);
+      formatPersons: function (list = []) {
+        let personText = list.map((person:any)=>{
+          return person.personName
+        })
+        return personText.join('、');
       },
       handleUpdate: function (value:boolean) {
-        let {exceptionId, type} = this.$props.data;
+        let {groupAutoId} = this.$props.data;
         let isDeal = value ? 0 : 1;
 
-        this.$emit('updateItem', {exceptionId, type, isDeal});
+        this.$emit('updateItem', {groupAutoId, isDeal});
       },
       handleEventTypeCommon: function(type:number){
         let text = '人脸异常';
@@ -95,6 +145,71 @@
         }
         return text;
       },
+      changeMainImage: function (index:number) {
+        //切换图片时重置播放器状态
+        this.playStatus = false;
+        this.firstPlay = true;
+        this.imageIndex = index;
+        //@ts-ignore
+        this.playerRef.pause();
+        //@ts-ignore
+        this.playerRef.unload();
+        //@ts-ignore
+        this.playerRef.detachMediaElement();
+        //@ts-ignore
+        this.playerRef.destroy();
+      },
+      play: function(){
+        //  判断是在detail-dialog.vue还是在index.vue点击播放按钮
+        // this.$props.imageList == undefined  展开详情框，否则直接播放视频
+        if (this.$props.imageList == undefined){
+          this.$emit('showDetailDialog',true);
+          return
+        }
+
+        this.playStatus = true;
+        if(flvjs.isSupported()){
+          if (this.firstPlay) {
+
+            this.playerRef = flvjs.createPlayer({
+              type: 'mp4',
+              url: this.$props.imageList[this.imageIndex].videoUrl
+            });
+
+            //@ts-ignore
+            this.playerRef.attachMediaElement(this.$refs.videoPlayer)
+            //@ts-ignore
+            this.playerRef.load()
+          }
+
+          //play放在外面，避免视频播放途中点击暂停再点击播放时，视频重新加载
+          //@ts-ignore
+          this.playerRef.play()
+          this.firstPlay = false;
+
+        }else{
+          this.$message.error('不支持的格式');
+          return;
+        }
+      },
+      pause: function () {
+        this.playStatus = false;
+        //@ts-ignore
+        this.playerRef.pause()
+      },
+      playError: function (e:any) {
+        this.playStatus = false;
+        this.$message({
+          type:'error',
+          message:'播放失败，重新加载中！'
+        });
+
+        const {exceptionType} = this.$props.data;
+        const {exceptionId} = this.$props.imageList[this.imageIndex];
+        reloadEventVideo({exceptionId, exceptionType}).then((res:any)=>{
+          showMessageAfterRequest(res.data,'加载成功，请刷新页面！','加载失败，请稍后重试！')
+        })
+      }
     },
   })
 </script>

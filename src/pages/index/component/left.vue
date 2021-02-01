@@ -42,7 +42,7 @@
           @node-expand="expandBoxTree"
       >
         <template v-slot="{ node, data }" class="group">
-          <div class="custom-tree-node" @click="handleClickTreeNode(node, data)" :class="currentCameraId === data.id ? 'currentCamera' : ''">
+          <div class="custom-tree-node" @click="handleClickTreeNode(node, data)" :class="{currentCamera:currentCameraId === data.id, expand:node.expanded}">
             <div class="img">
               <span v-if="node.expanded === true || data.hasOwnProperty('parentId')">-</span>
               <span v-else-if="node.expanded === false">+</span>
@@ -61,6 +61,7 @@
       title="流量提醒设置"
       width="400px"
       :show-close="false"
+      custom-class="flow-dialog"
     >
 
       <div class="content">

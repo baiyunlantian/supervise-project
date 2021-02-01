@@ -136,11 +136,8 @@
         this.$refs.left.customRefreshTree();
       },
       initDepartSelectList: function () {
-        let formData = new FormData();
 
-        formData.append('companyCode', sessionStorage.getItem('companyCode') || '');
-
-        getDepartSelectList(formData).then((res:any)=>{
+        getDepartSelectList().then((res:any)=>{
           if (!res.data) return;
           let map = new Map();
           let list : any = [];

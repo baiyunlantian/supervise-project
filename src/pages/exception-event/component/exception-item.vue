@@ -10,16 +10,16 @@
 
     <div class="content">
       <div class="left">
-        <img :src="data.picUrl || require('@/assets/supervise-public.jpeg')" alt="***"/>
-        <i class="el-icon-video-play play-icon" @click="visible = true"/>
+        <img :src="data.imageUrl || require('@/assets/supervise-public.jpeg')" alt="***"/>
+        <i class="el-icon-video-play play-icon" @click="showDetailDialog"/>
       </div>
 
       <div class="right">
-        <div>事件类型:<span>{{handleEventTypeCommon(data.type)}}</span></div>
-        <div>所属任务:<span>{{data.arrangeName}}</span></div>
-        <div>事件名称:<span>{{data.name}}</span></div>
-        <div>异常来源:<span>{{data.boxName}}-{{data.cameraName}}</span></div>
-        <div>关联人员:<span>{{data.personName}}</span></div>
+        <div>事件类型:<span>{{handleEventTypeCommon(data.exceptionType)}}</span></div>
+        <div>所属任务:<span>{{data.projectName}}</span></div>
+        <div>事件名称:<span>{{data.eventName}}</span></div>
+        <div>异常来源:<span>{{data.boxName}}</span></div>
+        <div>关联人员:<span>{{formatPersons(data.persons)}}</span></div>
         <div>异常情况:<span>{{data.info}}</span></div>
         <div>
           异常状态:
@@ -36,7 +36,7 @@
       </div>
     </div>
 
-    <VideoDialog :visible="visible" :video-data="data" @close="close"/>
+<!--    <VideoDialog :visible="visible" :video-data="data" @close="close"/>-->
   </div>
 </template>
 
@@ -44,6 +44,7 @@
   import Vue from 'vue';
   import VideoDialog from './video-dialog.vue';
   import SvgIcon from '@/components/svgIcon.vue';
+  import { getExceptionDetail } from '@/request/exception';
 
   export default Vue.extend({
     props:{
@@ -53,13 +54,14 @@
         default: function () {
           return {
             createTime: '',
-            project:'',
+            projectName:'',
             type:'',
             arrangeName:'',
-            personName:'',
-            info:'',
+            persons:[],
+            eventName:'',
+            isDeal:'',
             exceptionId:'',
-            picUrl:'',
+            imageUrl:'',
             videoUrl:'',
             cameraName:'',
             boxName:'',
@@ -77,6 +79,12 @@
       }
     },
     methods: {
+      formatPersons: function (list = []) {
+        let personText = list.map((person:any)=>{
+          return person.personName
+        })
+        return personText.join('、');
+      },
       showDetailDialog: function () {
         this.$emit('showDetailDialog', true, this.$props.data);
       },
@@ -87,34 +95,34 @@
         this.visible = false;
       },
       handleUpdate: function (value:boolean) {
-        let {exceptionId, type} = this.$props.data;
+        let {groupAutoId} = this.$props.data;
         let isDeal = value === true ? 0 : 1;
 
-        this.$emit('updateItem', {exceptionId, type, isDeal});
+        this.$emit('updateItem', {groupAutoId, isDeal});
       },
       handleEventTypeCommon: function(type:number){
-        let text = '人脸异常';
+        let text = '人脸识别';
         switch (type) {
           case 101:
-            text = '登高异常';
+            text = '高空作业安全带';
             break;
           case 103:
-            text = '火灾异常';
+            text = '火灾';
             break;
           case 104:
-            text = '安全帽异常';
+            text = '安全帽';
             break;
           case 105:
-            text = '静止异常';
+            text = '静止';
             break;
           case 106:
-            text = '反光衣异常';
+            text = '反光衣';
             break;
           case 107:
-            text = '区域异常';
+            text = '人员入侵';
             break;
           case 108:
-            text = '跌倒异常';
+            text = '跌倒';
             break;
         }
         return text;

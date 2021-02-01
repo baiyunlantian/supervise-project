@@ -213,8 +213,8 @@
       multipleSelectChange: function (value:any) {
         this.arrangeIds = value.map((item:any)=>item.arrangeId);
       },
-      initPersonSelectList: function (formData:object) {
-        getPersonSelectList(formData).then((res:any)=>{
+      initPersonSelectList: function () {
+        getPersonSelectList().then((res:any)=>{
           if (!res.data) return;
 
           let list = res.data.list.map((item:any)=>{
@@ -271,10 +271,7 @@
       }
     },
     mounted(): void {
-      let formData = new FormData();
-      formData.append('companyCode', sessionStorage.getItem('companyCode') || '');
-
-      this.initPersonSelectList(formData);
+      this.initPersonSelectList();
 
       getBoxList({pageSize:40, pageNum:1}).then(res=>{
         if (!res.data) return;

@@ -105,11 +105,8 @@
       },
       initStationList: function (init = true) {
         if (!init) return;
-        let formData = new FormData();
 
-        formData.append('companyCode', sessionStorage.getItem('companyCode') || '');
-
-        getStationList(formData).then((res:any)=>{
+        getStationList().then((res:any)=>{
           if (!res.data) return;
           let stationSelectList : any = [];
           let stationCommonMap = new Map();

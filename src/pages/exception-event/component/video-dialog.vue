@@ -16,7 +16,7 @@
           class="video-player"
           @error="playError"
           muted
-          :style="{backgroundImage:videoData.picUrl || `url(${require('@/assets/supervise-public.jpeg')})`}"
+          :style="{backgroundImage:videoData.imageUrl ? `url(${videoData.imageUrl})` : `url(${require('@/assets/supervise-public.jpeg')})`}"
       />
       <SvgIcon name="play" width="3.125rem" height="3.125rem" color="rgb(255,255,255)" v-on:click="play()" v-if="!playStatus"/>
       <SvgIcon name="pause" width="3.125rem" height="3.125rem" color="rgb(255,255,255)" @click="pause()" v-else />
@@ -37,14 +37,10 @@
       SvgIcon,
     },
     props: {
-      videoData:{
+      videoData:{},
+      personData:{
         type: Object,
-        default: function () {
-          return {
-            videoUrl:'',
-            picUrl:''
-          }
-        }
+        required:true,
       },
       visible:{
         required:true,
@@ -104,7 +100,7 @@
           message:'播放失败，重新加载中！'
         });
 
-        const {exceptionId, type:exceptionType} = this.$props.videoData;
+        const {exceptionId, exceptionType} = this.$props.personData;
         reloadEventVideo({exceptionId, exceptionType}).then((res:any)=>{
           showMessageAfterRequest(res.data,'加载成功，请刷新页面！','加载失败，请稍后重试！')
         })

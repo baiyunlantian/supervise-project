@@ -267,32 +267,32 @@
 
         let census : any= {};
 
-        res.data.list.forEach((item:any)=>{
+        res.data.todayCounts.forEach((item:any)=>{
 
-          switch (item.type) {
+          switch (item.exceptionType) {
             case 101:
-              census.climbHeight = item.todayNum;
+              census.climbHeight = item.count;
               break;
             case 102:
-              census.face = item.todayNum;
+              census.face = item.count;
               break;
             case 103:
-              census.fire = item.todayNum;
+              census.fire = item.count;
               break;
             case 104:
-              census.helmet = item.todayNum;
+              census.helmet = item.count;
               break;
             case 105:
-              census.motionless = item.todayNum;
+              census.motionless = item.count;
               break;
             case 106:
-              census.refectiveVest = item.todayNum;
+              census.refectiveVest = item.count;
               break;
             case 107:
-              census.region = item.todayNum;
+              census.region = item.count;
               break;
             case 108:
-              census.tumble = item.todayNum;
+              census.tumble = item.count;
               break;
           }
         })

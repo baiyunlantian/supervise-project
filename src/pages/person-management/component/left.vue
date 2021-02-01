@@ -240,10 +240,7 @@
         this.$emit('updateStation', 'stationSelectList', list, 'stationCommonMap', map);
       },
       handleGetPersonNum: function () {
-        let formData = new FormData();
-
-        formData.append('companyCode', sessionStorage.getItem('companyCode') || '');
-        getDepartPersonNum(formData).then(res=>{
+        getDepartPersonNum().then(res=>{
           this.personNumObject = res.data;
         })
       }

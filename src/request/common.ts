@@ -1,22 +1,24 @@
 import {ACCOUNT, PERSON} from './type';
 import * as API from "@/utils/axios";
+let formData = new FormData();
+formData.append('companyCode', sessionStorage.getItem('companyCode') || '');
 
-export function getPersonSelectList (param:object)  {
-  return API.fetchCommon(`${ACCOUNT}/assist/personList`, param);
+export function getPersonSelectList ()  {
+  return API.fetchCommon(`${ACCOUNT}/assist/personList`, formData);
 }
 
-export function getStationList (param:object)  {
-  return API.fetchCommon(`${ACCOUNT}/assist/stationList`, param);
+export function getStationList ()  {
+  return API.fetchCommon(`${ACCOUNT}/assist/stationList`, formData);
 }
 
-export function getDepartSelectList(param:object) {
-  return API.fetchCommon(`${ACCOUNT}/assist/departList`, param);
+export function getDepartSelectList() {
+  return API.fetchCommon(`${ACCOUNT}/assist/departList`, formData);
 }
 
-export function getDepartPersonNum(param:object) {
-  return API.fetchCommon(`${ACCOUNT}/assist/departPersonNum`, param);
+export function getDepartPersonNum() {
+  return API.fetchCommon(`${ACCOUNT}/assist/departPersonNum`, formData);
 }
 
-export function getArrangeList(param:object) {
-  return API.fetchCommon(`${ACCOUNT}/assist/arrangeList`, param);
+export function getArrangeList() {
+  return API.fetchCommon(`${ACCOUNT}/assist/arrangeList`, formData);
 }

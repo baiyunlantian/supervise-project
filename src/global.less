@@ -89,6 +89,7 @@ html, body, #app {
     .el-range-separator {
       width: auto;
       color: #828282;
+      visibility: hidden;
     }
     .el-range-input {
       box-shadow: 1px 1px 5px 1px #4b89e65e;
@@ -193,9 +194,12 @@ html, body, #app {
       .img {
         width: 30px;
         height: 30px;
-        line-height: 30px;
-        text-align: center;
+        //line-height: 30px;
+        //text-align: center;
         overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
         img {
           width: 100%;
@@ -382,6 +386,24 @@ i{
         transform: translate(-50%, -30%) rotate(45deg);
         -webkit-transform: translate(-50%, -30%) rotate(45deg);
       }
+    }
+  }
+}
+
+.el-message-box__wrapper{
+  .el-message-box__btns{
+    display: flex;
+    flex-direction: row-reverse;
+    .el-button--default{
+      color: #FFF;
+      background-color: #409EFF;
+      border-color: #409EFF;
+      margin-left: 15px;
+    }
+    .el-button--primary{
+      background: #FFF;
+      border: 1px solid #DCDFE6;
+      color: #606266;
     }
   }
 }

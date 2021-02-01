@@ -21,6 +21,13 @@
         }
         /deep/
         .el-switch{
+          .el-switch__core{
+            height: 30px;
+            border-radius: 20px;
+          }
+          .el-switch__core::after{
+            top: 6px;
+          }
           .el-switch__label{
             span{
               font-size: 14px;
@@ -113,7 +120,7 @@
           align-items: center;
           justify-content: space-between;
           color: #fff;
-          padding: 5px;
+          padding: 5px 20px 5px 5px;
           height: 35px;
           position: absolute;
           width: 100%;

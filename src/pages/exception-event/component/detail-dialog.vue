@@ -10,29 +10,33 @@
       <i class="el-icon-close" @click="close"/>
     </template>
 
-    <DetailMainContent :data="detailData" @toggleVideo="toggleVideo" @updateItem="updateItem"/>
+    <DetailMainContent
+        :data="detailData"
+        :image-list="imageAndVideoList"
+        @toggleVideo="toggleVideo"
+        @updateItem="updateItem"
+    />
 
     <div class="person-list">
       <div class="title">关联人员信息</div>
       <div class="list">
-        <div class="item" v-if="detailData.personName && detailData.station">
+        <div class="item" v-for="(person,index) in detailData.persons">
           <div class="img">
-            <img :src="detailData.personUrl" :alt="detailData.personName"/>
+            <img :src="person.personUrl" :alt="person.personName"/>
           </div>
           <div class="info">
-            <div><span class="label">姓名</span><span>:</span>{{detailData.personName}}</div>
-            <div><span class="label">性别</span><span>:</span>{{['女','男','未填写'][detailData.sex]}}</div>
-            <div><span class="label">身份证号</span><span>:</span>{{detailData.ipNum}}</div>
-            <div><span class="label">手机号</span><span>:</span>{{detailData.phone}}</div>
-            <div><span class="label">岗位</span><span>:</span>{{stationCommonMap.get(detailData.station)}}</div>
-            <div><span class="label">工号</span><span>:</span>{{detailData.code}}</div>
-            <div><span class="label">备注</span><span>:</span>{{detailData.remark}}</div>
+            <div><span class="label">姓名</span><span>:</span>{{person.personName}}</div>
+            <div><span class="label">性别</span><span>:</span>{{['女','男','未填写'][person.sex]}}</div>
+            <div><span class="label">身份证号</span><span>:</span>{{person.ipNum}}</div>
+            <div><span class="label">手机号</span><span>:</span>{{person.phone}}</div>
+            <div><span class="label">部门</span><span>:</span>{{person.departName}}</div>
+            <div><span class="label">岗位</span><span>:</span>{{person.stationName}}</div>
+            <div><span class="label">工号</span><span>:</span>{{person.code}}</div>
+            <div><span class="label">备注</span><span>:</span>{{person.remark}}</div>
           </div>
         </div>
       </div>
     </div>
-
-    <VideoDialog :visible="videoVisible" :video-data="detailData" @close="toggleVideo"/>
   </el-dialog>
 </template>
 
@@ -40,7 +44,7 @@
   import Vue from 'vue';
   import DetailMainContent from './detail-main-content.vue';
   import VideoDialog from './video-dialog.vue';
-  import { updateEvent } from '@/request/exception';
+  import { updateEvent, getExceptionDetail } from '@/request/exception';
   import { getStationList } from "@/request/common";
   import {showMessageAfterRequest} from "@/utils/common";
 
@@ -53,14 +57,13 @@
         default: function () {
           return {
             createTime: '',
-            project:'',
-            type:'',
-            arrangeName:'',
-            personName:'',
-            info:'',
+            projectName:'',
+            exceptionType:'',
+            eventName:'',
+            persons:[],
+            isDeal:0,
             exceptionId:'',
-            picUrl:'',
-            videoUrl:'',
+            imageUrl:'',
             cameraName:'',
             boxName:'',
           }
@@ -79,7 +82,8 @@
       return {
         videoVisible:false,
         detailData:{},
-        stationCommonMap: new Map()
+        stationCommonMap: new Map(),
+        imageAndVideoList:[],
       }
     },
     methods: {
@@ -99,7 +103,7 @@
             this.$set(this.detailData, 'isDeal', data.isDeal);
           }
         })
-      }
+      },
     },
     watch:{
       data:{
@@ -108,13 +112,19 @@
         },
         deep:true
       },
+      visible: function (newVal, oldVal) {
+        if (newVal === true){
+          let {exceptionType, groupId} = this.$props.data;
+          getExceptionDetail({exceptionType, groupId}).then(res=>{
+            if (res.data){
+              this.imageAndVideoList = res.data;
+            }
+          })
+        }
+      }
     },
     mounted(): void {
-      let formData = new FormData();
-
-      formData.append('companyCode', sessionStorage.getItem('companyCode') || '');
-
-      getStationList(formData).then((res:any)=>{
+      getStationList().then((res:any)=>{
         if (!res.data) return;
         let stationCommonMap = new Map();
 

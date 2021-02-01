@@ -59,7 +59,7 @@
         list:[],
         searchParams:{},
         formItemsProp:[
-          {key:'type',label:'事件类型',type:'select',
+          {key:'exceptionType',label:'事件类型',type:'select',
             options:[
               {value:101,label:'登高异常'},
               {value:102,label:'人脸异常'},
@@ -71,7 +71,7 @@
               {value:108,label:'跌倒异常'},
             ],
           },
-          {key:'arrangeId',label:'所属任务',type:'select',
+          {key:'projectId',label:'所属任务',type:'select',
             options:[],
           },
           {key:'boxId',label:'设备',type:'select', options:[],},
@@ -127,9 +127,9 @@
       deleteItem: function (item:any) {
         this.$confirm('确定删除该条信息吗？')
           .then(res=>{
-            let {exceptionId, type} = item;
+            let {groupAutoId} = item;
 
-            deleteEvent({exceptionId, type}).then(res=>{
+            deleteEvent({groupAutoId}).then(res=>{
               showMessageAfterRequest(res.data, '删除成功','删除失败');
               //@ts-ignore
               res.data === true ? this.initList(this.searchParams) : '';
@@ -145,8 +145,6 @@
       },
     },
     mounted(): void {
-      let formData = new FormData();
-      formData.append('companyCode', sessionStorage.getItem('companyCode') || '');
       this.initList(this.pagination);
 
 
@@ -161,7 +159,7 @@
         this.formItemsProp.splice(targetIndex, 1, targetItem)
       })
 
-      getPersonSelectList(formData).then((res:any)=>{
+      getPersonSelectList().then((res:any)=>{
         if (!res.data) return;
 
         let list = res.data.list.map((item:any)=>{
@@ -172,6 +170,16 @@
         this.formItemsProp.splice(targetIndex, 1, targetItem)
       })
 
+      getArrangeList().then(res=>{
+        if (!res.data) return;
+
+        let list = res.data.list.map((item:any)=>{
+          return {value:item.arrangeId, label:item.arrangeName}
+        })
+
+        const {targetIndex, targetItem} = insertOptionsToSearchFormItems(this.formItemsProp, 'projectId', list);
+        this.formItemsProp.splice(targetIndex, 1, targetItem)
+      })
     }
   })
 </script>
