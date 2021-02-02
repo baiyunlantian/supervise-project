@@ -44,15 +44,14 @@
           ref="table"
           :table-props="tableProps"
           @multipleSelectChange="multipleSelectChange"
+          @updateCustomParam="updateCustomParam"
       >
+        <template v-slot:num="{row}">
+          <div>{{reportNum[row.reportId] || 0}}</div>
+        </template>
+
         <template v-slot:operate="{row}">
-          <router-link
-              :to="{
-            path: '/schedule-management/reporter-detail',
-            query:{data:row}
-          }">
-            查看详情>>
-          </router-link>
+          <div class="jump-page" @click="handleJumpPage(row)">查看详情>></div>
         </template>
       </Table>
     </div>
@@ -84,6 +83,7 @@
       SvgIcon
     },
     data() {
+      const _this = this;
       return {
         formProps:{
           items:[
@@ -134,14 +134,14 @@
           },
           params:{
             //@ts-ignore
-            arrangeId:this.$route.query.data.arrangeId
+            arrangeId:this.$route.query.arrangeId
           },
           tableColumn:[
             {prop:'buildTime',label:'日期'},
             {prop:'code',label:'编号'},
             {prop:'startTime',label:'开始检测日期'},
             {prop:'endTime',label:'结束检测日期'},
-            {prop:'num',label:'预警条数'},
+            {prop:'num',label:'预警条数',insertHtml:true,},
             {prop:'operate',label:'操作',insertHtml:true},
           ],
         },
@@ -162,6 +162,7 @@
           region:'区域预警',
           tumble:'跌倒预警',
         },
+        reportNum:{},
       }
     },
     methods: {
@@ -330,7 +331,8 @@
         })
       },
       initialValueForm: function () {
-        const {data} :any = this.$route.query;
+        //@ts-ignore
+        let data:any = JSON.parse(sessionStorage.getItem('missionDetailFormData'));
         let dutyPersonList: any = [];
         let delFlagList: any = [];
 
@@ -401,6 +403,13 @@
           //@ts-ignore
           this.$set(this.formData, 'personList', [...this.formData.personList, option]);
         }
+      },
+      handleJumpPage: function (data:any) {
+        sessionStorage.setItem('reporterDetailFormData',JSON.stringify(data))
+        this.$router.push({ path: '/schedule-management/reporter-detail', query: { reportId: data.reportId }});
+      },
+      updateCustomParam: function (data:object) {
+        this.reportNum = data;
       }
     },
     mounted(): void {

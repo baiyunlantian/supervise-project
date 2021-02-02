@@ -70,9 +70,7 @@
 
         <template v-slot:operate="{row}">
           <div class="operate-btn">
-            <router-link :to="{ path: '/schedule-management/mission-detail', query: { data: row}}">
-              ···
-            </router-link>
+            <div class="jump-page" @click="handleJumpPage(row)">···</div>
             <SvgIcon name="delete" @click="handleClickDelete(row.arrangeId)"/>
           </div>
         </template>
@@ -268,6 +266,10 @@
 
         headerPerson && headerPerson.length > 0 ? personList.splice(targetIndex,1) : '';
         return headerPerson.concat(personList);
+      },
+      handleJumpPage: function (data:any) {
+        sessionStorage.setItem('missionDetailFormData',JSON.stringify(data))
+        this.$router.push({ path: '/schedule-management/mission-detail', query: { arrangeId: data.arrangeId }});
       }
     },
     mounted(): void {

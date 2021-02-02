@@ -80,7 +80,16 @@
           hiddenFooter:true,
         },
         formData:{},
-        censusData:{},
+        censusData:{
+          face:0,
+          helmet:0,
+          region:0,
+          refectiveVest:0,
+          climbHeight:0,
+          motionless:0,
+          fire:0,
+          tumble:0
+        },
         censusList:[],
         exportExcelData:[],
         exceptionEventCommon:{
@@ -162,9 +171,9 @@
       },
     },
     mounted(): void {
-      this.formData = this.$route.query.data || {};
       //@ts-ignore
-      let reportId = this.$route.query.data.reportId || '';
+      this.formData = JSON.parse(sessionStorage.getItem('reporterDetailFormData'));
+      let reportId = Number(this.$route.query.reportId);
 
       getArrangeReportExceptionCensus({reportId}).then(res=>{
         if (!res.data) return;
@@ -204,7 +213,8 @@
           }
         })
 
-        this.censusData = censusData;
+        console.log('censusData',censusData)
+        this.censusData = {...this.censusData, ...censusData};;
         this.censusList = censusList;
         this.exportExcelData = res.data;
       })

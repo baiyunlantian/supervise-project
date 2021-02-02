@@ -171,7 +171,7 @@
         getBoxList({pageSize:40, pageNum:1}).then(res=>{
           let onLine:any=[];
           let offLine:any=[];
-          res.data.list.map((item:any)=>{
+          res.data.list.forEach((item:any)=>{
             let {free, trouble, running} = item;
             let data = {
               id:item.boxId,
@@ -271,6 +271,7 @@
       handleJudgeException: function (nodeLevel:number, id:string) {
 
         let list = this.$props.exceptionList && this.$props.exceptionList.filter((item:any)=>{
+          if (!item) return false;
           return nodeLevel === 1 ? item.boxId === id : item.cameraId === id
         })
 

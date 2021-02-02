@@ -263,6 +263,10 @@
         let list = this.$props.exceptionList && this.$props.exceptionList.filter((item:any)=>item.cameraId === cameraId)
         return list && list.length > 0 ? true : false;
       },
+      handleUpdateWarningCount:function (key:string) {
+        //@ts-ignore
+        this.$set(this.warningCensus, key, this.warningCensus[key]+1);
+      }
     },
     watch:{
       cameraList:{

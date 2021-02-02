@@ -70,6 +70,22 @@ html, body, #app {
       border: none;
     }
   }
+
+  .el-input.is-disabled{
+    .el-input__inner{
+      color: #7d8088;
+    }
+  }
+  .el-date-editor.is-disabled {
+    input{
+      color: #7d8088;
+    }
+  }
+  .el-textarea.is-disabled {
+    .el-textarea__inner{
+      color: #7d8088;
+    }
+  }
   .el-textarea{
     .el-textarea__inner{
       box-shadow:  @inputShadow;
@@ -92,7 +108,7 @@ html, body, #app {
       visibility: hidden;
     }
     .el-range-input {
-      box-shadow: 1px 1px 5px 1px #4b89e65e;
+      box-shadow: @divShadow;
       border-radius: 5px;
       height: 0.9375rem;
       line-height: 0.9375rem;

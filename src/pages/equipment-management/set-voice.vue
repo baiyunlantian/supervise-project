@@ -63,11 +63,7 @@
               v-if="disableInputs[item.key]"
             />
             <template v-else>
-              <SvgIcon
-                  name="voiceUpdate"
-                  color="rgb(0, 204, 51)"
-                  @click="handleUpdateNormalVoice(item.key)"
-              />
+              <img :src="require('@/assets/update-voice.png')" @click="handleUpdateNormalVoice(item.key)"/>
               <SvgIcon
                   name="goBack"
                   color="rgb(136, 136, 136)"

@@ -206,6 +206,8 @@
               const {total = 0, pageSize = 10, pageNum = 1} = page;
               this.pagination = {...this.pagination, totalPageNum: Math.ceil(total/pageSize), total, pageSize, pageNum};
               this.$emit('updatePagination',this.pagination);
+              //特用于任务详情--施工监督报告--table
+              this.$emit('updateCustomParam',res.data.num || {});
             }
           })
           .catch(e => {

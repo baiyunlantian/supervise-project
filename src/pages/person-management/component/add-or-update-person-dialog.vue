@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-      :title="formData.id ? '修改人员' : '添加人员'"
+      :title="formData.departId ? '修改人员' : '添加人员'"
       :visible="visible"
       :show-close="false"
       custom-class="add-or-update-person-dialog-container"
@@ -38,7 +38,7 @@
     </div>
 
     <template slot="footer">
-      <el-button type="primary" @click="submit">{{formData.id ? '修改' : '添加'}}</el-button>
+      <el-button type="primary" @click="submit">{{formData.departId ? '修改' : '添加'}}</el-button>
       <el-button @click="close">取消</el-button>
     </template>
   </el-dialog>

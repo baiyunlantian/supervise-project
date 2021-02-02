@@ -6,6 +6,7 @@
         @updateReadiedExceptionBoxList="updateReadiedExceptionBoxList"
     />
     <Right
+        ref="right"
         :camera-list="cameraList"
         :exception-list="websocketReturnExceptionList"
     />
@@ -78,12 +79,13 @@
                 console.log(JSON.parse(msg.data));
                 const {data,type} = JSON.parse(msg.data);
 
-                if (type === 301){
+                if (type == '301'){
                   this.$message({
                     type:'warning',
                     message:'流量使用警报'
                   })
-                }else if (type > 100){
+                }else {
+                  _this.handleUpdateWarningCensus(type);
                   //@ts-ignore
                   _this.$global.readiedExceptionBoxList.push(data)
                 }
@@ -102,6 +104,38 @@
           }
         }());
       },
+      handleUpdateWarningCensus: function (type:string) {
+        let key = '';
+        switch (type) {
+          case '101':
+            key = 'climbHeight';
+            break;
+          case '102':
+            key = 'face';
+            break;
+          case '103':
+            key = 'fire';
+            break;
+          case '104':
+            key = 'helmet';
+            break;
+          case '105':
+            key = 'motionless';
+            break;
+          case '106':
+            key = 'refectiveVest';
+            break;
+          case '107':
+            key = 'region';
+            break;
+          case '108':
+            key = 'tumble';
+            break;
+        }
+
+        //@ts-ignore
+        this.$refs.right.handleUpdateWarningCount(key);
+      },
     },
     mounted(): void {
       this.createWebsocket();
@@ -117,15 +151,15 @@
     //离开页面时，移除当前已读状态的异常摄像头
     beforeDestroy (){
       //@ts-ignore
-      let list = this.$global.readiedExceptionBoxList.map((item:any)=>{
-        //@ts-ignore
-        if (!this.readiedExceptionBoxList.includes(item.boxId)){
-          return item;
-        }
-      })
-
-      //@ts-ignore
-      this.$global.readiedExceptionBoxList = list;
+      // let list = this.$global.readiedExceptionBoxList.map((item:any)=>{
+      //   //@ts-ignore
+      //   if (!this.readiedExceptionBoxList.includes(item.boxId)){
+      //     return item;
+      //   }
+      // })
+      //
+      // //@ts-ignore
+      // this.$global.readiedExceptionBoxList = list;
     },
   })
 </script>
