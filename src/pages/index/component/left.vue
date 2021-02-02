@@ -138,18 +138,29 @@
 
         this.handleJudgeBoxException(boxId);
         getCameraList({boxId}).then(res=>{
-          let list = res.data.map((item:any)=>{
-            return{
-              parentId:boxId,
-              id:item.cameraId,
-              label:item.name,
-              leaf: true,
+          let onLine:any = [];
+          let offLine:any = [];
+          res.data.forEach((item:any)=>{
+            if (item.enable === 1){
+              onLine.push({
+                parentId:boxId,
+                id:item.cameraId,
+                label:item.name,
+                leaf: true,
+              });
+            }else {
+              offLine.push({
+                parentId:boxId,
+                id:item.cameraId,
+                label:item.name,
+                leaf: true,
+              });
             }
           });
           this.cameraListCommon.set(boxId, res.data);
           this.$emit('updateCameraList',res.data);
           this.cameraList = res.data;
-          resolve(list);
+          resolve(onLine.concat(offLine));
         }).catch(e=>{
           this.$emit('updateCameraList',[]);
           this.cameraList = [];
@@ -158,15 +169,26 @@
       },
       handleGetFirstTree: function (resolve:Function, custom?:string) {
         getBoxList({pageSize:40, pageNum:1}).then(res=>{
-          let list = res.data.list.map((item:any)=>{
-            return {
+          let onLine:any=[];
+          let offLine:any=[];
+          res.data.list.map((item:any)=>{
+            let {free, trouble, running} = item;
+            let data = {
               id:item.boxId,
               name:item.name,
               label:item.name,
               leaf:false,
               type:0
             };
+
+            if(free === 0 && trouble === 0 && running === 1){
+              onLine.push(data)
+            }else {
+              offLine.push(data)
+            }
           });
+
+          let list = onLine.concat(offLine);
           if (custom){
             this.treeBoxList = list;
             return;
@@ -291,7 +313,10 @@
 
       getFlowAlert().then(res=>{
         if (!res.data) return
-        this.flowMax = res.data.preSettingFlowByte && res.data.preSettingFlowByte > 0 ? (res.data.preSettingFlowByte/1024/1024).toFixed(0) : '0';
+        let {preSettingFlowByte, flowBalance} = res.data;
+        this.flowMax = preSettingFlowByte && preSettingFlowByte > 0 ? (preSettingFlowByte/1024/1024).toFixed(0) : '0';
+        //@ts-ignore
+        this.$global.flowBalance = flowBalance && flowBalance/100 || 0;
       })
     },
   });

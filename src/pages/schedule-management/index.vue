@@ -45,7 +45,7 @@
           <div class="custom-img-list">
             <template v-for="(item,index) in handleFormatTablePersonList(row.personList)">
               <div class="img-item" v-if="index <= 5" :key="index">
-                <img v-if="index < 5" :src="item.url" :alt="item.personName"/>
+                <img v-if="index < 5" :src="item.url || require('@/assets/personMaster.png')" :alt="item.personName"/>
                 <span v-else-if="index === 5">····</span>
                 <div v-if="item.type === 1" class="header">
                   <i class="el-icon-collection-tag" />
@@ -266,7 +266,7 @@
           }
         })
 
-        personList.splice(targetIndex,1);
+        headerPerson && headerPerson.length > 0 ? personList.splice(targetIndex,1) : '';
         return headerPerson.concat(personList);
       }
     },

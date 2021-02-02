@@ -50,9 +50,12 @@
           rules:{
             arrangeName:[{ required: true, message: '请输入任务名称', trigger: 'blur'},],
             time:[{ required: true, message: '请选择时间', trigger: 'blur'},],
-            detail:[{ required: true, message: '请输入任务详情', trigger: 'blur'},],
+            detail:[
+              { required: true, message: '请输入任务详情', trigger: 'blur'},
+              { min:1, max:56, message: '请输入1-56个字', trigger: 'change'}
+            ],
             personList:[{ required: true, message: '请安排人员', trigger: 'blur'},],
-            dutyPersonId:[{ required: true, message: '请负责人', trigger: 'blur'},],
+            dutyPersonId:[{ required: true, message: '请选择负责人', trigger: 'blur'},],
             boxId:[{ required: true, message: '请绑定设备', trigger: 'blur'},],
           },
           hiddenFooter:true,
@@ -65,6 +68,8 @@
       close: function (refreshTable = false) {
         this.formData = {};
         this.$emit('toggle',false, refreshTable);
+        //@ts-ignore
+        this.$refs.form.clearValid();
       },
       submit: function () {
         //@ts-ignore

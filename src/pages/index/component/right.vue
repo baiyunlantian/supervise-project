@@ -10,7 +10,7 @@
             <div class="sub">(开启将会产生流量费用)</div>
           </div>
           <el-switch
-              :value="reportStatus"
+              :value="!reportStatus"
               active-color="#ff4949"
               inactive-color="rgb(3, 114, 248)"
               active-text="OFF"
@@ -45,7 +45,12 @@
             v-for="(item,index) in monitorList.slice(0, sliceMonitorList)"
             :key="index"
         >
-          <video :ref="index" class="video-player" muted></video>
+          <video
+              :ref="index"
+              class="video-player"
+              muted
+              @error="playError"
+          />
 
           <div class="operate-content" :class="{exception:handleJudgeException(item.cameraId)}">
             <div class="text">{{item.name}}</div>
@@ -73,7 +78,7 @@
   import Vue from "vue";
   import WarningCensus from '@/components/warning-census/index.vue';
   import SvgIcon from '@/components/svgIcon.vue';
-  import { getExceptionCensus } from '@/request/exception';
+  import {getExceptionCensus, reloadEventVideo} from '@/request/exception';
   import { getCameraStreamControl, getReportVideoConfig, updateReportVideoConfig } from '@/request/index';
   import {showMessageAfterRequest, VideoSrc} from "@/utils/common";
   import flvjs from 'flv.js/dist/flv.min.js'
@@ -230,6 +235,13 @@
         } else if (ele.msRequestFullscreen) {
           ele.msRequestFullscreen();
         }
+      },
+      playError: function (e:any) {
+        console.log(e)
+        this.$message({
+          type:'error',
+          message:'播放失败，请刷新页面！'
+        });
       },
       //切换是否将视频同步到云端状态
       updateReportStatus: function(value:boolean) {

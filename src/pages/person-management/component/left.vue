@@ -31,7 +31,7 @@
         <template v-slot="{ node, data }" class="group">
           <div class="custom-tree-node">
             <div class="img">
-              <img v-if="data.type === 1" :src="data.url" alt=""/>
+              <img v-if="data.type === 1" :src="data.url || require('@/assets/personMaster.png')" alt=""/>
               <span v-else-if="data.type === 0 && node.expanded === true">-</span>
               <span v-else-if="data.type === 0 && node.expanded === false">+</span>
             </div>
@@ -223,8 +223,9 @@
         this.$data[key2] = value2;
       },
       //手动刷新节点树
-      customRefreshTree: function (fatherId = sessionStorage.getItem('companyCode')) {
-        this.handleGetPersonNum();
+      customRefreshTree: async function (fatherId = sessionStorage.getItem('companyCode')) {
+        let {data} = await getDepartPersonNum();
+        this.personNumObject = data;
         if (fatherId === sessionStorage.getItem('companyCode')) {
           //操作一级部门
           this.loadTree(this.firstNode, this.resolveFn, 'custom')
@@ -239,14 +240,11 @@
       updateStation: function (list:any, map:any) {
         this.$emit('updateStation', 'stationSelectList', list, 'stationCommonMap', map);
       },
-      handleGetPersonNum: function () {
-        getDepartPersonNum().then(res=>{
-          this.personNumObject = res.data;
-        })
-      }
     },
     mounted(): void {
-      this.handleGetPersonNum();;
+      getDepartPersonNum().then(res=>{
+        this.personNumObject = res.data;
+      })
     }
   })
 </script>

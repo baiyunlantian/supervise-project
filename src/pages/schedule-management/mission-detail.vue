@@ -18,11 +18,12 @@
       </div>
 
       <Form
-        :form-props="formProps"
-        :form-data="formData"
-        :disabled="disabledForm"
-        @selectChange="selectChange"
-        @selectRemoveTag="selectRemoveTag"
+          ref="form"
+          :form-props="formProps"
+          :form-data="formData"
+          :disabled="disabledForm"
+          @selectChange="selectChange"
+          @selectRemoveTag="selectRemoveTag"
       >
         <el-form-item label="使用时间" prop="useTime">
           <el-date-picker v-model="formData.useStartTime" type="date" placeholder="使用时间"></el-date-picker>
@@ -107,7 +108,19 @@
               ]
             },
           ],
-          hiddenFooter:true
+          rules:{
+            arrangeName:[{ required: true, message: '请输入任务名称', trigger: 'blur'},],
+            time:[{ required: true, message: '请选择时间', trigger: 'blur'},],
+            detail:[
+              { required: true, message: '请输入任务详情', trigger: 'blur'},
+              { min:1, max:56, message: '请输入1-56个字', trigger: 'blur'}
+            ],
+            personList:[{ required: true, message: '请安排人员', trigger: 'blur'},],
+            dutyPersonId:[{ required: true, message: '请选择负责人', trigger: 'blur'},],
+            boxId:[{ required: true, message: '请绑定设备', trigger: 'blur'},],
+          },
+          hiddenFooter:true,
+          hideRequiredAsterisk:true
         },
         tableProps:{
           url:`${PERSON}/arrange/arrangeReportSelect`,
@@ -277,25 +290,30 @@
 
         if (type === 'cancel'){
           this.formData = JSON.parse(JSON.stringify(this.baseFormData));
+          //@ts-ignore
+          this.$set(this.formData, 'time', [this.baseFormData.dutyStartTime, this.baseFormData.dutyEndTime]);
         }else if (type === 'ok'){
-          let data: any = {
-            arrangeId:this.arrangeId,
-            ...this.formData
-          };
+          //@ts-ignore
+          this.$refs.form.validate((valid) => {
+            let data: any = {
+              arrangeId:this.arrangeId,
+              ...this.formData
+            };
 
-          Object.keys(data).forEach(key=>{
-            if (!data[key]) return;
-            if (key === 'useStartTime' || key === 'useEndTime') {
-              data[key] = moment(data[key]).format('yyyy-MM-DD')+' 00:00:00';
-            }else if (key === 'time'){
-              data.dutyStartTime = moment(data[key][0]).format('yyyy-MM-DD')+' 00:00:00';
-              data.dutyEndTimeTime = moment(data[key][1]).format('yyyy-MM-DD')+' 23:59:59';
-              delete data.time;
-            }
-          })
+            Object.keys(data).forEach(key=>{
+              if (!data[key]) return;
+              if (key === 'useStartTime' || key === 'useEndTime') {
+                data[key] = moment(data[key]).format('yyyy-MM-DD')+' 00:00:00';
+              }else if (key === 'time'){
+                data.dutyStartTime = moment(data[key][0]).format('yyyy-MM-DD')+' 00:00:00';
+                data.dutyEndTime = moment(data[key][1]).format('yyyy-MM-DD')+' 23:59:59';
+                delete data.time;
+              }
+            })
 
-          updateSchedule(data).then(res=>{
-            showMessageAfterRequest(res.data, '更新成功', '更新失败');
+            updateSchedule(data).then(res=>{
+              showMessageAfterRequest(res.data, '更新成功', '更新失败');
+            })
           })
         }
       },
@@ -333,9 +351,9 @@
         this.delFlagList = delFlagList;
         this.$set(this.formProps, 'items', insertOptionsToFormItems(this.formProps.items, 'dutyPersonId',dutyPersonList));
         this.arrangeId = data.arrangeId;
-        this.formData = {...data, personList};
-        this.baseFormData = {...data, personList};
-        this.$set(this.formData, 'time', [data.dutyStartTime, data.dutyEndTime]);
+        this.formData = {...data, time:[data.dutyStartTime, data.dutyEndTime], personList};
+        this.baseFormData = {...data, time:[data.dutyStartTime, data.dutyEndTime], personList};
+        // this.$set(this.formData, 'time', [data.dutyStartTime, data.dutyEndTime]);
       },
       multipleSelectChange: function (value:any) {
         this.reportIds = value.map((item:any)=>item.reportId);

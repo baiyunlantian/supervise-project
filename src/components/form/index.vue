@@ -91,9 +91,9 @@
       },
       validate: function (callback:Function) {
         //@ts-ignore
-        this.$refs.form.validate((valid) => {
+        this.$refs.form.validate((valid, failedProp) => {
           if (valid) {
-            callback(valid);
+            callback(valid, failedProp);
           } else {
             return false;
           }
@@ -105,6 +105,10 @@
       selectRemoveTag: function (option:any, key:string) {
         this.$emit('selectRemoveTag', option, key);
       },
+      clearValid: function (props?: string | string[]) {
+        //@ts-ignore
+        this.$refs.form.clearValidate(props);
+      }
     },
   })
 </script>

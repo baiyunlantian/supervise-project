@@ -98,6 +98,8 @@
       close: function () {
         this.imgUrl = '';
         this.imgFile = '';
+        //@ts-ignore
+        this.$refs.form.clearValid(['departId','phone']);
         this.$emit('close','personDialogVisible', false, 'personInfo',{})
       },
       submit: function() {

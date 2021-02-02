@@ -10,7 +10,7 @@
 
     <Table :table-props="tableProps" ref="table" @multipleSelectChange="multipleSelectChange">
       <template v-slot:url="{row}">
-        <img :src="row.url" alt="***"/>
+        <img :src="row.url || require('@/assets/personMaster.png')" alt="***"/>
       </template>
       <template v-slot:operate="{row}" class="operate-btn">
         <SvgIcon name="edit" @click="triggerParentEvent('personInfo',row, 'personDialogVisible', true)"/>

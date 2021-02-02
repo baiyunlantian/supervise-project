@@ -7,7 +7,7 @@
     <div class="left">
       <div class="account-balance">
         <div>账户余额：</div>
-        <router-link to="/cost-management">50000.00</router-link>
+        <router-link to="/cost-management">{{balance}}</router-link>
       </div>
       <SvgIcon
           color="#fff"
@@ -30,6 +30,8 @@
     data(){
       return{
         logoUrl:'',
+        //@ts-ignore
+        balance:this.$global.flowBalance,
       }
     },
     methods:{
