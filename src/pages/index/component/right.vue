@@ -234,16 +234,16 @@
       },
       //切换是否将视频同步到云端状态
       updateReportStatus: function(value:boolean) {
-        let isPushCloudStream = value === false ? 0 : 1;
+        let isPushCloudStream = value === true ? 0 : 1;
         updateReportVideoConfig({isPushCloudStream}).then(res=>{
-          this.reportStatus = res.data === true ? value : !value;
+          this.reportStatus = res.data === true ? !value : value;
           showMessageAfterRequest(res.data, '修改成功','修改失败');
         }).catch(e=>{
           this.$message({
             type:'error',
             message:'修改失败'
           })
-          this.reportStatus = !value;
+          this.reportStatus = value;
         })
       },
       //判断摄像头是否检测出异常行为，异常的话显示红点

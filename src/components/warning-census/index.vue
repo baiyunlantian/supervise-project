@@ -147,7 +147,7 @@
 
         //@ts-ignore
         this.$set(this.censusData, key, this.censusData[key]+1);
-        this.$emit('countCensus',{total:this.totalAndTodayCountCensus,today:this.totalAndTodayCountCensus.today+1})
+        this.$emit('countCensus',{total:this.totalAndTodayCountCensus.total,today:this.totalAndTodayCountCensus.today+1})
         this.$emit('refreshTable');
       },
       handleInitCensus: function () {

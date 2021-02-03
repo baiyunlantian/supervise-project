@@ -113,8 +113,8 @@
         let data = param;
 
         if (data.time && data.time.length > 0){
-          data.startTime = moment(data.time[0]).format('yyyy-MM-DD HH:mm:ss');
-          data.endTime = moment(data.time[1]).format('yyyy-MM-DD HH:mm:ss');
+          data.fromDate = moment(data.time[0]).format('yyyy-MM-DD HH:mm:ss');
+          data.toDate = moment(data.time[1]).format('yyyy-MM-DD HH:mm:ss');
           delete data.time;
         }
 

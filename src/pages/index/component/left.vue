@@ -121,16 +121,8 @@
         cameraList:[],
         currentCameraId:'',
         cameraListCommon:new Map(),
+        defaultExpanded:[],
       }
-    },
-    watch:{
-      exceptionList:{
-        handler: function (newVal, oldVal) {
-          //检测到websocket有异常信息返回，手动刷新tree
-          this.loadTree(this.firstNode, this.resolveFn, 'custom');
-        },
-        deep:true
-      },
     },
     methods:{
       handleGetChildTree: function (boxId:string, resolve:Function) {
@@ -189,11 +181,19 @@
           });
 
           let list = onLine.concat(offLine);
+
           if (custom){
             this.treeBoxList = list;
             return;
           }
           resolve(list);
+
+          setTimeout(()=>{
+            if (list.length > 0){
+              //@ts-ignore
+              this.$refs.tree.$children[0].handleExpandIconClick();
+            }
+          },500)
         }).catch(e=>{
           resolve([]);
         })
