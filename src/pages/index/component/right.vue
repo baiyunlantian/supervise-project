@@ -1,6 +1,6 @@
 <template>
   <div id="right-container">
-    <WarningCensus :data="warningCensus" class="top"/>
+    <WarningCensus  class="top"/>
 
     <div class="monitor-container">
       <div class="operate">
@@ -78,7 +78,6 @@
   import Vue from "vue";
   import WarningCensus from '@/components/warning-census/index.vue';
   import SvgIcon from '@/components/svgIcon.vue';
-  import {getExceptionCensus, reloadEventVideo} from '@/request/exception';
   import { getCameraStreamControl, getReportVideoConfig, updateReportVideoConfig } from '@/request/index';
   import {showMessageAfterRequest, VideoSrc} from "@/utils/common";
   import flvjs from 'flv.js/dist/flv.min.js'
@@ -91,16 +90,6 @@
     },
     data(){
       return{
-        warningCensus:{
-          face:0,
-          helmet:0,
-          region:0,
-          refectiveVest:0,
-          climbHeight:0,
-          motionless:0,
-          fire:0,
-          tumble:0
-        },
         reportStatus:false,
         layout:'three',
         monitorList:[],
@@ -263,10 +252,6 @@
         let list = this.$props.exceptionList && this.$props.exceptionList.filter((item:any)=>item.cameraId === cameraId)
         return list && list.length > 0 ? true : false;
       },
-      handleUpdateWarningCount:function (key:string) {
-        //@ts-ignore
-        this.$set(this.warningCensus, key, this.warningCensus[key]+1);
-      }
     },
     watch:{
       cameraList:{
@@ -277,44 +262,6 @@
       },
     },
     mounted(): void {
-
-      getExceptionCensus().then(res=>{
-        if (!res.data) return
-
-        let census : any= {};
-
-        res.data.todayCounts.forEach((item:any)=>{
-
-          switch (item.exceptionType) {
-            case 101:
-              census.climbHeight = item.count;
-              break;
-            case 102:
-              census.face = item.count;
-              break;
-            case 103:
-              census.fire = item.count;
-              break;
-            case 104:
-              census.helmet = item.count;
-              break;
-            case 105:
-              census.motionless = item.count;
-              break;
-            case 106:
-              census.refectiveVest = item.count;
-              break;
-            case 107:
-              census.region = item.count;
-              break;
-            case 108:
-              census.tumble = item.count;
-              break;
-          }
-        })
-
-        this.warningCensus = {...this.warningCensus, ...census};
-      })
 
       getReportVideoConfig().then(res=>{
         if (!res.data) return;

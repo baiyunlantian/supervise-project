@@ -24,6 +24,11 @@ Vue.use(VueRouter)
 Vue.use(less)
 Vue.use(VideoPlayer)
 
+router.beforeEach((to, from, next) => {
+  if (to.name !== 'Login' && !sessionStorage.getItem('token')) next({name:'Login'})
+  else next();
+})
+
 new Vue({
   router,
   render: h => h(App),

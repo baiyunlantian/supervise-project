@@ -7,7 +7,7 @@
     <div class="left">
       <div class="account-balance">
         <div>账户余额：</div>
-        <router-link to="/cost-management">{{balance}}</router-link>
+        <router-link to="/cost-management">{{flowBalance}}</router-link>
       </div>
       <SvgIcon
           color="#fff"
@@ -24,6 +24,7 @@
   import { logout } from '@/request/login';
 
   export default Vue.extend({
+    props:['flowBalance'],
     components:{
       SvgIcon,
     },

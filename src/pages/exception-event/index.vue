@@ -23,7 +23,7 @@
 
       <div class="right">
         <div class="fontBlackAndBold title">今日异常预警分析</div>
-        <WarningCensus :data="warningCensus"/>
+        <WarningCensus @countCensus="countCensus"/>
       </div>
     </div>
 
@@ -118,16 +118,6 @@
         exceptionCensus:{
           total:0,
           today:0
-        },
-        warningCensus:{
-          face:0,
-          helmet:0,
-          region:0,
-          refectiveVest:0,
-          climbHeight:0,
-          motionless:0,
-          fire:0,
-          tumble:0
         },
         latelyList:[],
         tableProps:{
@@ -225,38 +215,10 @@
           res.data === true ? this.initHistoryList() : '';
         })
       },
+      countCensus: function (data: { today:0, total:0 }) {
+        this.exceptionCensus = data;
+      }
     },
-    mounted(): void {
-      let map = new Map();
-      [
-        {key:101,label:'climbHeight'},
-        {key:102,label:'face'},
-        {key:103,label:'fire'},
-        {key:104,label:'helmet'},
-        {key:105,label:'motionless'},
-        {key:106,label:'refectiveVest'},
-        {key:107,label:'region'},
-        {key:108,label:'tumble'},
-      ].forEach(item=>{
-        map.set(item.key,item.label)
-      })
-
-      this.eventMap = map;
-      getExceptionCensus().then(res=>{
-        if (!res.data) return
-
-        let total = res.data.totalCount, today = 0, census : any= {};
-
-        res.data.todayCounts.forEach((item:any)=>{
-          today += item.count;
-          census[map.get(item.exceptionType)] = item.count;
-        })
-
-        this.warningCensus = {...this.warningCensus, ...census};
-        this.exceptionCensus = {today, total};
-      })
-
-    }
   })
 </script>
 

@@ -317,7 +317,7 @@
         let {preSettingFlowByte, flowBalance} = res.data;
         this.flowMax = preSettingFlowByte && preSettingFlowByte > 0 ? (preSettingFlowByte/1024/1024).toFixed(0) : '0';
         //@ts-ignore
-        this.$global.flowBalance = flowBalance && flowBalance/100 || 0;
+        this.$emit('updateFlowBalance', flowBalance && flowBalance/100 || 0)
       })
     },
   });

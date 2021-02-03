@@ -1,10 +1,10 @@
 <template>
   <div id="app">
     <template v-if="path !== '/login'">
-      <Header />
+      <Header :flow-balance="flowBalance"/>
       <div class="main-container">
         <MenuList />
-        <router-view />
+        <router-view @updateFlowBalance="updateFlowBalance"/>
       </div>
     </template>
 
@@ -27,6 +27,12 @@
     data(){
       return{
         path:'/',
+        flowBalance:0,
+      }
+    },
+    methods:{
+      updateFlowBalance: function (value:number) {
+        this.flowBalance = value;
       }
     },
     watch: {

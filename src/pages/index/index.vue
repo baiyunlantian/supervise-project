@@ -4,6 +4,7 @@
         :exception-list="websocketReturnExceptionList"
         @updateCameraList="updateCameraList"
         @updateReadiedExceptionBoxList="updateReadiedExceptionBoxList"
+        @updateFlowBalance="updateFlowBalance"
     />
     <Right
         ref="right"
@@ -49,96 +50,9 @@
       updateCameraList: function (list = []) {
         this.cameraList = list;
       },
-      createWebsocket: function () {
-        const _this = this;
-        let socket: any = null;
-        (function  () {
-          if(typeof(WebSocket) == "undefined") {
-            console.log("您的浏览器不支持WebSocket");
-          }else{
-            console.log("您的浏览器支持WebSocket");
-            //实现化WebSocket对象，指定要连接的服务器地址与端口  建立连接
-            //等同于socket = new WebSocket("ws://localhost:8888/xxxx/im/25");
-            //var socketUrl="${request.contextPath}/im/"+$("#userId").val();
-            let socketUrl=`ws://192.168.1.105:8951/ws/asset/${sessionStorage.getItem('token')}`;
-            socket = new WebSocket(socketUrl);
-            if(socket == null){
-              socket.close();
-              socket=null;
-            }
-
-            //打开事件
-            socket.onopen = function() {
-              console.log("websocket已打开");
-              //socket.send("这是来自客户端的消息" + location.href + new Date());
-            };
-            //获得消息事件
-            socket.onmessage = function(msg:any) {
-              //发现消息进入    开始处理前端触发逻辑
-              try {
-                console.log(JSON.parse(msg.data));
-                const {data,type} = JSON.parse(msg.data);
-
-                if (type == '301'){
-                  this.$message({
-                    type:'warning',
-                    message:'流量使用警报'
-                  })
-                }else {
-                  _this.handleUpdateWarningCensus(type);
-                  //@ts-ignore
-                  _this.$global.readiedExceptionBoxList.push(data)
-                }
-              }catch (e) {
-                console.log(e);
-              }
-            };
-            //关闭事件
-            socket.onclose = function() {
-              console.log("websocket已关闭");
-            };
-            //发生了错误事件
-            socket.onerror = function() {
-              console.log("websocket发生了错误");
-            }
-          }
-        }());
-      },
-      handleUpdateWarningCensus: function (type:string) {
-        let key = '';
-        switch (type) {
-          case '101':
-            key = 'climbHeight';
-            break;
-          case '102':
-            key = 'face';
-            break;
-          case '103':
-            key = 'fire';
-            break;
-          case '104':
-            key = 'helmet';
-            break;
-          case '105':
-            key = 'motionless';
-            break;
-          case '106':
-            key = 'refectiveVest';
-            break;
-          case '107':
-            key = 'region';
-            break;
-          case '108':
-            key = 'tumble';
-            break;
-        }
-
-        //@ts-ignore
-        this.$refs.right.handleUpdateWarningCount(key);
-      },
-    },
-    mounted(): void {
-      this.createWebsocket();
+      updateFlowBalance: function (value:number) {
+        this.$emit('updateFlowBalance', value)
+      }
     },
     beforeRouteEnter (to, from, next) {
       const token = window.sessionStorage.getItem('token');
