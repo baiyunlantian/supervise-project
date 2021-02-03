@@ -281,6 +281,7 @@
       handleJudgeBoxException: function (boxId:string) {
         let list : string[] = [];
         this.$props.exceptionList.map((item:any)=>{
+          if (!item) return ;
           item.boxId === boxId ? list.push(boxId) : '';
         })
 
@@ -314,10 +315,8 @@
 
       getFlowAlert().then(res=>{
         if (!res.data) return
-        let {preSettingFlowByte, flowBalance} = res.data;
+        let {preSettingFlowByte} = res.data;
         this.flowMax = preSettingFlowByte && preSettingFlowByte > 0 ? (preSettingFlowByte/1024/1024).toFixed(0) : '0';
-        //@ts-ignore
-        this.$emit('updateFlowBalance', flowBalance && flowBalance/100 || 0)
       })
     },
   });

@@ -50,6 +50,7 @@
               class="video-player"
               muted
               @error="playError"
+              @recoveredearlyeof="playError"
           />
 
           <div class="operate-content" :class="{exception:handleJudgeException(item.cameraId)}">
@@ -249,7 +250,10 @@
       //判断摄像头是否检测出异常行为，异常的话显示红点
       handleJudgeException: function (cameraId:string) {
 
-        let list = this.$props.exceptionList && this.$props.exceptionList.filter((item:any)=>item.cameraId === cameraId)
+        let list = this.$props.exceptionList && this.$props.exceptionList.filter((item:any)=>{
+          if (!item) return false;
+          return item.cameraId === cameraId;
+        })
         return list && list.length > 0 ? true : false;
       },
     },

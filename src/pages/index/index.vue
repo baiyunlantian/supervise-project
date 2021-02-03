@@ -4,7 +4,6 @@
         :exception-list="websocketReturnExceptionList"
         @updateCameraList="updateCameraList"
         @updateReadiedExceptionBoxList="updateReadiedExceptionBoxList"
-        @updateFlowBalance="updateFlowBalance"
     />
     <Right
         ref="right"
@@ -50,9 +49,6 @@
       updateCameraList: function (list = []) {
         this.cameraList = list;
       },
-      updateFlowBalance: function (value:number) {
-        this.$emit('updateFlowBalance', value)
-      }
     },
     beforeRouteEnter (to, from, next) {
       const token = window.sessionStorage.getItem('token');

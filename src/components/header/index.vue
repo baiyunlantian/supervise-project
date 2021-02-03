@@ -7,7 +7,7 @@
     <div class="left">
       <div class="account-balance">
         <div>账户余额：</div>
-        <router-link to="/cost-management">{{flowBalance}}</router-link>
+        <router-link to="/cost-management">{{balance}}</router-link>
       </div>
       <SvgIcon
           color="#fff"
@@ -22,17 +22,16 @@
   import Vue from 'vue';
   import SvgIcon from '@/components/svgIcon.vue';
   import { logout } from '@/request/login';
+  import {getFlowAlert} from "@/request";
 
   export default Vue.extend({
-    props:['flowBalance'],
     components:{
       SvgIcon,
     },
     data(){
       return{
         logoUrl:'',
-        //@ts-ignore
-        balance:this.$global.flowBalance,
+        balance:0,
       }
     },
     methods:{
@@ -48,6 +47,13 @@
     },
     mounted(): void {
       this.logoUrl = sessionStorage.getItem('url') || '';
+
+      getFlowAlert().then(res=>{
+        if (!res.data) return
+        let {preSettingFlowByte, flowBalance} = res.data;
+        // this.flowMax = preSettingFlowByte && preSettingFlowByte > 0 ? (preSettingFlowByte/1024/1024).toFixed(0) : '0';
+        this.balance = flowBalance && flowBalance/100 || 0;
+      })
     }
   })
 </script>
