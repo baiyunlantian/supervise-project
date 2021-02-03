@@ -23,7 +23,7 @@
 
       <div class="right">
         <div class="fontBlackAndBold title">今日异常预警分析</div>
-        <WarningCensus @countCensus="countCensus"/>
+        <WarningCensus @countCensus="countCensus" @refreshTable="initHistoryList"/>
       </div>
     </div>
 
@@ -100,7 +100,7 @@
   import SvgIcon from '@/components/svgIcon.vue';
   import moment from "moment";
   import { BOX } from "@/request/type";
-  import { getExceptionCensus, deleteEvent, updateEvent } from '@/request/exception';
+  import { deleteEvent, updateEvent } from '@/request/exception';
   import {showMessageAfterRequest} from "@/utils/common";
 
 

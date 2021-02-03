@@ -68,7 +68,7 @@
             {prop:'outByte',label:'产生流量',
               format:(value:number)=>{
                 //单位：B
-                return `${value && Math.floor(value/1024/1024) || 0}M`
+                return `${value && Math.ceil(value/1024/1024) || 0}M`
               },
             },
             {prop:'settlementAccount',label:'产生费用',
@@ -101,7 +101,7 @@
               moment(item.startTime).format('HH:mm:ss'),
               moment(item.endTime).format('HH:mm:ss'),
               time,
-              `${outByte && Math.floor(outByte/1024/1024) || 0}M`,
+              `${outByte && Math.ceil(outByte/1024/1024) || 0}M`,
               settlementAccount && settlementAccount/100
             ];
             sheetData.push(obj);

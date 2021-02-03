@@ -50,8 +50,7 @@
 
       getFlowAlert().then(res=>{
         if (!res.data) return
-        let {preSettingFlowByte, flowBalance} = res.data;
-        // this.flowMax = preSettingFlowByte && preSettingFlowByte > 0 ? (preSettingFlowByte/1024/1024).toFixed(0) : '0';
+        let {flowBalance} = res.data;
         this.balance = flowBalance && flowBalance/100 || 0;
       })
     }

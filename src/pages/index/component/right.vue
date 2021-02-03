@@ -50,7 +50,6 @@
               class="video-player"
               muted
               @error="playError"
-              @recoveredearlyeof="playError"
           />
 
           <div class="operate-content" :class="{exception:handleJudgeException(item.cameraId)}">

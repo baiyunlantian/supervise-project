@@ -75,7 +75,7 @@
             {prop:'totalOutByte',label:'产生流量',
               format:(value:number)=>{
               //单位：B
-                return `${value && Math.floor(value/1024/1024) || 0}M`
+                return `${value && Math.ceil(value/1024/1024) || 0}M`
               },
             },
             {prop:'totalSettlementAccount',label:'产生费用',
@@ -156,7 +156,7 @@
                 index+1,
                 date,
                 time,
-                `${totalOutByte && Math.floor(totalOutByte/1024/1024) || 0}M`,
+                `${totalOutByte && Math.ceil(totalOutByte/1024/1024) || 0}M`,
                 totalSettlementAccount && totalSettlementAccount/100
               ];
               sheetData.push(obj);

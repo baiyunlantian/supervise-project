@@ -53,6 +53,10 @@
           tumble:0
         },
         socketRef: {},
+        totalAndTodayCountCensus:{
+          today:0,
+          total:0,
+        },
       }
     },
     methods:{
@@ -143,6 +147,8 @@
 
         //@ts-ignore
         this.$set(this.censusData, key, this.censusData[key]+1);
+        this.$emit('countCensus',{total:this.totalAndTodayCountCensus,today:this.totalAndTodayCountCensus.today+1})
+        this.$emit('refreshTable');
       },
       handleInitCensus: function () {
         this.createWebsocket();
@@ -188,6 +194,7 @@
           })
 
           this.censusData = {...this.censusData, ...census};
+          this.totalAndTodayCountCensus = {total, today:todayCensus};
           this.$emit('countCensus',{total,today:todayCensus})
         })
       }
