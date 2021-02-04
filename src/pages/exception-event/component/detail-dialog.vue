@@ -43,7 +43,6 @@
 <script lang="ts">
   import Vue from 'vue';
   import DetailMainContent from './detail-main-content.vue';
-  import VideoDialog from './video-dialog.vue';
   import { updateEvent, getExceptionDetail } from '@/request/exception';
   import { getStationList } from "@/request/common";
   import {showMessageAfterRequest} from "@/utils/common";
@@ -76,7 +75,6 @@
     },
     components:{
       DetailMainContent,
-      VideoDialog,
     },
     data() {
       return {

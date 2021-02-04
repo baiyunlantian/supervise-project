@@ -32,7 +32,8 @@
             :style="{backgroundImage:renderVideoBcgImg}"
         />
         <SvgIcon name="play" width="1.09375rem" height="1.09375rem" color="rgb(255,255,255)" v-on:click="play()" v-if="!playStatus"/>
-        <SvgIcon name="pause" width="1.09375rem" height="1.09375rem" color="rgb(255,255,255)" @click="pause()" v-else />
+        <SvgIcon name="pause" width="1.09375rem" height="1.09375rem" color="rgb(255,255,255)" @click="pause()" v-else-if="playStatus && !loadingStatus" />
+        <i class="el-icon-loading" v-if="loadingStatus" />
       </div>
 
       <template v-if="imageList">
@@ -93,6 +94,7 @@
         playerRef:'',
         playStatus:false,
         firstPlay:true,
+        loadingStatus:false,
       }
     },
     computed:{
@@ -168,6 +170,7 @@
         }
 
         this.playStatus = true;
+        this.loadingStatus = true;
         if(flvjs.isSupported()){
           if (this.firstPlay) {
 
@@ -178,14 +181,17 @@
 
             //@ts-ignore
             this.playerRef.attachMediaElement(this.$refs.videoPlayer)
-            //@ts-ignore
-            this.playerRef.load()
           }
 
           //play放在外面，避免视频播放途中点击暂停再点击播放时，视频重新加载
-          //@ts-ignore
-          this.playerRef.play()
-          this.firstPlay = false;
+          setTimeout(()=>{
+            this.loadingStatus = false;
+            this.firstPlay = false;
+            //@ts-ignore
+            this.playerRef.load()
+            //@ts-ignore
+            this.playerRef.play()
+          },2000)
 
         }else{
           this.$message.error('不支持的格式');
@@ -199,6 +205,7 @@
       },
       playError: function (e:any) {
         this.playStatus = false;
+        this.loadingStatus = false;
         this.$message({
           type:'error',
           message:'播放失败，重新加载中！'

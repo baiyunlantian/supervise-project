@@ -22,7 +22,7 @@ module.exports = {
         loaderOptions:{
             less:{
                 lessOptions: {
-                    strictMath: true,
+                  strictMath: false,
                     globalVars:{
                         divShadow: '1px 1px 5px 1px #d0e3ff',
                         inputShadow: '1px 2px 3px 0px #a7d4ff',

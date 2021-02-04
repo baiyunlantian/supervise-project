@@ -36,15 +36,12 @@
       </div>
     </div>
 
-<!--    <VideoDialog :visible="visible" :video-data="data" @close="close"/>-->
   </div>
 </template>
 
 <script lang="ts">
   import Vue from 'vue';
-  import VideoDialog from './video-dialog.vue';
   import SvgIcon from '@/components/svgIcon.vue';
-  import { getExceptionDetail } from '@/request/exception';
 
   export default Vue.extend({
     props:{
@@ -70,7 +67,6 @@
       }
     },
     components:{
-      VideoDialog,
       SvgIcon
     },
     data(){

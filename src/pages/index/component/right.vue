@@ -54,18 +54,30 @@
 
           <div class="operate-content" :class="{exception:handleJudgeException(item.cameraId)}">
             <div class="text">{{item.name}}</div>
-            <SvgIcon
-                name="fullScreen"
-                color="#fff"
-                @click="fullScreenHandle(index)"
-                width="0.625rem"
-                height="0.625rem"
-            />
+
+            <div class="svg-icons">
+              <SvgIcon
+                  v-if="isPlayArray[index].play"
+                  name="pause"
+                  width="0.6875rem"
+                  height="0.6875rem"
+                  color="#fff"
+                  @click="pause(index, item.cameraId)"
+              />
+              <SvgIcon
+                  name="fullScreen"
+                  color="#fff"
+                  @click="fullScreenHandle(index)"
+                  width="0.625rem"
+                  height="0.625rem"
+              />
+            </div>
+
           </div>
 
           <div class="operate-video-btn">
             <SvgIcon name="play" width="3.125rem" height="3.125rem" color="rgb(3, 114, 248)" v-on:click="play(index, item.cameraId)" v-if="!isPlayArray[index].play" />
-            <SvgIcon name="pause" width="3.125rem" height="3.125rem" color="rgb(3, 114, 248)" @click="pause(index, item.cameraId)" v-else />
+            <i class="el-icon-loading" v-if="loadingStatus[index]" />
           </div>
 
         </div>
@@ -100,6 +112,12 @@
           {play:false, encoded:''},
         ],
         playerList:[],
+        loadingStatus:[
+          false,
+          false,
+          false,
+          false,
+        ],
       }
     },
     computed:{
@@ -130,6 +148,7 @@
           if (!res.data) return;
           let {encodedString, pullAddress, notify, visToken} = res.data;
           this.$set(this.isPlayArray, index, {play:true, encoded:encodedString},)
+          this.$set(this.loadingStatus, index, true)
 
           if (notify === false){
             this.$message({
@@ -158,12 +177,15 @@
             return;
           }
 
-          //@ts-ignore
-          this.playerList[index].attachMediaElement(videoEl)
-          //@ts-ignore
-          this.playerList[index].load()
-          //@ts-ignore
-          this.playerList[index].play()
+          setTimeout(()=>{
+            //@ts-ignore
+            this.playerList[index].attachMediaElement(videoEl)
+            //@ts-ignore
+            this.playerList[index].load()
+            //@ts-ignore
+            this.playerList[index].play()
+            this.$set(this.loadingStatus, index, false)
+          },2000)
 
         }).catch(e=>{
           console.log(e)
@@ -171,6 +193,8 @@
             type:'error',
             message:'播放失败'
           });
+          this.$set(this.isPlayArray, index, {play:false, encoded:''},)
+          this.$set(this.loadingStatus, index, false)
         })
 
       },

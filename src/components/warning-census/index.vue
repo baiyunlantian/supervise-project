@@ -96,7 +96,7 @@
                     type:'warning',
                     message:'流量使用警报'
                   })
-                }else {
+                }else if (Number(type) > 100){
                   _this.handleUpdateWarningCensus(type);
                   //@ts-ignore
                   _this.$global.readiedExceptionBoxList.push(data)
