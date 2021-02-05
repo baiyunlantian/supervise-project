@@ -24,23 +24,23 @@
 
         <div
             class="type-items"
-            v-for="(item, index) in censusList"
+            v-for="(item, index) in ['face','helmet','region','refectiveVest','climbHeight','motionless','fire','tumble']"
             :key="index"
         >
-          <div class="title">{{item.label || ''}}</div>
+          <div class="title" v-if="renderCensusData[item] && renderCensusData[item].length > 0">{{exceptionEventCommon[item] || ''}}</div>
 
           <div class="list">
             <div
                 class="item"
-                v-for="(valueItem,valueIndex) in item.value || []"
+                v-for="(valueItem,valueIndex) in renderCensusData[item] || []"
                 :key="valueIndex"
             >
               <div class="borderBottom">发生时间：{{valueItem.createTime}}</div>
               <div class="img">
-                <img :src="valueItem.picUrl || require('@/assets/supervise-public.jpeg')" alt="***"/>
+                <img :src="valueItem.imageUrl || require('@/assets/supervise-public.jpeg')" alt="***"/>
               </div>
-              <div>事件名称：{{valueItem.person || ''}}</div>
-              <div>关联人员：{{valueItem.personName || ''}}</div>
+              <div>事件名称：{{valueItem.eventName || ''}}</div>
+              <div>关联人员：{{formatPersons(valueItem.persons)}}</div>
               <div>异常状态：{{valueItem.isDeal === 0 ? '未处理' : '已处理'}}</div>
             </div>
           </div>
@@ -57,8 +57,7 @@
   import Form from "@/components/form/index.vue";
   import WarningCensus from "@/components/warning-census/index.vue";
   import SvgIcon from '@/components/svgIcon.vue';
-  import { getArrangeReportExceptionCensus,} from '@/request/schedule';
-  import moment from "moment";
+  import { getExceptionList } from '@/request/exception';
   import {exportExcl} from "@/utils/common";
 
   export default Vue.extend({
@@ -91,6 +90,16 @@
           tumble:0
         },
         censusList:[],
+        renderCensusData:{
+          face:[],
+          helmet:[],
+          region:[],
+          refectiveVest:[],
+          climbHeight:[],
+          motionless:[],
+          fire:[],
+          tumble:[]
+        },
         exportExcelData:[],
         exceptionEventCommon:{
           face:'人脸识别预警',
@@ -116,47 +125,47 @@
         let region:any = [];
         let tumble:any = [];
 
-        Object.keys(this.exportExcelData).forEach(key=>{
-          //@ts-ignore
-          this.exportExcelData[key] && this.exportExcelData[key].forEach((eventItem:any)=>{
-            switch (key) {
-              case 'face':
-                face.push({...eventItem, type:this.exceptionEventCommon[key]});
-                break;
-              case 'climbHeight':
-                climbHeight.push({...eventItem, type:this.exceptionEventCommon[key]});
-                break;
-              case 'fire':
-                fire.push({...eventItem, type:this.exceptionEventCommon[key]});
-                break;
-              case 'helmet':
-                helmet.push({...eventItem, type:this.exceptionEventCommon[key]});
-                break;
-              case 'motionless':
-                motionless.push({...eventItem, type:this.exceptionEventCommon[key]});
-                break;
-              case 'refectiveVest':
-                refectiveVest.push({...eventItem, type:this.exceptionEventCommon[key]});
-                break;
-              case 'region':
-                region.push({...eventItem, type:this.exceptionEventCommon[key]});
-                break;
-              case 'tumble':
-                tumble.push({...eventItem, type:this.exceptionEventCommon[key]});
-                break;
-            }
-          })
-        });
+        this.censusList.forEach((data:any)=>{
+          let item = data.value;
+          const type : number = item.exceptionType;
 
-        let list:any = face.concat(climbHeight, fire, helmet, motionless, refectiveVest, region, tumble);;
+          switch (type) {
+            case 102:
+              face.push({...item, exceptionType:'face'});
+              break;
+            case 103:
+              fire.push({...item, exceptionType:'fire'});
+              break;
+            case 104:
+              helmet.push({...item, exceptionType:'helmet'});
+              break;
+            case 105:
+              motionless.push({...item, exceptionType:'motionless'});
+              break;
+            case 106:
+              refectiveVest.push({...item, exceptionType:'refectiveVest'});
+              break;
+            case 107:
+              region.push({...item, exceptionType:'region'});
+              break;
+            case 108:
+              tumble.push({...item, exceptionType:'climbHeight'});
+              break;
+            case 101:
+              climbHeight.push({...item, exceptionType:'tumble'});
+              break;
+          }
+        })
+
+        let list:any = face.concat(climbHeight, fire, helmet, motionless, refectiveVest, region, tumble);
         list.forEach((item:any,index:number)=>{
 
           let obj = [
             index+1,
-            item.type,
+            this.exceptionEventCommon[item.exceptionType],
             item.createTime,
-            item.arrangeName,
-            item.personName,
+            item.eventName,
+            this.formatPersons(item.persons),
             item.isDeal === 0 ? '未处理' :'已处理',
           ];
           sheetData.push(obj);
@@ -169,54 +178,95 @@
 
         exportExcl(list, sheetData, exclHeader, columnWidths, fileName);
       },
+      formatPersons: function (list = []) {
+        let personText = list.map((person:any)=>{
+          return person.personName
+        })
+        return personText.join('、');
+      },
     },
     mounted(): void {
       //@ts-ignore
       this.formData = JSON.parse(sessionStorage.getItem('reporterDetailFormData'));
-      let reportId = Number(this.$route.query.reportId);
+      let reportId = this.$route.query.reportId;
 
-      getArrangeReportExceptionCensus({reportId}).then(res=>{
+      getExceptionList({pageNum:1,pageSize:99,reportId}).then(res=>{
         if (!res.data) return;
+        let {list} = res.data;
+        if (!list) return
 
-        let censusData : any = {};
+        let censusData : any = {
+          face:0,
+          helmet:0,
+          region:0,
+          refectiveVest:0,
+          climbHeight:0,
+          motionless:0,
+          fire:0,
+          tumble:0
+        };
         let censusList : any = [];
+        let renderCensusData: any = {
+          face:[],
+          helmet:[],
+          region:[],
+          refectiveVest:[],
+          climbHeight:[],
+          motionless:[],
+          fire:[],
+          tumble:[]
+        };
 
-        Object.keys(res.data).forEach((key:string)=>{
-          const value = res.data[key];
+        list.forEach((item:any)=>{
+          const type : number = item.exceptionType;
 
-          censusData[key] = value.length || 0;
-          switch (key) {
-            case 'face':
-              censusList.push({key, value, label:this.exceptionEventCommon[key]});
+          switch (type) {
+            case 102:
+              censusList.push({key:'face', value:item, label:this.exceptionEventCommon.face});
+              renderCensusData.face.push(item);
+              censusData.face += 1;
               break;
-            case 'fire':
-              censusList.push({key, value, label:this.exceptionEventCommon[key]});
+            case 103:
+              censusList.push({key:'fire', value:item, label:this.exceptionEventCommon.fire});
+              renderCensusData.fire.push(item);
+              censusData.fire += 1;
               break;
-            case 'helmet':
-              censusList.push({key, value, label:this.exceptionEventCommon[key]});
+            case 104:
+              censusList.push({key:'helmet', value:item, label:this.exceptionEventCommon.helmet});
+              renderCensusData.helmet.push(item);
+              censusData.helmet += 1;
               break;
-            case 'motionless':
-              censusList.push({key, value, label:this.exceptionEventCommon[key]});
+            case 105:
+              censusList.push({key:'motionless', value:item, label:this.exceptionEventCommon.motionless});
+              renderCensusData.motionless.push(item);
+              censusData.motionless += 1;
               break;
-            case 'refectiveVest':
-              censusList.push({key, value, label:this.exceptionEventCommon[key]});
+            case 106:
+              censusList.push({key:'refectiveVest', value:item, label:this.exceptionEventCommon.refectiveVest});
+              renderCensusData.refectiveVest.push(item);
+              censusData.refectiveVest += 1;
               break;
-            case 'region':
-              censusList.push({key, value, label:this.exceptionEventCommon[key]});
+            case 107:
+              censusList.push({key:'region', value:item, label:this.exceptionEventCommon.region});
+              renderCensusData.region.push(item);
+              censusData.region += 1;
               break;
-            case 'tumble':
-              censusList.push({key, value, label:this.exceptionEventCommon[key]});
+            case 108:
+              censusList.push({key:'tumble', value:item, label:this.exceptionEventCommon.tumble});
+              renderCensusData.tumble.push(item);
+              censusData.tumble += 1;
               break;
-            case 'climbHeight':
-              censusList.push({key, value, label:this.exceptionEventCommon[key]});
+            case 101:
+              censusList.push({key:'climbHeight', value:item, label:this.exceptionEventCommon.climbHeight});
+              renderCensusData.climbHeight.push(item);
+              censusData.climbHeight += 1;
               break;
           }
         })
 
-        console.log('censusData',censusData)
-        this.censusData = {...this.censusData, ...censusData};;
+        this.censusData = {...this.censusData, ...censusData};
         this.censusList = censusList;
-        this.exportExcelData = res.data;
+        this.renderCensusData = renderCensusData;
       })
 
     },

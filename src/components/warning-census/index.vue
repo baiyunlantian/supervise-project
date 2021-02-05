@@ -52,7 +52,7 @@
           fire:0,
           tumble:0
         },
-        socketRef: {},
+        socketRef: null,
         totalAndTodayCountCensus:{
           today:0,
           total:0,
@@ -203,9 +203,17 @@
       if (this.$props.data == undefined) this.handleInitCensus()
       else this.censusData = {...this.censusData, ...this.$props.data}
     },
+    watch:{
+      data:{
+        handler: function (newVal, oldVal) {
+          this.censusData = newVal;
+        },
+        deep:true
+      },
+    },
     beforeDestroy(): void {
       //@ts-ignore
-      this.socketRef.close();
+      this.socketRef && this.socketRef.close();
     }
   })
 </script>

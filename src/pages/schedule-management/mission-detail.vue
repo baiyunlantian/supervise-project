@@ -34,27 +34,7 @@
 
     </div>
 
-    <div class="form-content">
-      <div class="title">
-        <div class="fontBlackAndBold">施工监督报告</div>
-        <SvgIcon name="exportExcel" @click="handleExportExcel"/>
-      </div>
-
-      <Table
-          ref="table"
-          :table-props="tableProps"
-          @multipleSelectChange="multipleSelectChange"
-          @updateCustomParam="updateCustomParam"
-      >
-        <template v-slot:num="{row}">
-          <div>{{reportNum[row.reportId] || 0}}</div>
-        </template>
-
-        <template v-slot:operate="{row}">
-          <div class="jump-page" @click="handleJumpPage(row)">查看详情>></div>
-        </template>
-      </Table>
-    </div>
+    <MissionTable />
   </div>
 </template>
 
@@ -62,16 +42,10 @@
   import Vue from 'vue';
   import GoBackBtn from '@/components/goBackBtn.vue';
   import Form from '@/components/form/index.vue';
-  import Table from '@/components/table/index.vue';
-  import SvgIcon from '@/components/svgIcon.vue';
+  import MissionTable from './component/mission-table.vue';
   import moment from "moment";
-  import {
-    exportExcl,
-    insertOptionsToFormItems,
-    showMessageAfterRequest
-  } from '@/utils/common';
-  import { updateSchedule, batchDeleteSchedule, getArrangeReportExceptionCensus } from "@/request/schedule";
-  import { PERSON, MOCK } from "@/request/type";
+  import {insertOptionsToFormItems, showMessageAfterRequest} from '@/utils/common';
+  import { updateSchedule, batchDeleteSchedule } from "@/request/schedule";
   import {getPersonSelectList} from "@/request/common";
   import {getBoxList} from "@/request/equipment";
 
@@ -79,11 +53,9 @@
     components:{
       GoBackBtn,
       Form,
-      Table,
-      SvgIcon
+      MissionTable,
     },
     data() {
-      const _this = this;
       return {
         formProps:{
           items:[
@@ -122,170 +94,15 @@
           hiddenFooter:true,
           hideRequiredAsterisk:true
         },
-        tableProps:{
-          url:`${PERSON}/arrange/arrangeReportSelect`,
-          rowKey:'reportId',
-          firstColumn:{
-            show:true,
-            type:'selection'
-          },
-          pagination:{
-            pageSize:12
-          },
-          params:{
-            //@ts-ignore
-            arrangeId:this.$route.query.arrangeId
-          },
-          tableColumn:[
-            {prop:'buildTime',label:'日期'},
-            {prop:'code',label:'编号'},
-            {prop:'startTime',label:'开始检测日期'},
-            {prop:'endTime',label:'结束检测日期'},
-            {prop:'num',label:'预警条数',insertHtml:true,},
-            {prop:'operate',label:'操作',insertHtml:true},
-          ],
-        },
         formData:{},
         baseFormData:{},
         disabledForm:true,
         arrangeId:'',
-        reportIds:[],
         personSelectList:[],
         delFlagList:[],
-        exceptionEventCommon:{
-          face:'人脸识别预警',
-          climbHeight:'登高预警',
-          fire:'火灾预警',
-          helmet:'安全帽预警',
-          motionless:'静止预警',
-          refectiveVest:'反反光衣预警',
-          region:'区域预警',
-          tumble:'跌倒预警',
-        },
-        reportNum:{},
       }
     },
     methods: {
-      handleExportExcel: function () {
-        // 如果有勾选表格行，则导出勾选的表格行所对应的报告详情信息，否则导出当前表格内容
-        this.reportIds.length === 0 ? this.exportTableList() : this.exportExceptionCensus();
-
-      },
-      exportExceptionCensus: function () {
-        let fnArray = this.reportIds.map((reportId:string)=>{
-          return this.handleGetExceptionCensus(reportId)
-        })
-
-        Promise.all(fnArray).then((res:any)=>{
-          //res--数组
-          const list = this.handleFormatAllExceptionData(res);    //获取全所勾选的行的预警详情数据
-
-          let sheetData: any = [];
-
-          list.forEach((item:any,index:number)=>{
-            let obj = [
-              index+1,
-              item.type,
-              item.createTime,
-              item.arrangeName,
-              item.personName,
-              item.isDeal === 0 ? '未处理' :'已处理',
-            ];
-            sheetData.push(obj);
-          });
-
-          const exclHeader = ['序号','预警类型','发生时间','事件名称','关联人员','状态'];
-          const columnWidths = [5,10,15,10,10,5];
-          const fileName = '预警表格';
-
-          exportExcl(res, sheetData, exclHeader, columnWidths, fileName);
-        }).catch(e=>{
-          console.log(e)
-        })
-
-      },
-      //获取每份报告里的预警详情
-      handleGetExceptionCensus: async function (reportId:string): Promise<object> {
-          let {data} = await getArrangeReportExceptionCensus({reportId})
-          return data;
-      },
-      //格式化所勾选的行的预警详情数据
-      handleFormatAllExceptionData: function (list = []) :[] {
-
-        let face:any = [];
-        let climbHeight:any = [];
-        let fire:any = [];
-        let helmet:any = [];
-        let motionless:any = [];
-        let refectiveVest:any = [];
-        let region:any = [];
-        let tumble:any = [];
-
-        try{
-          list && list.forEach((censusItem:any)=>{
-            //censusItem--每行预警详情数据
-            Object.keys(censusItem).forEach(key=>{
-              censusItem[key] && censusItem[key].forEach((eventItem:any)=>{
-                //eventItem--预警类型
-                switch (key) {
-                  case 'face':
-                    face.push({...eventItem, type:this.exceptionEventCommon[key]});
-                    break;
-                  case 'climbHeight':
-                    climbHeight.push({...eventItem, type:this.exceptionEventCommon[key]});
-                    break;
-                  case 'fire':
-                    fire.push({...eventItem, type:this.exceptionEventCommon[key]});
-                    break;
-                  case 'helmet':
-                    helmet.push({...eventItem, type:this.exceptionEventCommon[key]});
-                    break;
-                  case 'motionless':
-                    motionless.push({...eventItem, type:this.exceptionEventCommon[key]});
-                    break;
-                  case 'refectiveVest':
-                    refectiveVest.push({...eventItem, type:this.exceptionEventCommon[key]});
-                    break;
-                  case 'region':
-                    region.push({...eventItem, type:this.exceptionEventCommon[key]});
-                    break;
-                  case 'tumble':
-                    tumble.push({...eventItem, type:this.exceptionEventCommon[key]});
-                    break;
-                }
-              })
-            })
-          })
-          return face.concat(climbHeight, fire, helmet, motionless, refectiveVest, region, tumble);
-        }catch (e) {
-          console.log(e)
-          return []
-        }
-      },
-      exportTableList: function () {
-        //@ts-ignore
-        this.$refs.table.exportExcelList.then(res=>{
-          let sheetData: any = [];
-
-          res.forEach((item:any,index:number)=>{
-            let obj = [
-              index+1,
-              moment(item.buildTime).format('YYYY.MM.DD'),
-              item.code,
-              item.startTime,
-              item.endTime,
-              item.num,
-            ];
-            sheetData.push(obj);
-          });
-
-          const exclHeader = ['序号','日期','工号','开始检测时间','结束检测时间','预警条数'];
-          const columnWidths = [5,10,5,10,5,5,5,5,10];
-          const fileName = '施工监督报告表格';
-
-          exportExcl(res, sheetData, exclHeader, columnWidths, fileName);
-        });
-      },
       handleSubmit: function (type:string) {
         this.disabledForm = true;
 
@@ -355,10 +172,6 @@
         this.arrangeId = data.arrangeId;
         this.formData = {...data, time:[data.dutyStartTime, data.dutyEndTime], personList};
         this.baseFormData = {...data, time:[data.dutyStartTime, data.dutyEndTime], personList};
-        // this.$set(this.formData, 'time', [data.dutyStartTime, data.dutyEndTime]);
-      },
-      multipleSelectChange: function (value:any) {
-        this.reportIds = value.map((item:any)=>item.reportId);
       },
       selectChange: function (options:any, key:string) {
         if (key !== 'personList') return;
@@ -404,13 +217,7 @@
           this.$set(this.formData, 'personList', [...this.formData.personList, option]);
         }
       },
-      handleJumpPage: function (data:any) {
-        sessionStorage.setItem('reporterDetailFormData',JSON.stringify(data))
-        this.$router.push({ path: '/schedule-management/reporter-detail', query: { reportId: data.reportId }});
-      },
-      updateCustomParam: function (data:object) {
-        this.reportNum = data;
-      }
+
     },
     mounted(): void {
       getPersonSelectList().then((res:any)=>{
