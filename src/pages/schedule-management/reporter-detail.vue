@@ -57,7 +57,7 @@
   import Form from "@/components/form/index.vue";
   import WarningCensus from "@/components/warning-census/index.vue";
   import SvgIcon from '@/components/svgIcon.vue';
-  import { getExceptionList } from '@/request/exception';
+  import { getExceptionList, getExceptionCensus } from '@/request/exception';
   import {exportExcl} from "@/utils/common";
 
   export default Vue.extend({
@@ -195,16 +195,6 @@
         let {list} = res.data;
         if (!list) return
 
-        let censusData : any = {
-          face:0,
-          helmet:0,
-          region:0,
-          refectiveVest:0,
-          climbHeight:0,
-          motionless:0,
-          fire:0,
-          tumble:0
-        };
         let censusList : any = [];
         let renderCensusData: any = {
           face:[],
@@ -224,49 +214,82 @@
             case 102:
               censusList.push({key:'face', value:item, label:this.exceptionEventCommon.face});
               renderCensusData.face.push(item);
-              censusData.face += 1;
               break;
             case 103:
               censusList.push({key:'fire', value:item, label:this.exceptionEventCommon.fire});
               renderCensusData.fire.push(item);
-              censusData.fire += 1;
               break;
             case 104:
               censusList.push({key:'helmet', value:item, label:this.exceptionEventCommon.helmet});
               renderCensusData.helmet.push(item);
-              censusData.helmet += 1;
               break;
             case 105:
               censusList.push({key:'motionless', value:item, label:this.exceptionEventCommon.motionless});
               renderCensusData.motionless.push(item);
-              censusData.motionless += 1;
               break;
             case 106:
               censusList.push({key:'refectiveVest', value:item, label:this.exceptionEventCommon.refectiveVest});
               renderCensusData.refectiveVest.push(item);
-              censusData.refectiveVest += 1;
               break;
             case 107:
               censusList.push({key:'region', value:item, label:this.exceptionEventCommon.region});
               renderCensusData.region.push(item);
-              censusData.region += 1;
               break;
             case 108:
               censusList.push({key:'tumble', value:item, label:this.exceptionEventCommon.tumble});
               renderCensusData.tumble.push(item);
-              censusData.tumble += 1;
               break;
             case 101:
               censusList.push({key:'climbHeight', value:item, label:this.exceptionEventCommon.climbHeight});
               renderCensusData.climbHeight.push(item);
-              censusData.climbHeight += 1;
               break;
           }
         })
 
-        this.censusData = {...this.censusData, ...censusData};
         this.censusList = censusList;
         this.renderCensusData = renderCensusData;
+      })
+
+      getExceptionCensus({reportId}).then(res=>{
+        if (!res.data) return
+
+        let census : any= {};
+
+        try{
+          res.data.counts.forEach((item:any)=>{
+
+            switch (item.exceptionType) {
+              case 101:
+                census.climbHeight = item.count;
+                break;
+              case 102:
+                census.face = item.count;
+                break;
+              case 103:
+                census.fire = item.count;
+                break;
+              case 104:
+                census.helmet = item.count;
+                break;
+              case 105:
+                census.motionless = item.count;
+                break;
+              case 106:
+                census.refectiveVest = item.count;
+                break;
+              case 107:
+                census.region = item.count;
+                break;
+              case 108:
+                census.tumble = item.count;
+                break;
+            }
+          })
+
+          this.censusData = {...this.censusData, ...census};
+        }catch (e) {
+          console.log(e)
+        }
       })
 
     },
