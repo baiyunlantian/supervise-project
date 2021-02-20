@@ -58,7 +58,7 @@
   import WarningCensus from "@/components/warning-census/index.vue";
   import SvgIcon from '@/components/svgIcon.vue';
   import html2Canvas from 'html2canvas';
-  import JsPDF from 'jspdf';
+  import JsPDF from 'jspdf/dist/jspdf.min.js';
   import { getExceptionList, getExceptionCensus } from '@/request/exception';
   import {exportExcl} from "@/utils/common";
   import { Message } from "element-ui";
@@ -196,7 +196,7 @@
 
         const element = this.$refs.warningContent;
         const _this = this;
-        html2Canvas(element, {scale: 2, useCORS: true}).then(function (canvas) {
+        html2Canvas(element, {scale: 2, useCORS: true}).then(canvas=>{
           const contentWidth = canvas.width;
           const contentHeight = canvas.height;
 
@@ -228,8 +228,10 @@
               }
             }
           }
-
           pdf.save(`${_this.formData.buildTime || ''}预警信息.pdf`);
+          //@ts-ignore
+          Message.closeAll();
+        }).catch(e=>{
           //@ts-ignore
           Message.closeAll();
         });

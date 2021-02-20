@@ -39,7 +39,14 @@
   }
 
   .project-tree{
-    max-height: 95%;
+    min-height: 95%;
+    /deep/
+    .el-tree{
+      .el-tree-node__expand-icon{
+        top: 0.09375rem;
+        padding-left: 0.3125rem;
+      }
+    }
   }
 
 }

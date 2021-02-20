@@ -11,6 +11,7 @@
     </template>
 
     <DetailMainContent
+        ref="detailMain"
         :data="detailData"
         :image-list="imageAndVideoList"
         @toggleVideo="toggleVideo"
@@ -87,6 +88,7 @@
     methods: {
       close: function () {
         this.$emit('close',false);
+        this.$refs.detailMain.changeMainImage();
       },
       toggleVideo: function (res = false) {
         this.videoVisible = res;

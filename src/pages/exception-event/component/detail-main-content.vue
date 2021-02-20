@@ -147,18 +147,14 @@
         }
         return text;
       },
-      changeMainImage: function (index:number) {
+      changeMainImage: function (index?:number) {
         //切换图片时重置播放器状态
         this.playStatus = false;
         this.firstPlay = true;
-        this.imageIndex = index;
-        //@ts-ignore
+        index >= 0 ? this.imageIndex = index : '';
         this.playerRef.pause();
-        //@ts-ignore
         this.playerRef.unload();
-        //@ts-ignore
         this.playerRef.detachMediaElement();
-        //@ts-ignore
         this.playerRef.destroy();
       },
       play: function(){
@@ -187,9 +183,7 @@
           setTimeout(()=>{
             this.loadingStatus = false;
             this.firstPlay = false;
-            //@ts-ignore
             this.playerRef.load()
-            //@ts-ignore
             this.playerRef.play()
           },2000)
 
@@ -200,7 +194,6 @@
       },
       pause: function () {
         this.playStatus = false;
-        //@ts-ignore
         this.playerRef.pause()
       },
       playError: function (e:any) {

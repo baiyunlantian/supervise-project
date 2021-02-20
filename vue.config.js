@@ -1,6 +1,6 @@
 const path = require("path");
 const CompressionWebpackPlugin = require("compression-webpack-plugin");
-const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
 const { PRO_PROXY, DEV_PROXY} = require("./src/request/proxy");
 const IS_PROD = ['production', 'prod'].includes(process.env.NODE_ENV);
 const productionGzipExtensions = /\.(js|css|json|txt|html|ico|svg)(\?.*)?$/i;
@@ -20,6 +20,12 @@ module.exports = {
     css: {
         // requireModuleExtension: false,   //引入此配置会导致elementUI样式失效
         loaderOptions:{
+          /**
+           * less在IE10下会报错
+           * 兼容方式：
+           * 去掉node_modules/less/dist/less.js下的
+           * use strict
+           **/
             less:{
                 lessOptions: {
                   strictMath: false,
@@ -52,37 +58,6 @@ module.exports = {
         config.module.rule('ts').use('babel-loader');
         config.module.rule('ts').use('cache-loader');
         config.plugin('fork-ts-checker');
-        //开启gzip压缩
-        if (IS_PROD) {
-            const plugins = [];
-            plugins.push(
-                //开启gzip压缩
-                new CompressionWebpackPlugin({
-                    filename: '[path].gz[query]',
-                    algorithm: 'gzip',
-                    test: productionGzipExtensions,
-                    threshold: 10240,
-                    minRatio: 0.8
-                }),
-                //去掉console.log
-                new UglifyJsPlugin({
-                    uglifyOptions: {
-                        compress: {
-                            warnings: false,
-                            drop_console: true,
-                            drop_debugger: false,
-                            pure_funcs: ['console.log']//移除console
-                        }
-                    },
-                    sourceMap: false,
-                    parallel: true
-                })
-            );
-            config.plugins = [
-                ...config.plugins,
-                ...plugins
-            ];
-        }
 
         //压缩图片
         config.module
@@ -114,6 +89,34 @@ module.exports = {
           .end()
     },
     configureWebpack: config => {
-        config.entry.app = ["babel-polyfill", "./src/main.ts"];
+      config.entry.app = ["babel-polyfill", "./src/main.ts"];
+
+      //开启gzip压缩
+      if (IS_PROD) {
+        const plugins = config.plugins;
+        plugins.push(
+          //开启gzip压缩
+          new CompressionWebpackPlugin({
+            filename: '[path].gz[query]',
+            algorithm: 'gzip',
+            test: productionGzipExtensions,
+            threshold: 10240,
+            minRatio: 0.8
+          }),
+          //去掉console.log
+          new TerserPlugin({
+            terserOptions: {
+              ecma: undefined,
+              warnings: false,
+              parse: {},
+              compress: {
+                drop_console: true,
+                drop_debugger: false,
+                pure_funcs: ['console.log'] // 移除console
+              }
+            },
+          })
+        );
+      }
     }
 }

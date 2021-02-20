@@ -36,10 +36,10 @@
         tableProps:{
           url:`${BOX}/exception/reportPageListInArrange`,
           rowKey:'reportId',
-          firstColumn:{
-            show:true,
-            type:'selection'
-          },
+          // firstColumn:{
+          //   show:true,
+          //   type:'selection'
+          // },
           pagination:{
             pageSize:12
           },

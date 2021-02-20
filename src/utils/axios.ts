@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import router from '@/router'
 import axios from 'axios'
-import {PERSON} from "@/request/type";
+import fetch from 'isomorphic-fetch';
 axios.defaults.withCredentials = false;
 axios.defaults.headers['Accept'] = 'application/json';
 
@@ -55,15 +55,15 @@ axios.interceptors.response.use(function (response) {
             message: error.response.data.msg || '登录凭证已失效，请重新登录',
             type: 'error'
         });
-        sessionStorage.clear();
-        router.push({path: '/login'}).then(r => r);
+        // sessionStorage.clear();
+        // router.push({path: '/login'}).then(r => r);
     }else if (error.response.data.code === 401){
         Vue.prototype.$message({
             message: error.response.data.msg || '登录凭证已失效，请重新登录',
             type: 'error'
         });
-        sessionStorage.clear();
-        router.push({path: '/login'}).then(r => r);
+        // sessionStorage.clear();
+        // router.push({path: '/login'}).then(r => r);
     }
     return Promise.reject(error);
 })

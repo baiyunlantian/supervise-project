@@ -31,18 +31,26 @@
         margin-bottom: 10px;
         width: 26%;
         .el-form-item__content{
+          display: flex;
+          .el-date-editor{
+            .el-range-input{
+              width: 47%;
+            }
+          }
+          .range-separator{
+            width: 20px;
+            margin: 0 5px;
+          }
           div{
             width: 100%;
           }
         }
       }
-      .el-form-item{
-        /deep/
+      /deep/
+      .el-form-item:last-child{
         .el-form-item__content{
-          display: flex;
-          .range-separator{
-            width: 20px;
-            margin: 0 5px;
+          .el-date-editor{
+            flex: 1;
           }
         }
       }
